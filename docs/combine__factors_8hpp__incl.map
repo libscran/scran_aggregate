@@ -1,9 +1,0 @@
-<map id="aggregate_across_cells/combine_factors.hpp" name="aggregate_across_cells/combine_factors.hpp">
-<area shape="rect" id="Node000001" title="Combine categorical factors into a single factor." alt="" coords="53,5,211,46"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,94,80,120"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="112,48,69,86,66,82,108,44"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="103,94,161,120"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="135,46,135,78,129,78,129,46"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="185,94,231,120"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="153,45,187,81,184,84,149,48"/>
-</map>
