@@ -14,7 +14,7 @@
 namespace scran {
 
 /**
- * @namespace aggregate_across_cells
+ * @namespace scran::aggregate_across_cells
  * @brief Aggregate expression values across cells.
  */
 namespace aggregate_across_cells {

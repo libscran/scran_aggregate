@@ -13,13 +13,13 @@
 namespace scran {
 
 /**
- * @namespace combine_factors
+ * @namespace scran::combine_factors
  * @brief Combine categorical factors into a single factor. 
  */
 namespace combine_factors {
 
 /**
- * @brief Unique combinations from `combine_factors()`.
+ * @brief Unique combinations from `combine_factors::compute()`.
  *
  * @tparam Factor_ Factor type, typically an integer.
  */

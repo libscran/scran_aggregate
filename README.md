@@ -72,14 +72,14 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(scran_aggregate_across_cells)
 ```
 
-Then we can link to **aggregate_across_cells** to make the headers available during compilation:
+Then we can link to it to make the headers available during compilation:
 
 ```cmake
 # For executables:
-target_link_libraries(myexe scran::aggregate_across_cells)
+target_link_libraries(myexe scran_aggregate_across_cells)
 
 # For libaries
-target_link_libraries(mylib INTERFACE scran::aggregate_across_cells)
+target_link_libraries(mylib INTERFACE scran_aggregate_across_cells)
 ```
 
 If you're not using CMake, the simple approach is to just copy the files in `include/` - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's `-I`.
