@@ -106,8 +106,7 @@ $(function() {
 <div class="line">res.factors[1]; <span class="comment">// values of grouping2 for each unique combination.</span></div>
 </div><!-- fragment --><p>Check out the <a href="https://libscran.github.io/aggregate_across_cells">reference documentation</a> for more details.</p>
 <h1>Building projects</h1>
-<p>This repository is part of the broader <a href="https://github.com/libscran/libscran"><b>libscran</b></a> library, so users are recommended to use the latter when building binaries.</p>
-<p>Nonetheless, if this library is to be used directly, we can use <code>FetchContent</code>:</p>
+<p>This repository is part of the broader <a href="https://github.com/libscran/libscran"><b>libscran</b></a> library, so users are recommended to use the latter in their projects. Nonetheless, if this library is to be used directly, we can use CMake with <code>FetchContent</code>:</p>
 <div class="fragment"><div class="line">include(FetchContent)</div>
 <div class="line"> </div>
 <div class="line">FetchContent_Declare(</div>
@@ -117,7 +116,7 @@ $(function() {
 <div class="line">)</div>
 <div class="line"> </div>
 <div class="line">FetchContent_MakeAvailable(scran_aggregate_across_cells)</div>
-</div><!-- fragment --><p>Then you can link to <b>aggregate_across_cells</b> to make the headers available during compilation:</p>
+</div><!-- fragment --><p>Then we can link to <b>aggregate_across_cells</b> to make the headers available during compilation:</p>
 <div class="fragment"><div class="line"># For executables:</div>
 <div class="line">target_link_libraries(myexe scran::aggregate_across_cells)</div>
 <div class="line"> </div>
