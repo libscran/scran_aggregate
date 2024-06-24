@@ -111,7 +111,7 @@ $(function() {
 <div class="ttc" id="anamespacescran_1_1combine__factors_html_a522c70000c2235e998e112489b849f02"><div class="ttname"><a href="namespacescran_1_1combine__factors.html#a522c70000c2235e998e112489b849f02">scran::combine_factors::compute</a></div><div class="ttdeci">Results&lt; Factor_ &gt; compute(size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *combined)</div><div class="ttdef"><b>Definition</b> combine_factors.hpp:68</div></div>
 </div><!-- fragment --><p>Check out the <a href="https://libscran.github.io/aggregate_across_cells">reference documentation</a> for more details.</p>
 <h1>Building projects</h1>
-<p>This repository is part of the broader <a href="https://github.com/libscran/libscran"><b>libscran</b></a> library, so users are recommended to use the latter in their projects. Nonetheless, if this library is to be used directly, we can use CMake with <code>FetchContent</code>:</p>
+<p>This repository is part of the broader <a href="https://github.com/libscran/libscran"><b>libscran</b></a> library, so users are recommended to use the latter in their projects. <b>libscran</b> developers should just use CMake with <code>FetchContent</code>:</p>
 <div class="fragment"><div class="line">include(FetchContent)</div>
 <div class="line"> </div>
 <div class="line">FetchContent_Declare(</div>
@@ -121,14 +121,13 @@ $(function() {
 <div class="line">)</div>
 <div class="line"> </div>
 <div class="line">FetchContent_MakeAvailable(scran_aggregate_across_cells)</div>
-</div><!-- fragment --><p>Then we can link to it to make the headers available during compilation:</p>
-<div class="fragment"><div class="line"># For executables:</div>
+<div class="line"> </div>
+<div class="line"># For executables:</div>
 <div class="line">target_link_libraries(myexe scran_aggregate_across_cells)</div>
 <div class="line"> </div>
 <div class="line"># For libaries</div>
 <div class="line">target_link_libraries(mylib INTERFACE scran_aggregate_across_cells)</div>
-</div><!-- fragment --><p>If you're not using CMake, the simple approach is to just copy the files in <code>include/</code> - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's <code>-I</code>. This requires the external dependencies listed in <a href="extern/CMakeLists.txt"><code>extern/CMakeLists.txt</code></a>, which also need to be made available during compilation. </p>
-</div></div><!-- PageDoc -->
+</div><!-- fragment --> </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
