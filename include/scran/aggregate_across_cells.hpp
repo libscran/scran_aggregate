@@ -1,34 +1,42 @@
-#ifndef SCRAN_AGGREGATE_ACROSS_CELLS_COMPUTE_HPP
-#define SCRAN_AGGREGATE_ACROSS_CELLS_COMPUTE_HPP
+#ifndef SCRAN_AGGREGATE_ACROSS_CELLS_HPP
+#define SCRAN_AGGREGATE_ACROSS_CELLS_HPP
 
 #include <algorithm>
 #include <vector>
 #include "tatami/tatami.hpp"
 
 /**
- * @file compute.hpp
+ * @file aggregate_across_cells.hpp
  *
  * @brief Aggregate expression values across cells.
  */
 
+namespace scran {
+
+/**
+ * @namespace aggregate_across_cells
+ * @brief Aggregate expression values across cells.
+ */
 namespace aggregate_across_cells {
 
+/**
+ * @brief Further options for `aggregate_across_cells::compute()`.
+ */
 struct Options {
     /**
      * Whether to compute the sum within each factor level.
-     * This option only affects the `compute()` overload where a `Results` object is returned.
+     * This option only affects the `aggregate_across_cells::compute()` overload where an `aggregate_across_cells::Results` object is returned.
      */
     bool compute_sums = true;
 
     /**
      * Whether to compute the number of detected cells within each factor level.
-     * This option only affects the `compute()` overload where a `Results` object is returned.
+     * This option only affects the `aggregate_across_cells::compute()` overload where an `aggregate_across_cells::Results` object is returned.
      */
     bool compute_detected = true;
 
     /**
      * Number of threads to use. 
-     * See `set_num_threads()`.
      */
     int num_threads = 1;
 };
@@ -201,7 +209,7 @@ void compute(const tatami::Matrix<Data_, Index_>* input, const Factor_* factor, 
 } 
 
 /**
- * @brief Container for the aggregation results.
+ * @brief Aggregated results from `aggregate_across_cells::compute()`.
  * @tparam Sum_ Type of the sum, should be numeric.
  * @tparam Detected_ Type for the number of detected cells, usually integer.
  */
@@ -212,7 +220,7 @@ struct Results {
      * Each inner vector is of length equal to the number of genes.
      * Each entry contains the summed expression across all cells in the corresponding level for the corresponding gene.
      *
-     * If `Options::compute_sums = false`, this vector is empty.
+     * If `aggregate_across_cells::Options::compute_sums = false`, this vector is empty.
      */
     std::vector<std::vector<Sum_> > sums;
 
@@ -221,7 +229,7 @@ struct Results {
      * Each inner vector is of length equal to the number of genes.
      * Each entry contains the number of cells in the corresponding level with detected expression for the corresponding gene.
      *
-     * If `Options::compute_detected = false`, this vector is empty.
+     * If `aggregate_across_cells::Options::compute_detected = false`, this vector is empty.
      */
     std::vector<std::vector<Detected_> > detected;
 };
@@ -239,7 +247,7 @@ struct Results {
  * All levels should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique levels.
  * @param options Further options.
  *
- * @return A `Results` object is returned, where the available statistics depend on `Options`.
+ * @return Results of the aggregation, where the available statistics depend on `aggregate_across_cells::Options`.
  */
 template<typename Sum_ = double, typename Detected_ = int, typename Data_, typename Index_, typename Factor_>
 Results<Sum_, Detected_> compute(const tatami::Matrix<Data_, Index_>* input, const Factor_* factor, const Options& options) {
@@ -270,6 +278,8 @@ Results<Sum_, Detected_> compute(const tatami::Matrix<Data_, Index_>* input, con
     compute(input, factor, std::move(sumptr), std::move(detptr), options);
     return output;
 } 
+
+}
 
 }
 

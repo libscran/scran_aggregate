@@ -2,12 +2,12 @@
 
 #include <random>
 
-#include "aggregate_across_cells/combine_factors.hpp"
+#include "scran/combine_factors.hpp"
 
-template<typename Factor>
-std::pair<aggregate_across_cells::Combinations<Factor>, std::vector<int> > test_combine_factors(size_t n, const std::vector<const Factor*>& factors) {
+template<typename Factor_>
+std::pair<scran::combine_factors::Results<Factor_>, std::vector<int> > test_combine_factors(size_t n, const std::vector<const Factor_*>& factors) {
     std::vector<int> combined(n);
-    auto levels = aggregate_across_cells::combine_factors(n, factors, combined.data());
+    auto levels = scran::combine_factors::compute(n, factors, combined.data());
     return std::make_pair(std::move(levels), std::move(combined));
 }
 

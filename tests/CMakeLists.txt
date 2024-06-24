@@ -10,30 +10,39 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(
-    libtest 
-    src/combine_factors.cpp
-    src/compute.cpp
-)
-
-target_link_libraries(
-    libtest
-    gtest_main
-    aggregate_across_cells
-)
-
 set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
 set(DO_CODE_COVERAGE OFF)
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     set(DO_CODE_COVERAGE ON)
-    target_compile_options(libtest PRIVATE -O0 -g --coverage)
-    target_link_options(libtest PRIVATE --coverage)
 endif()
 
 include(GoogleTest)
-gtest_discover_tests(libtest)
+
+macro(create_test name) 
+    add_executable(
+        ${name} 
+        src/aggregate_across_cells.cpp
+        src/combine_factors.cpp
+    )
+
+    target_link_libraries(
+        ${name}
+        gtest_main
+        scran_aggregate_across_cells
+    )
+
+    if(DO_CODE_COVERAGE)
+        target_compile_options(${name} PRIVATE -O0 -g --coverage)
+        target_link_options(${name} PRIVATE --coverage)
+    endif()
+
+    gtest_discover_tests(${name})
+endmacro()
+
+create_test(libtest)
 
 find_package(OpenMP)
 if (USE_OPENMP)
-    #target_link_libraries(libtest OpenMP::OpenMP_CXX)
+    create_test(omptest)
+    target_link_libraries(omptest OpenMP::OpenMP_CXX)
 endif()

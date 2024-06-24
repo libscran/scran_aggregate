@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "aggregate_across_cells/compute.hpp"
+#include "scran/aggregate_across_cells.hpp"
 #include <map>
 #include <random>
 
@@ -48,8 +48,8 @@ TEST_P(AggregateAcrossCellsTest, Basics) {
 
     std::vector<int> groupings = create_groupings(dense_row->ncol(), ngroups);
 
-    aggregate_across_cells::Options opt;
-    auto ref = aggregate_across_cells::compute(dense_row.get(), groupings.data(), opt);
+    scran::aggregate_across_cells::Options opt;
+    auto ref = scran::aggregate_across_cells::compute(dense_row.get(), groupings.data(), opt);
 
     auto compare = [&](const auto& other) -> void {
         for (int l = 0; l < ngroups; ++l) {
@@ -60,7 +60,7 @@ TEST_P(AggregateAcrossCellsTest, Basics) {
 
     opt.num_threads = nthreads; 
     if (nthreads != 1) {
-        auto res1 = aggregate_across_cells::compute(dense_row.get(), groupings.data(), opt);
+        auto res1 = scran::aggregate_across_cells::compute(dense_row.get(), groupings.data(), opt);
         compare(res1);
     } else {
         // Doing some cursory checks.
@@ -76,13 +76,13 @@ TEST_P(AggregateAcrossCellsTest, Basics) {
         }
     }
 
-    auto res2 = aggregate_across_cells::compute(sparse_row.get(), groupings.data(), opt);
+    auto res2 = scran::aggregate_across_cells::compute(sparse_row.get(), groupings.data(), opt);
     compare(res2);
 
-    auto res3 = aggregate_across_cells::compute(dense_column.get(), groupings.data(), opt);
+    auto res3 = scran::aggregate_across_cells::compute(dense_column.get(), groupings.data(), opt);
     compare(res3);
 
-    auto res4 = aggregate_across_cells::compute(sparse_column.get(), groupings.data(), opt);
+    auto res4 = scran::aggregate_across_cells::compute(sparse_column.get(), groupings.data(), opt);
     compare(res4);
 }
 
@@ -100,19 +100,19 @@ TEST(AggregateAcrossCells, Skipping) {
     auto input = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nr, nc, simulate_sparse_vector<double>(nr * nc, 0.1)));
     auto grouping = create_groupings(input->ncol(), 2);
 
-    aggregate_across_cells::Options opt;
-    auto ref = aggregate_across_cells::compute(input.get(), grouping.data(), opt);
+    scran::aggregate_across_cells::Options opt;
+    auto ref = scran::aggregate_across_cells::compute(input.get(), grouping.data(), opt);
     EXPECT_EQ(ref.sums.size(), 2);
     EXPECT_EQ(ref.detected.size(), 2);
 
     // Skipping works correctly when we don't want to compute things.
     opt.compute_sums = false;
-    auto partial = aggregate_across_cells::compute(input.get(), grouping.data(), opt);
+    auto partial = scran::aggregate_across_cells::compute(input.get(), grouping.data(), opt);
     EXPECT_EQ(partial.sums.size(), 0);
     EXPECT_EQ(partial.detected.size(), 2);
     
     opt.compute_detected = false;
-    auto skipped = aggregate_across_cells::compute(input.get(), grouping.data(), opt);
+    auto skipped = scran::aggregate_across_cells::compute(input.get(), grouping.data(), opt);
     EXPECT_EQ(skipped.sums.size(), 0);
     EXPECT_EQ(skipped.detected.size(), 0);
 }

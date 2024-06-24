@@ -1,5 +1,5 @@
-#ifndef SCRAN_AGGREGATE_ACROSS_CELLS_COMBINE_FACTORS_HPP
-#define SCRAN_AGGREGATE_ACROSS_CELLS_COMBINE_FACTORS_HPP
+#ifndef SCRAN_COMBINE_FACTORS_HPP
+#define SCRAN_COMBINE_FACTORS_HPP
 
 #include <algorithm>
 #include <vector>
@@ -10,19 +10,25 @@
  * @brief Combine categorical factors into a single factor. 
  */
 
-namespace aggregate_across_cells {
+namespace scran {
 
 /**
- * @brief Unique combinations of factors.
- *
- * @tparam Factor Factor type, typically an integer.
+ * @namespace combine_factors
+ * @brief Combine categorical factors into a single factor. 
  */
-template<typename Factor>
-struct Combinations {
+namespace combine_factors {
+
+/**
+ * @brief Unique combinations from `combine_factors()`.
+ *
+ * @tparam Factor_ Factor type, typically an integer.
+ */
+template<typename Factor_>
+struct Results {
     /**
      * @cond
      */
-    Combinations(size_t n) : factors(n) {}
+    Results(size_t n) : factors(n) {}
     /**
      * @endcond
      */
@@ -34,7 +40,7 @@ struct Combinations {
      * Corresponding entries of the inner vectors define a particular combination of levels.
      * Combinations are guaranteed to be sorted.
      */
-    std::vector<std::vector<Factor> > factors;
+    std::vector<std::vector<Factor_> > factors;
 
     /**
      * Number of cells in each unique combination of factor levels.
@@ -45,9 +51,9 @@ struct Combinations {
 };
 
 /**
- * @tparam Factor Factor type.
+ * @tparam Factor_ Factor type.
  * Any type may be used here as long as it is comparable.
- * @tparam Combined Integer type for the combined factor.
+ * @tparam Combined_ Integer type for the combined factor.
  * This should be large enough to hold the number of unique combinations.
  *
  * @param n Number of observations (i.e., cells).
@@ -55,11 +61,11 @@ struct Combinations {
  * @param[out] combined Pointer to an array of length `n`, in which the combined factor is to be stored.
  *
  * @return 
- * A `Combinations` object is returned containing the unique combinations of levels observed in `factors`.
- * A combined factor is saved to `combined`, where each entry is an index into the relevant combination of the output `Combinations` object.
+ * A `combine_factors::Results` object is returned containing the unique combinations of levels observed in `factors`.
+ * A combined factor is saved to `combined`, where each entry is an index into the relevant combination of the output `combine_factors::Results` object.
  */
-template<typename Factor, typename Combined>
-Combinations<Factor> combine_factors(size_t n, const std::vector<const Factor*>& factors, Combined* combined) {
+template<typename Factor_, typename Combined_>
+Results<Factor_> compute(size_t n, const std::vector<const Factor_*>& factors, Combined_* combined) {
     auto cmp = [&](size_t left, size_t right) -> bool {
         for (auto curf : factors) {
             if (curf[left] < curf[right]) {
@@ -80,17 +86,17 @@ Combinations<Factor> combine_factors(size_t n, const std::vector<const Factor*>&
         return true;
     };
 
-    std::map<size_t, Combined, decltype(cmp)> mapping(cmp);
+    std::map<size_t, Combined_, decltype(cmp)> mapping(cmp);
     for (size_t i = 0; i < n; ++i) {
         auto mIt = mapping.find(i);
         if (mIt == mapping.end() || !eq(i, mIt->first)) {
-            mapping.insert(mIt, std::pair<size_t, Combined>(i, 0));
+            mapping.insert(mIt, std::pair<size_t, Combined_>(i, 0));
         }
     }
 
     // Obtaining the sorted set of unique combinations.
     size_t nfac = factors.size();
-    Combinations<Factor> output(nfac);
+    Results<Factor_> output(nfac);
     size_t nuniq = mapping.size();
     for (auto& ofac : output.factors) {
         ofac.reserve(nuniq);
@@ -114,6 +120,8 @@ Combinations<Factor> combine_factors(size_t n, const std::vector<const Factor*>&
     }
 
     return output;
+}
+
 }
 
 }
