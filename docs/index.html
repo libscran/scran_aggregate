@@ -74,7 +74,67 @@ $(function() {
   <div class="headertitle"><div class="title">Aggregate expression values across cells </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md__2github_2workspace_2README"></a> Computes some aggregate statistics across groups of cells. </p>
+<div class="textblock"><p><a class="anchor" id="md__2github_2workspace_2README"></a> <img src="https://github.com/libscran/aggregate_across_cells/actions/workflows/run-tests.yaml/badge.svg" alt="Unit tests" style="pointer-events: none;" class="inline"/> <img src="https://github.com/libscran/aggregate_across_cells/actions/workflows/doxygenate.yaml/badge.svg" alt="Documentation" style="pointer-events: none;" class="inline"/> <a href="https://codecov.io/gh/libscran/aggregate_across_cells"><img src="https://codecov.io/gh/libscran/aggregate_across_cells/graph/badge.svg?token=JWV0I4WJX2" alt="Codecov" style="pointer-events: none;" class="inline"/></a></p>
+<h1>Overview</h1>
+<p>This library computes aggregate statistics for groups of cells from a gene-by-cell matrix of expression values. It was primarily developed for computing pseudo-bulk expression profiles for clusters of cells, which can then be used for differential expression analysis. The code itself was originally derived from the <a href="https://bioconductor.org/packages/scran"><b>scran</b> R package</a>, factored out into a separate C++ library for easier re-use.</p>
+<h1>Quick start</h1>
+<p>Not too much to say here. Given a <a href="https://github.com/tatami-inc/tatami"><code>tatami::Matrix</code></a> and an array of group assignments, the <code>compute()</code> function will compute the aggregate statistics across all genes for each group.</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="aggregate__across__cells_8hpp.html">aggregate_across_cells/aggregate_across_cells.hpp</a>&quot;</span></div>
+<div class="line"> </div>
+<div class="line">tatami::Matrix&lt;double, int&gt;* ptr = some_data_source();</div>
+<div class="line">std::vector&lt;int&gt; groupings = some_groupings();</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">auto</span> res = <a class="code hl_function" href="namespaceaggregate__across__cells.html#a2414f0abd84279090f07fde892581e01">aggregate_across_cells::compute</a>(ptr, groupings.data());</div>
+<div class="line">res.sums; <span class="comment">// vector of vectors of per-group sums across genes.</span></div>
+<div class="line">res.sums[0]; <span class="comment">// vector of sums for the first group across all genes.</span></div>
+<div class="line">res.detected; <span class="comment">// vector of vectors of the number of detected cells. </span></div>
+<div class="ttc" id="aaggregate__across__cells_8hpp_html"><div class="ttname"><a href="aggregate__across__cells_8hpp.html">aggregate_across_cells.hpp</a></div><div class="ttdoc">Umbrella header for aggregate_across_cells.</div></div>
+<div class="ttc" id="anamespaceaggregate__across__cells_html_a2414f0abd84279090f07fde892581e01"><div class="ttname"><a href="namespaceaggregate__across__cells.html#a2414f0abd84279090f07fde892581e01">aggregate_across_cells::compute</a></div><div class="ttdeci">void compute(const tatami::Matrix&lt; Data_, Index_ &gt; *input, const Factor_ *factor, std::vector&lt; Sum_ * &gt; sums, std::vector&lt; Detected_ * &gt; detected, const Options &amp;options)</div><div class="ttdef"><b>Definition</b> compute.hpp:187</div></div>
+</div><!-- fragment --><p>The array of groupings should contain integer assignments to groups 0, 1, 2, etc. For more complex groupings defined from combinations of multiple factors, the <code>combine_factors()</code> utility will create group assignments from unique combinations of those factors:</p>
+<div class="fragment"><div class="line">std::vector&lt;int&gt; grouping1 { 0, 0, 1, 1, 2, 2 };</div>
+<div class="line">std::vector&lt;int&gt; grouping2 { 0, 1, 0, 1, 0, 1 };</div>
+<div class="line"> </div>
+<div class="line">std::vector&lt;int&gt; combined(grouping1.size()); </div>
+<div class="line"><span class="keyword">auto</span> res = <a class="code hl_function" href="namespaceaggregate__across__cells.html#af56b9866b2ea6f99d6a5c18ebf67ea2d">aggregate_across_cells::combine_factors</a>(</div>
+<div class="line">    grouping1.size(), </div>
+<div class="line">    std::vector&lt;int*&gt;{ grouping1.data(), grouping2.data() },</div>
+<div class="line">    combined.data()</div>
+<div class="line">);</div>
+<div class="line"> </div>
+<div class="line">combined; <span class="comment">// defines unique combinations of (grouping1, grouping2).</span></div>
+<div class="line">res.factors[0]; <span class="comment">// values of grouping1 for each unique combination.</span></div>
+<div class="line">res.factors[1]; <span class="comment">// values of grouping2 for each unique combination.</span></div>
+<div class="ttc" id="anamespaceaggregate__across__cells_html_af56b9866b2ea6f99d6a5c18ebf67ea2d"><div class="ttname"><a href="namespaceaggregate__across__cells.html#af56b9866b2ea6f99d6a5c18ebf67ea2d">aggregate_across_cells::combine_factors</a></div><div class="ttdeci">Combinations&lt; Factor &gt; combine_factors(size_t n, const std::vector&lt; const Factor * &gt; &amp;factors, Combined *combined)</div><div class="ttdef"><b>Definition</b> combine_factors.hpp:62</div></div>
+</div><!-- fragment --><p>Check out the <a href="https://libscran.github.io/aggregate_across_cells">reference documentation</a> for more details.</p>
+<h1>Building projects</h1>
+<h2>CMake with <code>FetchContent</code></h2>
+<p>If you're using CMake, you just need to add something like this to your <code>CMakeLists.txt</code>:</p>
+<div class="fragment"><div class="line">include(FetchContent)</div>
+<div class="line"> </div>
+<div class="line">FetchContent_Declare(</div>
+<div class="line">  aggregate_across_cells </div>
+<div class="line">  GIT_REPOSITORY https://github.com/libscran/aggregate_across_cells</div>
+<div class="line">  GIT_TAG master # or any version of interest</div>
+<div class="line">)</div>
+<div class="line"> </div>
+<div class="line">FetchContent_MakeAvailable(aggregate_across_cells)</div>
+</div><!-- fragment --><p>Then you can link to <b><a class="el" href="namespaceaggregate__across__cells.html" title="Methods for aggregating across cells.">aggregate_across_cells</a></b> to make the headers available during compilation:</p>
+<div class="fragment"><div class="line"># For executables:</div>
+<div class="line">target_link_libraries(myexe scran::aggregate_across_cells)</div>
+<div class="line"> </div>
+<div class="line"># For libaries</div>
+<div class="line">target_link_libraries(mylib INTERFACE scran::aggregate_across_cells)</div>
+</div><!-- fragment --><h2>CMake with <code>find_package()</code></h2>
+<p>To install the library, clone an appropriate version of this repository and run:</p>
+<div class="fragment"><div class="line">mkdir build &amp;&amp; cd build</div>
+<div class="line">cmake .. -DAGGREGATE_ACROSS_CELLS_TESTS=OFF</div>
+<div class="line">cmake --build . --target install</div>
+</div><!-- fragment --><p>Then we can use <code>find_package()</code> as usual:</p>
+<div class="fragment"><div class="line">find_package(scran_aggregate_across_cells CONFIG REQUIRED)</div>
+<div class="line">target_link_libraries(mylib INTERFACE scran::aggregate_across_cells)</div>
+</div><!-- fragment --><p>By default, this will use <code>FetchContent</code> to fetch all external dependencies (see <a href="extern/CMakeLists.txt"><code>extern/CMakeLists.txt</code></a> for a list). If you want to install them manually, use <code>-DAGGREGATE_ACROSS_CELLS_FETCH_EXTERN=OFF</code>.</p>
+<h2>Manual</h2>
+<p>If you're not using CMake, the simple approach is to just copy the files in <code>include/</code> - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's <code>-I</code>. This requires the external dependencies listed in <a href="extern/CMakeLists.txt"><code>extern/CMakeLists.txt</code></a>, which also need to be made available during compilation. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
