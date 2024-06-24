@@ -4,9 +4,17 @@ FetchContent_Declare(
   URL https://github.com/google/googletest/archive/1d17ea141d2c11b8917d2c7d029f1c4e2b9769b2.zip
 )
 
+FetchContent_Declare(
+  scran_test_utils 
+  GIT_REPOSITORY https://github.com/libscran/test_utils
+  GIT_TAG master
+)
+
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
+
+FetchContent_MakeAvailable(scran_test_utils)
 
 enable_testing()
 
@@ -29,6 +37,7 @@ macro(create_test name)
         ${name}
         gtest_main
         scran_aggregate_across_cells
+        scran_test_utils
     )
 
     if(DO_CODE_COVERAGE)
