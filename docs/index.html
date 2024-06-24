@@ -78,24 +78,24 @@ $(function() {
 <h1>Overview</h1>
 <p>This repository contains a function to aggregate statistics for groups of cells from a gene-by-cell matrix of expression values. It was primarily developed for computing pseudo-bulk expression profiles for clusters of cells, which can then be used for differential expression analysis. The code itself was originally derived from the <a href="https://bioconductor.org/packages/scran"><b>scran</b> R package</a>, factored out into a separate C++ library for easier re-use.</p>
 <h1>Quick start</h1>
-<p>Not too much to say here. Given a <a href="https://github.com/tatami-inc/tatami"><code>tatami::Matrix</code></a> and an array of group assignments, the <code>compute()</code> function will compute the aggregate statistics across all genes for each group.</p>
+<p>Not too much to say here. Given a <a href="https://github.com/tatami-inc/tatami"><code>tatami::Matrix</code></a> and an array of group assignments, the <code>aggregate_across_cells::compute()</code> function will compute the aggregate statistics across all genes for each group.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;scran/aggregate_across_cells.hpp&quot;</span></div>
 <div class="line"> </div>
 <div class="line">tatami::Matrix&lt;double, int&gt;* ptr = some_data_source();</div>
 <div class="line">std::vector&lt;int&gt; groupings = some_groupings();</div>
 <div class="line"> </div>
-<div class="line"><span class="keyword">auto</span> res = scran::aggregate_across_cells(ptr, groupings.data());</div>
+<div class="line"><span class="keyword">auto</span> res = scran::aggregate_across_cells::compute(ptr, groupings.data());</div>
 <div class="line">res.sums; <span class="comment">// vector of vectors of per-group sums across genes.</span></div>
 <div class="line">res.sums[0]; <span class="comment">// vector of sums for the first group across all genes.</span></div>
 <div class="line">res.detected; <span class="comment">// vector of vectors of the number of detected cells. </span></div>
-</div><!-- fragment --><p>The array of groupings should contain integer assignments to groups 0, 1, 2, etc. For more complex groupings defined from combinations of multiple factors, the <code>combine_factors()</code> utility will create group assignments from unique combinations of those factors:</p>
+</div><!-- fragment --><p>The array of groupings should contain integer assignments to groups 0, 1, 2, etc. For more complex groupings defined from combinations of multiple factors, the <code>combine_factors::compute()</code> utility will create group assignments from unique combinations of those factors:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;scran/combine_factors.hpp&quot;</span></div>
 <div class="line"> </div>
 <div class="line">std::vector&lt;int&gt; grouping1 { 0, 0, 1, 1, 2, 2 };</div>
 <div class="line">std::vector&lt;int&gt; grouping2 { 0, 1, 0, 1, 0, 1 };</div>
 <div class="line"> </div>
 <div class="line">std::vector&lt;int&gt; combined(grouping1.size()); </div>
-<div class="line"><span class="keyword">auto</span> res = scran::combine_factors(</div>
+<div class="line"><span class="keyword">auto</span> res = scran::combine_factors::compute(</div>
 <div class="line">    grouping1.size(), </div>
 <div class="line">    std::vector&lt;int*&gt;{ grouping1.data(), grouping2.data() },</div>
 <div class="line">    combined.data()</div>
