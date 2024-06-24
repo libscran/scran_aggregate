@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "scran/aggregate_across_cells.hpp"
+#include "aggregate_across_cells.hpp"
 #include "simulate_vector.h"
 #include <map>
 #include <random>

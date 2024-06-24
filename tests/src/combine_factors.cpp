@@ -2,7 +2,7 @@
 
 #include <random>
 
-#include "scran/combine_factors.hpp"
+#include "combine_factors.hpp"
 
 template<typename Factor_>
 std::pair<scran::combine_factors::Results<Factor_>, std::vector<int> > test_combine_factors(size_t n, const std::vector<const Factor_*>& factors) {
