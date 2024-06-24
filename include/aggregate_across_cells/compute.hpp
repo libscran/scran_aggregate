@@ -172,15 +172,16 @@ void compute_by_column(const tatami::Matrix<Data_, Index_>* p, const Factor_* fa
  * @param input The input matrix where rows are features and columns are cells.
  * @param[in] factor Pointer to an array of length equal to the number of columns of `input`,
  * containing the factor level for each cell.
- * All levels should be integers in $[0, N)$ where $N$ is the number of unique levels.
- * @param[out] sums Vector of length $N$ (see `factor`),
+ * All levels should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique levels.
+ * @param[out] sums Vector of length \f$N\f$ (see `factor`),
  * containing pointers to arrays of length equal to the number of columns of `input`.
  * These will be filled with the summed expression across all cells in the corresponding level for each gene.
  * Alternatively, if the vector is of length 0, no sums will be computed.
- * @param[out] detected Vector of length $N$ (see `factor`),
+ * @param[out] detected Vector of length \f$N\f$ (see `factor`),
  * containing pointers to arrays of length equal to the number of columns of `input`.
  * These will be filled with the number of cells with detected expression in the corresponding level for each gene.
  * Alternatively, if the vector is of length 0, no numbers will be computed.
+ * @param options Further options.
  */
 template<typename Data_, typename Index_, typename Factor_, typename Sum_, typename Detected_>
 void compute(const tatami::Matrix<Data_, Index_>* input, const Factor_* factor, std::vector<Sum_*> sums, std::vector<Detected_*> detected, const Options& options) {
@@ -235,7 +236,8 @@ struct Results {
  * @param input The input matrix where rows are features and columns are cells.
  * @param[in] factor Pointer to an array of length equal to the number of columns of `input`,
  * containing the factor level for each cell.
- * All levels should be integers in $[0, N)$ where $N$ is the number of unique levels.
+ * All levels should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique levels.
+ * @param options Further options.
  *
  * @return A `Results` object is returned, where the available statistics depend on `Options`.
  */
