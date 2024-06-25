@@ -114,186 +114,188 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <span class="keyword">auto</span> ext = <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::consecutive_extractor&lt;sparse_&gt;</a>(p, <span class="keyword">true</span>, s, l, opt);</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        std::vector&lt;Sum_&gt; tmp_sums(sums.size());</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        std::vector&lt;Detected_&gt; tmp_detected(detected.size());</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="keyword">auto</span> NC = p-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        std::vector&lt;Data_&gt; vbuffer(NC);</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="keyword">typename</span> std::conditional&lt;sparse_, std::vector&lt;Index_&gt;, Index_&gt;::type ibuffer(NC);</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="keywordflow">for</span> (Index_ x = s, end = s + l; x &lt; end; ++x) {</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            <span class="keyword">auto</span> row = [&amp;]() {</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                    <span class="keywordflow">return</span> ext-&gt;fetch(vbuffer.data(), ibuffer.data());</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                    <span class="keywordflow">return</span> ext-&gt;fetch(vbuffer.data());</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                }</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>            }();</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            <span class="keywordflow">if</span> (sums.size()) {</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                std::fill(tmp_sums.begin(), tmp_sums.end(), 0);</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; row.number; ++j) {</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>                        tmp_sums[factor[row.index[j]]] += row.value[j];</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                    }</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; NC; ++j) {</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                        tmp_sums[factor[j]] += row[j];</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>                    }</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>                }</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>                <span class="comment">// Computing before transferring for more cache-friendliness.</span></div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                <span class="keywordflow">for</span> (Index_ l = 0; l &lt; tmp_sums.size(); ++l) {</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                    sums[l][x] = tmp_sums[l];</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                }</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            }</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            <span class="keywordflow">if</span> (detected.size()) {</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                std::fill(tmp_detected.begin(), tmp_detected.end(), 0);</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>                <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; row.number; ++j) {</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>                        tmp_detected[factor[row.index[j]]] += (row.value[j] &gt; 0);</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>                    }</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; NC; ++j) {</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>                        tmp_detected[factor[j]] += (row[j] &gt; 0);</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>                    }</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>                }</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>                <span class="keywordflow">for</span> (Index_ l = 0; l &lt; tmp_detected.size(); ++l) {</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                    detected[l][x] = tmp_detected[l];</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                }</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>            }</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        }</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    }, p-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), options.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Options.html#a7cec296b4ee8633c76d40ca0d6c23666">num_threads</a>);</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>}</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> sparse_, <span class="keyword">typename</span> Data_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Factor_, <span class="keyword">typename</span> Sum_, <span class="keyword">typename</span> Detected_&gt;</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="keywordtype">void</span> compute_by_column(<span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Data_, Index_&gt;</a>* p, <span class="keyword">const</span> Factor_* factor, std::vector&lt;Sum_*&gt;&amp; sums, std::vector&lt;Detected_*&gt;&amp; detected, <span class="keyword">const</span> Options&amp; options) {</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <a class="code hl_structRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> opt;</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    opt.<a class="code hl_variableRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html#a4d2e6f2631a7e813bfbf3f215594a79b">sparse_ordered_index</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        <span class="keyword">auto</span> NC = p-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        <span class="keyword">auto</span> ext = <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::consecutive_extractor&lt;sparse_&gt;</a>(p, <span class="keyword">false</span>, 0, NC, s, l, opt);</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        std::vector&lt;Data_&gt; vbuffer(l);</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        <span class="keyword">typename</span> std::conditional&lt;sparse_, std::vector&lt;Index_&gt;, Index_&gt;::type ibuffer(l);</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        <span class="keywordflow">for</span> (Index_ x = 0; x &lt; NC; ++x) {</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>            <span class="keyword">auto</span> current = factor[x];</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>                <span class="keyword">auto</span> col = ext-&gt;fetch(vbuffer.data(), ibuffer.data());</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>                <span class="keywordflow">if</span> (sums.size()) {</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>                    <span class="keyword">auto</span>&amp; cursum = sums[current];</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                    <span class="keywordflow">for</span> (Index_ i = 0; i &lt; col.number; ++i) {</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>                        cursum[col.index[i]] += col.value[i];</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>                    }</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>                }</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                <span class="keywordflow">if</span> (detected.size()) {</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                    <span class="keyword">auto</span>&amp; curdetected = detected[current];</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                    <span class="keywordflow">for</span> (Index_ i = 0; i &lt; col.number; ++i) {</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                        curdetected[col.index[i]] += (col.value[i] &gt; 0);</div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                    }</div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>                }</div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>                <span class="keyword">auto</span> col = ext-&gt;fetch(vbuffer.data());</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span> </div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>                <span class="keywordflow">if</span> (sums.size()) {</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>                    <span class="keyword">auto</span> cursum = sums[current] + s;</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>                    <span class="keywordflow">for</span> (Index_ i = 0; i &lt; l; ++i) {</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>                        cursum[i] += col[i];</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>                    }</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                }</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>                <span class="keywordflow">if</span> (detected.size()) {</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>                    <span class="keyword">auto</span> curdetected = detected[current] + s;</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>                    <span class="keywordflow">for</span> (Index_ i = 0; i &lt; l; ++i) {</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>                        curdetected[i] += (col[i] &gt; 0);</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                    }</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>                }</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>            }</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>        }</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    }, p-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), options.num_threads);</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>}</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <span class="keywordtype">size_t</span> nsums = sums.size();</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        std::vector&lt;Sum_&gt; tmp_sums(nsums);</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        <span class="keywordtype">size_t</span> ndetected = detected.size();</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        std::vector&lt;Detected_&gt; tmp_detected(ndetected);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="keyword">auto</span> NC = p-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        std::vector&lt;Data_&gt; vbuffer(NC);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="keyword">typename</span> std::conditional&lt;sparse_, std::vector&lt;Index_&gt;, Index_&gt;::type ibuffer(NC);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        <span class="keywordflow">for</span> (Index_ x = s, end = s + l; x &lt; end; ++x) {</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            <span class="keyword">auto</span> row = [&amp;]() {</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>                <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                    <span class="keywordflow">return</span> ext-&gt;fetch(vbuffer.data(), ibuffer.data());</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                    <span class="keywordflow">return</span> ext-&gt;fetch(vbuffer.data());</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                }</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            }();</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>            <span class="keywordflow">if</span> (nsums) {</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                std::fill(tmp_sums.begin(), tmp_sums.end(), 0);</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>                <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; row.number; ++j) {</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>                        tmp_sums[factor[row.index[j]]] += row.value[j];</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>                    }</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; NC; ++j) {</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>                        tmp_sums[factor[j]] += row[j];</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>                    }</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>                }</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                <span class="comment">// Computing before transferring for more cache-friendliness.</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> l = 0; l &lt; nsums; ++l) {</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                    sums[l][x] = tmp_sums[l];</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                }</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            }</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>            <span class="keywordflow">if</span> (ndetected) {</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>                std::fill(tmp_detected.begin(), tmp_detected.end(), 0);</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>                <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; row.number; ++j) {</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>                        tmp_detected[factor[row.index[j]]] += (row.value[j] &gt; 0);</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>                    }</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; NC; ++j) {</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>                        tmp_detected[factor[j]] += (row[j] &gt; 0);</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>                    }</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>                }</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> l = 0; l &lt; ndetected; ++l) {</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>                    detected[l][x] = tmp_detected[l];</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>                }</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>            }</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        }</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    }, p-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), options.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Options.html#a7cec296b4ee8633c76d40ca0d6c23666">num_threads</a>);</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>}</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> sparse_, <span class="keyword">typename</span> Data_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Factor_, <span class="keyword">typename</span> Sum_, <span class="keyword">typename</span> Detected_&gt;</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span><span class="keywordtype">void</span> compute_by_column(<span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Data_, Index_&gt;</a>* p, <span class="keyword">const</span> Factor_* factor, std::vector&lt;Sum_*&gt;&amp; sums, std::vector&lt;Detected_*&gt;&amp; detected, <span class="keyword">const</span> Options&amp; options) {</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <a class="code hl_structRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> opt;</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    opt.<a class="code hl_variableRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html#a4d2e6f2631a7e813bfbf3f215594a79b">sparse_ordered_index</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        <span class="keyword">auto</span> NC = p-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        <span class="keyword">auto</span> ext = <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::consecutive_extractor&lt;sparse_&gt;</a>(p, <span class="keyword">false</span>, 0, NC, s, l, opt);</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        std::vector&lt;Data_&gt; vbuffer(l);</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        <span class="keyword">typename</span> std::conditional&lt;sparse_, std::vector&lt;Index_&gt;, Index_&gt;::type ibuffer(l);</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        <span class="keywordflow">for</span> (Index_ x = 0; x &lt; NC; ++x) {</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>            <span class="keyword">auto</span> current = factor[x];</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span> </div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>                <span class="keyword">auto</span> col = ext-&gt;fetch(vbuffer.data(), ibuffer.data());</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                <span class="keywordflow">if</span> (sums.size()) {</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>                    <span class="keyword">auto</span>&amp; cursum = sums[current];</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>                    <span class="keywordflow">for</span> (Index_ i = 0; i &lt; col.number; ++i) {</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>                        cursum[col.index[i]] += col.value[i];</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>                    }</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                }</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                <span class="keywordflow">if</span> (detected.size()) {</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                    <span class="keyword">auto</span>&amp; curdetected = detected[current];</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                    <span class="keywordflow">for</span> (Index_ i = 0; i &lt; col.number; ++i) {</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>                        curdetected[col.index[i]] += (col.value[i] &gt; 0);</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>                    }</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>                }</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span> </div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>                <span class="keyword">auto</span> col = ext-&gt;fetch(vbuffer.data());</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>                <span class="keywordflow">if</span> (sums.size()) {</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>                    <span class="keyword">auto</span> cursum = sums[current] + s;</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>                    <span class="keywordflow">for</span> (Index_ i = 0; i &lt; l; ++i) {</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                        cursum[i] += col[i];</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>                    }</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>                }</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span> </div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>                <span class="keywordflow">if</span> (detected.size()) {</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>                    <span class="keyword">auto</span> curdetected = detected[current] + s;</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                    <span class="keywordflow">for</span> (Index_ i = 0; i &lt; l; ++i) {</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>                        curdetected[i] += (col[i] &gt; 0);</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>                    }</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>                }</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            }</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        }</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    }, p-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), options.num_threads);</div>
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>}</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Data_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Factor_, <span class="keyword">typename</span> Sum_, <span class="keyword">typename</span> Detected_&gt;</div>
-<div class="foldopen" id="foldopen00195" data-start="{" data-end="}">
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno"><a class="line" href="namespacescran_1_1aggregate__across__cells.html#aa8c09dfee9f424daa59e29f2826460dc">  195</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacescran_1_1aggregate__across__cells.html#aa8c09dfee9f424daa59e29f2826460dc">compute</a>(<span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Data_, Index_&gt;</a>* input, <span class="keyword">const</span> Factor_* factor, std::vector&lt;Sum_*&gt; sums, std::vector&lt;Detected_*&gt; detected, <span class="keyword">const</span> <a class="code hl_struct" href="structscran_1_1aggregate__across__cells_1_1Options.html">Options</a>&amp; options) {</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    <span class="keywordflow">if</span> (input-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">prefer_rows</a>()) {</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        <span class="keywordflow">if</span> (input-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">sparse</a>()) {</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>            internal::compute_by_row&lt;true&gt;(input, factor, sums, detected, options);</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>            internal::compute_by_row&lt;false&gt;(input, factor, sums, detected, options);</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        }</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        <span class="keywordflow">if</span> (input-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">sparse</a>()) {</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>            internal::compute_by_column&lt;true&gt;(input, factor, sums, detected, options);</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>            internal::compute_by_column&lt;false&gt;(input, factor, sums, detected, options);</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        }</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    }</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>} </div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>}</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Data_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Factor_, <span class="keyword">typename</span> Sum_, <span class="keyword">typename</span> Detected_&gt;</div>
+<div class="foldopen" id="foldopen00197" data-start="{" data-end="}">
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno"><a class="line" href="namespacescran_1_1aggregate__across__cells.html#aa8c09dfee9f424daa59e29f2826460dc">  197</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacescran_1_1aggregate__across__cells.html#aa8c09dfee9f424daa59e29f2826460dc">compute</a>(<span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Data_, Index_&gt;</a>* input, <span class="keyword">const</span> Factor_* factor, std::vector&lt;Sum_*&gt; sums, std::vector&lt;Detected_*&gt; detected, <span class="keyword">const</span> <a class="code hl_struct" href="structscran_1_1aggregate__across__cells_1_1Options.html">Options</a>&amp; options) {</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    <span class="keywordflow">if</span> (input-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">prefer_rows</a>()) {</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        <span class="keywordflow">if</span> (input-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">sparse</a>()) {</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>            internal::compute_by_row&lt;true&gt;(input, factor, sums, detected, options);</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>            internal::compute_by_row&lt;false&gt;(input, factor, sums, detected, options);</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        }</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        <span class="keywordflow">if</span> (input-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">sparse</a>()) {</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>            internal::compute_by_column&lt;true&gt;(input, factor, sums, detected, options);</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            internal::compute_by_column&lt;false&gt;(input, factor, sums, detected, options);</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        }</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    }</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>} </div>
 </div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Sum_, <span class="keyword">typename</span> Detected_&gt;</div>
-<div class="foldopen" id="foldopen00217" data-start="{" data-end="};">
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno"><a class="line" href="structscran_1_1aggregate__across__cells_1_1Results.html">  217</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structscran_1_1aggregate__across__cells_1_1Results.html">Results</a> {</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno"><a class="line" href="structscran_1_1aggregate__across__cells_1_1Results.html#a7df8887bf412f7f3fb0fd08becb42da1">  225</a></span>    std::vector&lt;std::vector&lt;Sum_&gt; &gt; <a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a7df8887bf412f7f3fb0fd08becb42da1">sums</a>;</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span> </div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno"><a class="line" href="structscran_1_1aggregate__across__cells_1_1Results.html#a5f490db8a7f5e5408e14235f28b775c6">  234</a></span>    std::vector&lt;std::vector&lt;Detected_&gt; &gt; <a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a5f490db8a7f5e5408e14235f28b775c6">detected</a>;</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>};</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span> </div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Sum_, <span class="keyword">typename</span> Detected_&gt;</div>
+<div class="foldopen" id="foldopen00219" data-start="{" data-end="};">
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno"><a class="line" href="structscran_1_1aggregate__across__cells_1_1Results.html">  219</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structscran_1_1aggregate__across__cells_1_1Results.html">Results</a> {</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno"><a class="line" href="structscran_1_1aggregate__across__cells_1_1Results.html#a7df8887bf412f7f3fb0fd08becb42da1">  227</a></span>    std::vector&lt;std::vector&lt;Sum_&gt; &gt; <a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a7df8887bf412f7f3fb0fd08becb42da1">sums</a>;</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span> </div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno"><a class="line" href="structscran_1_1aggregate__across__cells_1_1Results.html#a5f490db8a7f5e5408e14235f28b775c6">  236</a></span>    std::vector&lt;std::vector&lt;Detected_&gt; &gt; <a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a5f490db8a7f5e5408e14235f28b775c6">detected</a>;</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>};</div>
 </div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span> </div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Sum_ = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Detected_ = <span class="keywordtype">int</span>, <span class="keyword">typename</span> Data_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Factor_&gt;</div>
-<div class="foldopen" id="foldopen00253" data-start="{" data-end="}">
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno"><a class="line" href="namespacescran_1_1aggregate__across__cells.html#acd5ae1de15376ecfeae0baf4030366a8">  253</a></span><a class="code hl_struct" href="structscran_1_1aggregate__across__cells_1_1Results.html">Results&lt;Sum_, Detected_&gt;</a> <a class="code hl_function" href="namespacescran_1_1aggregate__across__cells.html#aa8c09dfee9f424daa59e29f2826460dc">compute</a>(<span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Data_, Index_&gt;</a>* input, <span class="keyword">const</span> Factor_* factor, <span class="keyword">const</span> <a class="code hl_struct" href="structscran_1_1aggregate__across__cells_1_1Options.html">Options</a>&amp; options) {</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>    <span class="keywordtype">size_t</span> NC = input-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    <span class="keywordtype">size_t</span> nlevels = (NC ? *std::max_element(factor, factor + NC) + 1 : 0);</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <span class="keywordtype">size_t</span> ngenes = input-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>();</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span> </div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    <a class="code hl_struct" href="structscran_1_1aggregate__across__cells_1_1Results.html">Results&lt;Sum_, Detected_&gt;</a> output;</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    std::vector&lt;Sum_*&gt; sumptr;</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    std::vector&lt;Detected_*&gt; detptr;</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span> </div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Options.html#abafe797e3f1808a7d258aeed7e1fe823">compute_sums</a>) {</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>        output.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a7df8887bf412f7f3fb0fd08becb42da1">sums</a>.resize(nlevels, std::vector&lt;Sum_&gt;(ngenes));</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>        sumptr.resize(nlevels);</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> l = 0; l &lt; nlevels; ++l) {</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>            sumptr[l] = output.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a7df8887bf412f7f3fb0fd08becb42da1">sums</a>[l].data();</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        }</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    }</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span> </div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Options.html#a27912761546ec8d507041c15b648b561">compute_detected</a>) {</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>        output.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a5f490db8a7f5e5408e14235f28b775c6">detected</a>.resize(nlevels, std::vector&lt;Detected_&gt;(ngenes));</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>        detptr.resize(nlevels);</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> l = 0; l &lt; nlevels; ++l) {</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>            detptr[l] = output.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a5f490db8a7f5e5408e14235f28b775c6">detected</a>[l].data();</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>        }</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>    }</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span> </div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    <a class="code hl_function" href="namespacescran_1_1aggregate__across__cells.html#aa8c09dfee9f424daa59e29f2826460dc">compute</a>(input, factor, std::move(sumptr), std::move(detptr), options);</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>    <span class="keywordflow">return</span> output;</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>} </div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span> </div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Sum_ = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Detected_ = <span class="keywordtype">int</span>, <span class="keyword">typename</span> Data_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Factor_&gt;</div>
+<div class="foldopen" id="foldopen00255" data-start="{" data-end="}">
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno"><a class="line" href="namespacescran_1_1aggregate__across__cells.html#acd5ae1de15376ecfeae0baf4030366a8">  255</a></span><a class="code hl_struct" href="structscran_1_1aggregate__across__cells_1_1Results.html">Results&lt;Sum_, Detected_&gt;</a> <a class="code hl_function" href="namespacescran_1_1aggregate__across__cells.html#aa8c09dfee9f424daa59e29f2826460dc">compute</a>(<span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Data_, Index_&gt;</a>* input, <span class="keyword">const</span> Factor_* factor, <span class="keyword">const</span> <a class="code hl_struct" href="structscran_1_1aggregate__across__cells_1_1Options.html">Options</a>&amp; options) {</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <span class="keywordtype">size_t</span> NC = input-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    <span class="keywordtype">size_t</span> nlevels = (NC ? *std::max_element(factor, factor + NC) + 1 : 0);</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    <span class="keywordtype">size_t</span> ngenes = input-&gt;<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>();</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span> </div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    <a class="code hl_struct" href="structscran_1_1aggregate__across__cells_1_1Results.html">Results&lt;Sum_, Detected_&gt;</a> output;</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    std::vector&lt;Sum_*&gt; sumptr;</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    std::vector&lt;Detected_*&gt; detptr;</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span> </div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Options.html#abafe797e3f1808a7d258aeed7e1fe823">compute_sums</a>) {</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        output.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a7df8887bf412f7f3fb0fd08becb42da1">sums</a>.resize(nlevels, std::vector&lt;Sum_&gt;(ngenes));</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>        sumptr.resize(nlevels);</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> l = 0; l &lt; nlevels; ++l) {</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>            sumptr[l] = output.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a7df8887bf412f7f3fb0fd08becb42da1">sums</a>[l].data();</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        }</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>    }</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span> </div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Options.html#a27912761546ec8d507041c15b648b561">compute_detected</a>) {</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        output.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a5f490db8a7f5e5408e14235f28b775c6">detected</a>.resize(nlevels, std::vector&lt;Detected_&gt;(ngenes));</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        detptr.resize(nlevels);</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> l = 0; l &lt; nlevels; ++l) {</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>            detptr[l] = output.<a class="code hl_variable" href="structscran_1_1aggregate__across__cells_1_1Results.html#a5f490db8a7f5e5408e14235f28b775c6">detected</a>[l].data();</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        }</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    }</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span> </div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    <a class="code hl_function" href="namespacescran_1_1aggregate__across__cells.html#aa8c09dfee9f424daa59e29f2826460dc">compute</a>(input, factor, std::move(sumptr), std::move(detptr), options);</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>} </div>
 </div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span> </div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>}</div>
 <div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span> </div>
 <div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>}</div>
-</div>
 <div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span> </div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>}</div>
+</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a1f6fec43d5bae3f831841646bc02377b"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">tatami::Matrix::ncol</a></div><div class="ttdeci">virtual Index_ ncol() const=0</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a54fe7b4baf78069d35ff00357a1b6cc6"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">tatami::Matrix::nrow</a></div><div class="ttdeci">virtual Index_ nrow() const=0</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a69382d2a4e66cda1a9eb48dc25ab113a"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">tatami::Matrix::prefer_rows</a></div><div class="ttdeci">virtual bool prefer_rows() const=0</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_af84772cc4e911a87948d45a1edcabbd0"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">tatami::Matrix::sparse</a></div><div class="ttdeci">virtual std::unique_ptr&lt; MyopicSparseExtractor&lt; Value_, Index_ &gt; &gt; sparse(bool row, const Options &amp;opt) const=0</div></div>
-<div class="ttc" id="anamespacescran_1_1aggregate__across__cells_html_aa8c09dfee9f424daa59e29f2826460dc"><div class="ttname"><a href="namespacescran_1_1aggregate__across__cells.html#aa8c09dfee9f424daa59e29f2826460dc">scran::aggregate_across_cells::compute</a></div><div class="ttdeci">void compute(const tatami::Matrix&lt; Data_, Index_ &gt; *input, const Factor_ *factor, std::vector&lt; Sum_ * &gt; sums, std::vector&lt; Detected_ * &gt; detected, const Options &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:195</div></div>
+<div class="ttc" id="anamespacescran_1_1aggregate__across__cells_html_aa8c09dfee9f424daa59e29f2826460dc"><div class="ttname"><a href="namespacescran_1_1aggregate__across__cells.html#aa8c09dfee9f424daa59e29f2826460dc">scran::aggregate_across_cells::compute</a></div><div class="ttdeci">void compute(const tatami::Matrix&lt; Data_, Index_ &gt; *input, const Factor_ *factor, std::vector&lt; Sum_ * &gt; sums, std::vector&lt; Detected_ * &gt; detected, const Options &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:197</div></div>
 <div class="ttc" id="anamespacescran_html"><div class="ttname"><a href="namespacescran.html">scran</a></div><div class="ttdoc">Methods for single-cell analysis.</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:14</div></div>
 <div class="ttc" id="anamespacetatami_html_a41e252422f9959a123ba390a941ae76f"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize</a></div><div class="ttdeci">void parallelize(Function_ fun, Index_ tasks, size_t threads)</div></div>
 <div class="ttc" id="anamespacetatami_html_af05590455e558621c8ffc1b98c4fd454"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::consecutive_extractor</a></div><div class="ttdeci">auto consecutive_extractor(const Matrix&lt; Value_, Index_ &gt; *mat, bool row, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</div></div>
@@ -301,9 +303,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="astructscran_1_1aggregate__across__cells_1_1Options_html_a27912761546ec8d507041c15b648b561"><div class="ttname"><a href="structscran_1_1aggregate__across__cells_1_1Options.html#a27912761546ec8d507041c15b648b561">scran::aggregate_across_cells::Options::compute_detected</a></div><div class="ttdeci">bool compute_detected</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:36</div></div>
 <div class="ttc" id="astructscran_1_1aggregate__across__cells_1_1Options_html_a7cec296b4ee8633c76d40ca0d6c23666"><div class="ttname"><a href="structscran_1_1aggregate__across__cells_1_1Options.html#a7cec296b4ee8633c76d40ca0d6c23666">scran::aggregate_across_cells::Options::num_threads</a></div><div class="ttdeci">int num_threads</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:41</div></div>
 <div class="ttc" id="astructscran_1_1aggregate__across__cells_1_1Options_html_abafe797e3f1808a7d258aeed7e1fe823"><div class="ttname"><a href="structscran_1_1aggregate__across__cells_1_1Options.html#abafe797e3f1808a7d258aeed7e1fe823">scran::aggregate_across_cells::Options::compute_sums</a></div><div class="ttdeci">bool compute_sums</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:30</div></div>
-<div class="ttc" id="astructscran_1_1aggregate__across__cells_1_1Results_html"><div class="ttname"><a href="structscran_1_1aggregate__across__cells_1_1Results.html">scran::aggregate_across_cells::Results</a></div><div class="ttdoc">Aggregated results from aggregate_across_cells::compute().</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:217</div></div>
-<div class="ttc" id="astructscran_1_1aggregate__across__cells_1_1Results_html_a5f490db8a7f5e5408e14235f28b775c6"><div class="ttname"><a href="structscran_1_1aggregate__across__cells_1_1Results.html#a5f490db8a7f5e5408e14235f28b775c6">scran::aggregate_across_cells::Results::detected</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; Detected_ &gt; &gt; detected</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:234</div></div>
-<div class="ttc" id="astructscran_1_1aggregate__across__cells_1_1Results_html_a7df8887bf412f7f3fb0fd08becb42da1"><div class="ttname"><a href="structscran_1_1aggregate__across__cells_1_1Results.html#a7df8887bf412f7f3fb0fd08becb42da1">scran::aggregate_across_cells::Results::sums</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; Sum_ &gt; &gt; sums</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:225</div></div>
+<div class="ttc" id="astructscran_1_1aggregate__across__cells_1_1Results_html"><div class="ttname"><a href="structscran_1_1aggregate__across__cells_1_1Results.html">scran::aggregate_across_cells::Results</a></div><div class="ttdoc">Aggregated results from aggregate_across_cells::compute().</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:219</div></div>
+<div class="ttc" id="astructscran_1_1aggregate__across__cells_1_1Results_html_a5f490db8a7f5e5408e14235f28b775c6"><div class="ttname"><a href="structscran_1_1aggregate__across__cells_1_1Results.html#a5f490db8a7f5e5408e14235f28b775c6">scran::aggregate_across_cells::Results::detected</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; Detected_ &gt; &gt; detected</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:236</div></div>
+<div class="ttc" id="astructscran_1_1aggregate__across__cells_1_1Results_html_a7df8887bf412f7f3fb0fd08becb42da1"><div class="ttname"><a href="structscran_1_1aggregate__across__cells_1_1Results.html#a7df8887bf412f7f3fb0fd08becb42da1">scran::aggregate_across_cells::Results::sums</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; Sum_ &gt; &gt; sums</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:227</div></div>
 <div class="ttc" id="astructtatami_1_1Options_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a></div></div>
 <div class="ttc" id="astructtatami_1_1Options_html_a4d2e6f2631a7e813bfbf3f215594a79b"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html#a4d2e6f2631a7e813bfbf3f215594a79b">tatami::Options::sparse_ordered_index</a></div><div class="ttdeci">bool sparse_ordered_index</div></div>
 <div class="ttc" id="atatami_8hpp_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/tatami_8hpp.html">tatami.hpp</a></div></div>
