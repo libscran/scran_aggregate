@@ -14,7 +14,6 @@ factored out into a separate C++ library for easier re-use.
 
 ## Quick start
 
-Not too much to say here.
 Given a [`tatami::Matrix`](https://github.com/tatami-inc/tatami) and an array of group assignments,
 the `aggregate_across_cells::compute()` function will compute the aggregate statistics across all genes for each group.
 
@@ -24,10 +23,12 @@ the `aggregate_across_cells::compute()` function will compute the aggregate stat
 tatami::Matrix<double, int>* ptr = some_data_source();
 std::vector<int> groupings = some_groupings();
 
-auto res = scran::aggregate_across_cells::compute(ptr, groupings.data());
+scran::aggregate_across_cells::Options opt;
+auto res = scran::aggregate_across_cells::compute(ptr, groupings.data(), opt);
+
 res.sums; // vector of vectors of per-group sums across genes.
-res.sums[0]; // vector of sums for the first group across all genes.
-res.detected; // vector of vectors of the number of detected cells. 
+res.sums[0]; // vector of sums for the first group across genes.
+res.detected; // vector of vectors of the number of detected cells per gene.
 ```
 
 The array of groupings should contain integer assignments to groups 0, 1, 2, etc.
