@@ -40,6 +40,8 @@ macro(create_test name)
         scran_test_utils
     )
 
+    target_compile_options(${name} PRIVATE -Wall -Werror -Wpedantic -Wextra)
+
     if(DO_CODE_COVERAGE)
         target_compile_options(${name} PRIVATE -O0 -g --coverage)
         target_link_options(${name} PRIVATE --coverage)

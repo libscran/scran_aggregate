@@ -53,8 +53,10 @@ void compute_by_row(const tatami::Matrix<Data_, Index_>* p, const Factor_* facto
 
     tatami::parallelize([&](size_t, Index_ s, Index_ l) {
         auto ext = tatami::consecutive_extractor<sparse_>(p, true, s, l, opt);
-        std::vector<Sum_> tmp_sums(sums.size());
-        std::vector<Detected_> tmp_detected(detected.size());
+        size_t nsums = sums.size();
+        std::vector<Sum_> tmp_sums(nsums);
+        size_t ndetected = detected.size();
+        std::vector<Detected_> tmp_detected(ndetected);
 
         auto NC = p->ncol();
         std::vector<Data_> vbuffer(NC);
@@ -69,7 +71,7 @@ void compute_by_row(const tatami::Matrix<Data_, Index_>* p, const Factor_* facto
                 }
             }();
 
-            if (sums.size()) {
+            if (nsums) {
                 std::fill(tmp_sums.begin(), tmp_sums.end(), 0);
 
                 if constexpr(sparse_) {
@@ -83,12 +85,12 @@ void compute_by_row(const tatami::Matrix<Data_, Index_>* p, const Factor_* facto
                 }
 
                 // Computing before transferring for more cache-friendliness.
-                for (Index_ l = 0; l < tmp_sums.size(); ++l) {
+                for (size_t l = 0; l < nsums; ++l) {
                     sums[l][x] = tmp_sums[l];
                 }
             }
 
-            if (detected.size()) {
+            if (ndetected) {
                 std::fill(tmp_detected.begin(), tmp_detected.end(), 0);
 
                 if constexpr(sparse_) {
@@ -101,7 +103,7 @@ void compute_by_row(const tatami::Matrix<Data_, Index_>* p, const Factor_* facto
                     }
                 }
 
-                for (Index_ l = 0; l < tmp_detected.size(); ++l) {
+                for (size_t l = 0; l < ndetected; ++l) {
                     detected[l][x] = tmp_detected[l];
                 }
             }
