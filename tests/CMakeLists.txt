@@ -4,7 +4,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/libscran/scran_tests
   GIT_TAG master
 )
-FetchContent_MakeAvailable(scran_test_utils)
+FetchContent_MakeAvailable(scran_tests)
 
 option(CODE_COVERAGE "Enable coverage testing" OFF)
 set(DO_CODE_COVERAGE OFF)

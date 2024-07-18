@@ -92,7 +92,7 @@ FactorCombinations<Factor_> combine_factors(size_t n, const std::vector<const Fa
 
     // Obtaining the sorted set of unique combinations.
     size_t nfac = factors.size();
-    Results<Factor_> output(nfac);
+    FactorCombinations<Factor_> output(nfac);
     size_t nuniq = mapping.size();
     for (auto& ofac : output.factors) {
         ofac.reserve(nuniq);
@@ -116,8 +116,6 @@ FactorCombinations<Factor_> combine_factors(size_t n, const std::vector<const Fa
     }
 
     return output;
-}
-
 }
 
 }

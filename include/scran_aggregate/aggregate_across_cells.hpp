@@ -39,6 +39,7 @@ struct AggregateAcrossCellsOptions {
  * @tparam Sum_ Type of the sum, should be numeric.
  * @tparam Detected_ Type for the number of detected cells, usually integer.
  */
+template <typename Sum_, typename Detected_>
 struct AggregateAcrossCellsBuffers {
     /**
      * Vector of length equal to the number of factor levels.
@@ -92,7 +93,12 @@ struct AggregateAcrossCellsResults {
 namespace internal {
 
 template<bool sparse_, typename Data_, typename Index_, typename Factor_, typename Sum_, typename Detected_>
-void compute_aggregate_by_row(const tatami::Matrix<Data_, Index_>& p, const Factor_* factor, const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers, const AggregateAcrossCellsOptions& options) {
+void compute_aggregate_by_row(
+    const tatami::Matrix<Data_, Index_>& p,
+    const Factor_* factor,
+    const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers,
+    const AggregateAcrossCellsOptions& options)
+{
     tatami::Options opt;
     opt.sparse_ordered_index = false;
 
@@ -157,7 +163,12 @@ void compute_aggregate_by_row(const tatami::Matrix<Data_, Index_>& p, const Fact
 }
 
 template<bool sparse_, typename Data_, typename Index_, typename Factor_, typename Sum_, typename Detected_>
-void compute_aggregate_by_column(const tatami::Matrix<Data_, Index_>& p, const Factor_* factor, std::vector<Sum_*>& sums, std::vector<Detected_*>& detected, const AggregateAcrossCellsOptions& options) {
+void compute_aggregate_by_column(
+    const tatami::Matrix<Data_, Index_>& p,
+    const Factor_* factor,
+    const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers,
+    const AggregateAcrossCellsOptions& options)
+{
     tatami::Options opt;
     opt.sparse_ordered_index = false;
 
@@ -172,15 +183,15 @@ void compute_aggregate_by_column(const tatami::Matrix<Data_, Index_>& p, const F
 
             if constexpr(sparse_) {
                 auto col = ext->fetch(vbuffer.data(), ibuffer.data());
-                if (sums.size()) {
-                    auto& cursum = sums[current];
+                if (buffers.sums.size()) {
+                    auto& cursum = buffers.sums[current];
                     for (Index_ i = 0; i < col.number; ++i) {
                         cursum[col.index[i]] += col.value[i];
                     }
                 }
 
-                if (detected.size()) {
-                    auto& curdetected = detected[current];
+                if (buffers.detected.size()) {
+                    auto& curdetected = buffers.detected[current];
                     for (Index_ i = 0; i < col.number; ++i) {
                         curdetected[col.index[i]] += (col.value[i] > 0);
                     }
@@ -189,15 +200,15 @@ void compute_aggregate_by_column(const tatami::Matrix<Data_, Index_>& p, const F
             } else {
                 auto col = ext->fetch(vbuffer.data());
 
-                if (sums.size()) {
-                    auto cursum = sums[current] + s;
+                if (buffers.sums.size()) {
+                    auto cursum = buffers.sums[current] + s;
                     for (Index_ i = 0; i < l; ++i) {
                         cursum[i] += col[i];
                     }
                 }
 
-                if (detected.size()) {
-                    auto curdetected = detected[current] + s;
+                if (buffers.detected.size()) {
+                    auto curdetected = buffers.detected[current] + s;
                     for (Index_ i = 0; i < l; ++i) {
                         curdetected[i] += (col[i] > 0);
                     }
@@ -232,15 +243,20 @@ void compute_aggregate_by_column(const tatami::Matrix<Data_, Index_>& p, const F
  * @param options Further options.
  */
 template<typename Data_, typename Index_, typename Factor_, typename Sum_, typename Detected_>
-void aggregate_across_cells(const tatami::Matrix<Data_, Index_>& input, const Factor_* factor, const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers, const AggregateAcrossCellsOptions& options) {
-    if (input->prefer_rows()) {
-        if (input->sparse()) {
+void aggregate_across_cells(
+    const tatami::Matrix<Data_, Index_>& input,
+    const Factor_* factor,
+    const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers,
+    const AggregateAcrossCellsOptions& options)
+{
+    if (input.prefer_rows()) {
+        if (input.sparse()) {
             internal::compute_aggregate_by_row<true>(input, factor, buffers, options);
         } else {
             internal::compute_aggregate_by_row<false>(input, factor, buffers, options);
         }
     } else {
-        if (input->sparse()) {
+        if (input.sparse()) {
             internal::compute_aggregate_by_column<true>(input, factor, buffers, options);
         } else {
             internal::compute_aggregate_by_column<false>(input, factor, buffers, options);
@@ -264,13 +280,17 @@ void aggregate_across_cells(const tatami::Matrix<Data_, Index_>& input, const Fa
  * @return Results of the aggregation, where the available statistics depend on `AggregateAcrossCellsOptions`.
  */
 template<typename Sum_ = double, typename Detected_ = int, typename Data_, typename Index_, typename Factor_>
-AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(const tatami::Matrix<Data_, Index_>& input, const Factor_* factor, const AggregateAcrossCellsOptions& options) {
+AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(
+    const tatami::Matrix<Data_, Index_>& input,
+    const Factor_* factor,
+    const AggregateAcrossCellsOptions& options)
+{
     size_t NC = input.ncol();
     size_t nlevels = (NC ? *std::max_element(factor, factor + NC) + 1 : 0);
     size_t ngenes = input.nrow();
 
     AggregateAcrossCellsResults<Sum_, Detected_> output;
-    AggregateAcrossCellsBufferes<Sum_, Detected_> buffers;
+    AggregateAcrossCellsBuffers<Sum_, Detected_> buffers;
 
     if (options.compute_sums) {
         output.sums.resize(nlevels, std::vector<Sum_>(ngenes));
