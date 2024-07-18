@@ -12,6 +12,13 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX","output/HTML-CSS"],
+});
+</script>
+<script type="text/javascript" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -164,7 +171,7 @@ template&lt;typename Data_ , typename Index_ , typename Factor_ , typename Sum_ 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">input</td><td>The input matrix where rows are features and columns are cells. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Pointer to an array of length equal to the number of columns of <code>input</code>, containing the factor level for each cell. All levels should be integers in <picture><source srcset="form_0_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$[0, N)$" src="form_0.png"/></picture> where <picture><source srcset="form_1_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$N$" src="form_1.png"/></picture> is the number of unique levels. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Pointer to an array of length equal to the number of columns of <code>input</code>, containing the factor level for each cell. All levels should be integers in \([0, N)\) where \(N\) is the number of unique levels. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">buffers</td><td>Collection of buffers in which to store the aggregate statistics (e.g., sums, number of detected cells) for each level and gene. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">options</td><td>Further options. </td></tr>
   </table>
@@ -219,7 +226,7 @@ template&lt;typename Sum_  = double, typename Detected_  = int, typename Data_ ,
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">input</td><td>The input matrix where rows are features and columns are cells. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Pointer to an array of length equal to the number of columns of <code>input</code>, containing the factor level for each cell. All levels should be integers in <picture><source srcset="form_0_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$[0, N)$" src="form_0.png"/></picture> where <picture><source srcset="form_1_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$N$" src="form_1.png"/></picture> is the number of unique levels. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Pointer to an array of length equal to the number of columns of <code>input</code>, containing the factor level for each cell. All levels should be integers in \([0, N)\) where \(N\) is the number of unique levels. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">options</td><td>Further options.</td></tr>
   </table>
   </dd>
