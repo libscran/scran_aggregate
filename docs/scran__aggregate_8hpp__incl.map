@@ -1,0 +1,17 @@
+<map id="scran_aggregate/scran_aggregate.hpp" name="scran_aggregate/scran_aggregate.hpp">
+<area shape="rect" id="Node000001" title="Aggregate single&#45;cell expression values." alt="" coords="91,5,245,46"/>
+<area shape="rect" id="Node000002" href="$aggregate__across__cells_8hpp.html" title="Aggregate expression values across cells." alt="" coords="170,94,353,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="193,44,237,82,234,86,189,48"/>
+<area shape="rect" id="Node000006" href="$combine__factors_8hpp.html" title="Combine categorical factors into a single factor." alt="" coords="5,94,147,120"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="147,48,103,86,100,82,144,44"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="82,168,156,193"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="238,123,158,163,155,158,236,118"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="179,168,237,193"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="255,121,228,157,224,153,250,118"/>
+<area shape="rect" id="Node000005" href="/github/workspace/docs/tatami.tag$tatami_8hpp.html" title=" " alt="" coords="261,168,382,193"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="273,118,304,154,299,157,269,122"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="85,119,106,153,101,156,81,121"/>
+<area shape="poly" id="edge7_Node000006_Node000004" title=" " alt="" coords="100,118,174,158,171,162,97,123"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="12,168,58,193"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="71,121,52,156,47,153,67,119"/>
+</map>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>scran_aggregate_across_cells: Aggregate expression values across cells</title>
+<title>scran_aggregate: Aggregate expression values across cells</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,7 +22,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">scran_aggregate_across_cells
+   <div id="projectname">scran_aggregate
    </div>
    <div id="projectbrief">Aggregate expression values across cells</div>
   </td>
@@ -79,18 +79,21 @@ $(function() {
 <p>This repository contains a function to aggregate statistics for groups of cells from a gene-by-cell matrix of expression values. It was primarily developed for computing pseudo-bulk expression profiles for clusters of cells, which can then be used for differential expression analysis. The code itself was originally derived from the <a href="https://bioconductor.org/packages/scran"><b>scran</b> R package</a>, factored out into a separate C++ library for easier re-use.</p>
 <h1>Quick start</h1>
 <p>Given a <a href="https://github.com/tatami-inc/tatami"><code>tatami::Matrix</code></a> and an array of group assignments, the <code>aggregate_across_cells()</code> function will compute the aggregate statistics across all genes for each group.</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;scran_aggregate/scran_aggregate.hpp&quot;</span></div>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="scran__aggregate_8hpp.html">scran_aggregate/scran_aggregate.hpp</a>&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;double, int&gt;</a>&amp; mat = some_data_source();</div>
 <div class="line">std::vector&lt;int&gt; groupings = some_groupings();</div>
 <div class="line"> </div>
-<div class="line">scran_aggregate::AggregateAcrossCellsOptions opt;</div>
-<div class="line"><span class="keyword">auto</span> res = scran_aggregate::aggregate_across_cells(mat, groupings.data(), opt);</div>
+<div class="line"><a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html">scran_aggregate::AggregateAcrossCellsOptions</a> opt;</div>
+<div class="line"><span class="keyword">auto</span> res = <a class="code hl_function" href="namespacescran__aggregate.html#a76e8390729e70654df46d322d2e119ff">scran_aggregate::aggregate_across_cells</a>(mat, groupings.data(), opt);</div>
 <div class="line"> </div>
 <div class="line">res.sums; <span class="comment">// vector of vectors of per-group sums across genes.</span></div>
 <div class="line">res.sums[0]; <span class="comment">// vector of sums for the first group across genes.</span></div>
 <div class="line">res.detected; <span class="comment">// vector of vectors of the number of detected cells per gene.</span></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></div></div>
+<div class="ttc" id="anamespacescran__aggregate_html_a76e8390729e70654df46d322d2e119ff"><div class="ttname"><a href="namespacescran__aggregate.html#a76e8390729e70654df46d322d2e119ff">scran_aggregate::aggregate_across_cells</a></div><div class="ttdeci">void aggregate_across_cells(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Factor_ *factor, const AggregateAcrossCellsBuffers&lt; Sum_, Detected_ &gt; &amp;buffers, const AggregateAcrossCellsOptions &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:246</div></div>
+<div class="ttc" id="ascran__aggregate_8hpp_html"><div class="ttname"><a href="scran__aggregate_8hpp.html">scran_aggregate.hpp</a></div><div class="ttdoc">Aggregate single-cell expression values.</div></div>
+<div class="ttc" id="astructscran__aggregate_1_1AggregateAcrossCellsOptions_html"><div class="ttname"><a href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html">scran_aggregate::AggregateAcrossCellsOptions</a></div><div class="ttdoc">Options for aggregate_across_cells().</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:18</div></div>
 </div><!-- fragment --><p>The array of groupings should contain integer assignments to groups 0, 1, 2, etc. For more complex groupings defined from combinations of multiple factors, the <code>combine_factors()</code> utility will create group assignments from unique combinations of those factors:</p>
 <div class="fragment"><div class="line">std::vector&lt;int&gt; grouping1 { 0, 0, 1, 1, 2, 2 };</div>
 <div class="line">std::vector&lt;int&gt; grouping2 { 0, 1, 0, 1, 0, 1 };</div>
@@ -118,7 +121,7 @@ $(function() {
 <div class="line">)</div>
 <div class="line"> </div>
 <div class="line">FetchContent_MakeAvailable(scran_aggregate)</div>
-</div><!-- fragment --><p>Then you can link to <b>scran_aggregate</b> to make the headers available during compilation:</p>
+</div><!-- fragment --><p>Then you can link to <b><a class="el" href="namespacescran__aggregate.html" title="Aggregate single-cell expression values.">scran_aggregate</a></b> to make the headers available during compilation:</p>
 <div class="fragment"><div class="line"># For executables:</div>
 <div class="line">target_link_libraries(myexe libscran::scran_aggregate)</div>
 <div class="line"> </div>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['pointers_0',['pointers',['https://tatami-inc.github.io/tatami/structtatami_1_1CompressedSparseContents.html#ad56fc74d757e9dcd8ffbdc48d5adc692',1,'tatami::CompressedSparseContents']]]
+  ['factors_0',['factors',['../structscran__aggregate_1_1FactorCombinations.html#a385288d051eebb115e88256a66b2694b',1,'scran_aggregate::FactorCombinations']]]
 ];
