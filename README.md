@@ -40,7 +40,7 @@ std::vector<int> grouping1 { 0, 0, 1, 1, 2, 2 };
 std::vector<int> grouping2 { 0, 1, 0, 1, 0, 1 };
 
 std::vector<int> combined(grouping1.size()); 
-auto res = scran::combine_factors::compute(
+auto res = scran_aggregate::combine_factors(
     grouping1.size(), 
     std::vector<int*>{ grouping1.data(), grouping2.data() },
     combined.data()
