@@ -1,5 +1,5 @@
-#ifndef SCRAN_COMBINE_FACTORS_HPP
-#define SCRAN_COMBINE_FACTORS_HPP
+#ifndef SCRAN_AGGREGATE_COMBINE_FACTORS_HPP
+#define SCRAN_AGGREGATE_COMBINE_FACTORS_HPP
 
 #include <algorithm>
 #include <vector>
@@ -10,34 +10,30 @@
  * @brief Combine categorical factors into a single factor. 
  */
 
-namespace scran {
+namespace scran_aggregate {
 
 /**
- * @namespace scran::combine_factors
- * @brief Combine categorical factors into a single factor. 
- */
-namespace combine_factors {
-
-/**
- * @brief Unique combinations from `combine_factors::compute()`.
+ * @brief Unique combinations from `combine_factors()`.
  *
  * @tparam Factor_ Factor type, typically an integer.
  */
 template<typename Factor_>
-struct Results {
+struct FactorCombinations {
     /**
      * @cond
      */
-    Results(size_t n) : factors(n) {}
+    FactorCombinations(size_t n) : factors(n) {}
     /**
      * @endcond
      */
 
     /**
      * Unique combinations of factor levels.
-     * Each inner vector corresponds to a factor.
+     * Each inner vector corresponds to a factor used as input to `combine_factors()`.
      * All inner vectors have the same length.
-     * Corresponding entries of the inner vectors define a particular combination of levels.
+     * Corresponding entries of the inner vectors define a particular combination of levels,
+     * i.e., the first combination is defined as `(factors[0][0], factors[1][0], ...)`,
+     * the second combination is defined as `(factors[0][1], factors[1][1], ...)`, and so on.
      * Combinations are guaranteed to be sorted.
      */
     std::vector<std::vector<Factor_> > factors;
@@ -61,11 +57,11 @@ struct Results {
  * @param[out] combined Pointer to an array of length `n`, in which the combined factor is to be stored.
  *
  * @return 
- * A `combine_factors::Results` object is returned containing the unique combinations of levels observed in `factors`.
- * A combined factor is saved to `combined`, where each entry is an index into the relevant combination of the output `combine_factors::Results` object.
+ * Object containing the unique combinations of levels observed in `factors`.
+ * The combined factor written to `combined`, where each entry is an index into the relevant combination of the output `FactorCombinations` object.
  */
 template<typename Factor_, typename Combined_>
-Results<Factor_> compute(size_t n, const std::vector<const Factor_*>& factors, Combined_* combined) {
+FactorCombinations<Factor_> combine_factors(size_t n, const std::vector<const Factor_*>& factors, Combined_* combined) {
     auto cmp = [&](size_t left, size_t right) -> bool {
         for (auto curf : factors) {
             if (curf[left] < curf[right]) {
@@ -96,7 +92,7 @@ Results<Factor_> compute(size_t n, const std::vector<const Factor_*>& factors, C
 
     // Obtaining the sorted set of unique combinations.
     size_t nfac = factors.size();
-    Results<Factor_> output(nfac);
+    FactorCombinations<Factor_> output(nfac);
     size_t nuniq = mapping.size();
     for (auto& ofac : output.factors) {
         ofac.reserve(nuniq);
@@ -120,8 +116,6 @@ Results<Factor_> compute(size_t n, const std::vector<const Factor_*>& factors, C
     }
 
     return output;
-}
-
 }
 
 }

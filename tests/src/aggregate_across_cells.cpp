@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "aggregate_across_cells.hpp"
-#include "simulate_vector.h"
+#include "scran_aggregate/aggregate_across_cells.hpp"
+#include "scran_tests/scran_tests.hpp"
 #include <map>
 #include <random>
 
@@ -21,7 +21,13 @@ protected:
 
     static void SetUpTestSuite() {
         int nr = 112, nc = 78;
-        dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nr, nc, simulate_sparse_vector<double>(nr * nc, 0.1)));
+        auto vec = scran_tests::simulate_vector(nr * nc, []{
+            scran_tests::SimulationParameters sparams;
+            sparams.density = 0.1;
+            return sparams;
+        }());
+
+        dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nr, nc, std::move(vec)));
         dense_column = tatami::convert_to_dense(dense_row.get(), false);
         sparse_row = tatami::convert_to_compressed_sparse(dense_row.get(), true);
         sparse_column = tatami::convert_to_compressed_sparse(dense_row.get(), false);
@@ -35,8 +41,8 @@ TEST_P(AggregateAcrossCellsTest, Basics) {
 
     std::vector<int> groupings = create_groupings(dense_row->ncol(), ngroups);
 
-    scran::aggregate_across_cells::Options opt;
-    auto ref = scran::aggregate_across_cells::compute(dense_row.get(), groupings.data(), opt);
+    scran_aggregate::AggregateAcrossCellsOptions opt;
+    auto ref = scran_aggregate::aggregate_across_cells(*dense_row, groupings.data(), opt);
 
     auto compare = [&](const auto& other) -> void {
         for (int l = 0; l < ngroups; ++l) {
@@ -47,7 +53,7 @@ TEST_P(AggregateAcrossCellsTest, Basics) {
 
     opt.num_threads = nthreads; 
     if (nthreads != 1) {
-        auto res1 = scran::aggregate_across_cells::compute(dense_row.get(), groupings.data(), opt);
+        auto res1 = scran_aggregate::aggregate_across_cells(*dense_row, groupings.data(), opt);
         compare(res1);
     } else {
         // Doing some cursory checks.
@@ -63,13 +69,13 @@ TEST_P(AggregateAcrossCellsTest, Basics) {
         }
     }
 
-    auto res2 = scran::aggregate_across_cells::compute(sparse_row.get(), groupings.data(), opt);
+    auto res2 = scran_aggregate::aggregate_across_cells(*sparse_row, groupings.data(), opt);
     compare(res2);
 
-    auto res3 = scran::aggregate_across_cells::compute(dense_column.get(), groupings.data(), opt);
+    auto res3 = scran_aggregate::aggregate_across_cells(*dense_column, groupings.data(), opt);
     compare(res3);
 
-    auto res4 = scran::aggregate_across_cells::compute(sparse_column.get(), groupings.data(), opt);
+    auto res4 = scran_aggregate::aggregate_across_cells(*sparse_column, groupings.data(), opt);
     compare(res4);
 }
 
@@ -84,22 +90,28 @@ INSTANTIATE_TEST_SUITE_P(
 
 TEST(AggregateAcrossCells, Skipping) {
     int nr = 88, nc = 126;
-    auto input = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nr, nc, simulate_sparse_vector<double>(nr * nc, 0.1)));
+    auto vec = scran_tests::simulate_vector(nr * nc, []{
+        scran_tests::SimulationParameters sparams;
+        sparams.density = 0.1;
+        sparams.seed = 69;
+        return sparams;
+    }());
+    auto input = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nr, nc, std::move(vec)));
     auto grouping = create_groupings(input->ncol(), 2);
 
-    scran::aggregate_across_cells::Options opt;
-    auto ref = scran::aggregate_across_cells::compute(input.get(), grouping.data(), opt);
+    scran_aggregate::AggregateAcrossCellsOptions opt;
+    auto ref = scran_aggregate::aggregate_across_cells(*input, grouping.data(), opt);
     EXPECT_EQ(ref.sums.size(), 2);
     EXPECT_EQ(ref.detected.size(), 2);
 
     // Skipping works correctly when we don't want to compute things.
     opt.compute_sums = false;
-    auto partial = scran::aggregate_across_cells::compute(input.get(), grouping.data(), opt);
+    auto partial = scran_aggregate::aggregate_across_cells(*input, grouping.data(), opt);
     EXPECT_EQ(partial.sums.size(), 0);
     EXPECT_EQ(partial.detected.size(), 2);
     
     opt.compute_detected = false;
-    auto skipped = scran::aggregate_across_cells::compute(input.get(), grouping.data(), opt);
+    auto skipped = scran_aggregate::aggregate_across_cells(*input, grouping.data(), opt);
     EXPECT_EQ(skipped.sums.size(), 0);
     EXPECT_EQ(skipped.detected.size(), 0);
 }
