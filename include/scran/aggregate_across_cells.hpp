@@ -1,5 +1,5 @@
-#ifndef SCRAN_AGGREGATE_ACROSS_CELLS_HPP
-#define SCRAN_AGGREGATE_ACROSS_CELLS_HPP
+#ifndef SCRAN_AGGREGATE_AGGREGATE_ACROSS_CELLS_HPP
+#define SCRAN_AGGREGATE_AGGREGATE_ACROSS_CELLS_HPP
 
 #include <algorithm>
 #include <vector>
@@ -7,31 +7,24 @@
 
 /**
  * @file aggregate_across_cells.hpp
- *
  * @brief Aggregate expression values across cells.
  */
 
-namespace scran {
+namespace scran_aggregate {
 
 /**
- * @namespace scran::aggregate_across_cells
- * @brief Aggregate expression values across cells.
+ * @brief Options for `aggregate_across_cells()`.
  */
-namespace aggregate_across_cells {
-
-/**
- * @brief Further options for `aggregate_across_cells::compute()`.
- */
-struct Options {
+struct AggregateAcrossCellsOptions {
     /**
      * Whether to compute the sum within each factor level.
-     * This option only affects the `aggregate_across_cells::compute()` overload where an `aggregate_across_cells::Results` object is returned.
+     * This option only affects the `aggregate_across_cells()` overload where an `AggregateAcrossCellsResults` object is returned.
      */
     bool compute_sums = true;
 
     /**
      * Whether to compute the number of detected cells within each factor level.
-     * This option only affects the `aggregate_across_cells::compute()` overload where an `aggregate_across_cells::Results` object is returned.
+     * This option only affects the `aggregate_across_cells()` overload where an `AggregateAcrossCellsResults` object is returned.
      */
     bool compute_detected = true;
 
@@ -42,23 +35,75 @@ struct Options {
 };
 
 /**
+ * @brief Buffers for `aggregate_across_cells()`.
+ * @tparam Sum_ Type of the sum, should be numeric.
+ * @tparam Detected_ Type for the number of detected cells, usually integer.
+ */
+struct AggregateAcrossCellsBuffers {
+    /**
+     * Vector of length equal to the number of factor levels.
+     * Each element is a pointer to an array of length equal to the number of genes,
+     * to be filled with the summed expression across all cells in the corresponding level for each gene.
+     *
+     * If this is empty, the sums for each level are not computed.
+     */
+    std::vector<Sum_*> sums;
+
+    /**
+     * Vector of length equal to the number of factor levels.
+     * Each element is a pointer to an array of length equal to the number of genes,
+     * to be filled with the number of cells in the corresponding level with detected expression for each gene.
+     * 
+     * If this is empty, the number of detected cells for each level is not computed.
+     */
+    std::vector<Detected_*> detected;
+
+};
+
+/**
+ * @brief Results of `aggregate_across_cells()`.
+ * @tparam Sum_ Type of the sum, should be numeric.
+ * @tparam Detected_ Type for the number of detected cells, usually integer.
+ */
+template <typename Sum_, typename Detected_>
+struct AggregateAcrossCellsResults {
+    /**
+     * Vector of length equal to the number of factor levels.
+     * Each inner vector is of length equal to the number of genes.
+     * Each entry contains the summed expression across all cells in the corresponding level for each gene.
+     *
+     * If `AggregateAcrossCellsOptions::compute_sums = false`, this vector is empty.
+     */
+    std::vector<std::vector<Sum_> > sums;
+
+    /**
+     * Vector of length equal to the number of factor levels.
+     * Each inner vector is of length equal to the number of genes.
+     * Each entry contains the number of cells in the corresponding level with detected expression for each gene.
+     *
+     * If `AggregateAcrossCellsOptions::compute_detected = false`, this vector is empty.
+     */
+    std::vector<std::vector<Detected_> > detected;
+};
+
+/**
  * @cond
  */
 namespace internal {
 
 template<bool sparse_, typename Data_, typename Index_, typename Factor_, typename Sum_, typename Detected_>
-void compute_by_row(const tatami::Matrix<Data_, Index_>* p, const Factor_* factor, std::vector<Sum_*>& sums, std::vector<Detected_*>& detected, const Options& options) {
+void compute_aggregate_by_row(const tatami::Matrix<Data_, Index_>& p, const Factor_* factor, const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers, const AggregateAcrossCellsOptions& options) {
     tatami::Options opt;
     opt.sparse_ordered_index = false;
 
     tatami::parallelize([&](size_t, Index_ s, Index_ l) {
-        auto ext = tatami::consecutive_extractor<sparse_>(p, true, s, l, opt);
-        size_t nsums = sums.size();
+        auto ext = tatami::consecutive_extractor<sparse_>(&p, true, s, l, opt);
+        size_t nsums = buffers.sums.size();
         std::vector<Sum_> tmp_sums(nsums);
-        size_t ndetected = detected.size();
+        size_t ndetected = buffers.detected.size();
         std::vector<Detected_> tmp_detected(ndetected);
 
-        auto NC = p->ncol();
+        auto NC = p.ncol();
         std::vector<Data_> vbuffer(NC);
         typename std::conditional<sparse_, std::vector<Index_>, Index_>::type ibuffer(NC);
 
@@ -86,7 +131,7 @@ void compute_by_row(const tatami::Matrix<Data_, Index_>* p, const Factor_* facto
 
                 // Computing before transferring for more cache-friendliness.
                 for (size_t l = 0; l < nsums; ++l) {
-                    sums[l][x] = tmp_sums[l];
+                    buffers.sums[l][x] = tmp_sums[l];
                 }
             }
 
@@ -104,21 +149,21 @@ void compute_by_row(const tatami::Matrix<Data_, Index_>* p, const Factor_* facto
                 }
 
                 for (size_t l = 0; l < ndetected; ++l) {
-                    detected[l][x] = tmp_detected[l];
+                    buffers.detected[l][x] = tmp_detected[l];
                 }
             }
         }
-    }, p->nrow(), options.num_threads);
+    }, p.nrow(), options.num_threads);
 }
 
 template<bool sparse_, typename Data_, typename Index_, typename Factor_, typename Sum_, typename Detected_>
-void compute_by_column(const tatami::Matrix<Data_, Index_>* p, const Factor_* factor, std::vector<Sum_*>& sums, std::vector<Detected_*>& detected, const Options& options) {
+void compute_aggregate_by_column(const tatami::Matrix<Data_, Index_>& p, const Factor_* factor, std::vector<Sum_*>& sums, std::vector<Detected_*>& detected, const AggregateAcrossCellsOptions& options) {
     tatami::Options opt;
     opt.sparse_ordered_index = false;
 
     tatami::parallelize([&](size_t, Index_ s, Index_ l) {
-        auto NC = p->ncol();
-        auto ext = tatami::consecutive_extractor<sparse_>(p, false, 0, NC, s, l, opt);
+        auto NC = p.ncol();
+        auto ext = tatami::consecutive_extractor<sparse_>(&p, false, 0, NC, s, l, opt);
         std::vector<Data_> vbuffer(l);
         typename std::conditional<sparse_, std::vector<Index_>, Index_>::type ibuffer(l);
 
@@ -159,7 +204,7 @@ void compute_by_column(const tatami::Matrix<Data_, Index_>* p, const Factor_* fa
                 }
             }
         }
-    }, p->nrow(), options.num_threads);
+    }, p.nrow(), options.num_threads);
 }
 
 }
@@ -183,58 +228,25 @@ void compute_by_column(const tatami::Matrix<Data_, Index_>* p, const Factor_* fa
  * @param[in] factor Pointer to an array of length equal to the number of columns of `input`,
  * containing the factor level for each cell.
  * All levels should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique levels.
- * @param[out] sums Vector of length \f$N\f$ (see `factor`),
- * containing pointers to arrays of length equal to the number of columns of `input`.
- * These will be filled with the summed expression across all cells in the corresponding level for each gene.
- * Alternatively, if the vector is of length 0, no sums will be computed.
- * @param[out] detected Vector of length \f$N\f$ (see `factor`),
- * containing pointers to arrays of length equal to the number of columns of `input`.
- * These will be filled with the number of cells with detected expression in the corresponding level for each gene.
- * Alternatively, if the vector is of length 0, no numbers will be computed.
+ * @param[out] buffers Collection of buffers in which to store the aggregate statistics (e.g., sums, number of detected cells) for each level and gene.
  * @param options Further options.
  */
 template<typename Data_, typename Index_, typename Factor_, typename Sum_, typename Detected_>
-void compute(const tatami::Matrix<Data_, Index_>* input, const Factor_* factor, std::vector<Sum_*> sums, std::vector<Detected_*> detected, const Options& options) {
+void aggregate_across_cells(const tatami::Matrix<Data_, Index_>& input, const Factor_* factor, const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers, const AggregateAcrossCellsOptions& options) {
     if (input->prefer_rows()) {
         if (input->sparse()) {
-            internal::compute_by_row<true>(input, factor, sums, detected, options);
+            internal::compute_aggregate_by_row<true>(input, factor, buffers, options);
         } else {
-            internal::compute_by_row<false>(input, factor, sums, detected, options);
+            internal::compute_aggregate_by_row<false>(input, factor, buffers, options);
         }
     } else {
         if (input->sparse()) {
-            internal::compute_by_column<true>(input, factor, sums, detected, options);
+            internal::compute_aggregate_by_column<true>(input, factor, buffers, options);
         } else {
-            internal::compute_by_column<false>(input, factor, sums, detected, options);
+            internal::compute_aggregate_by_column<false>(input, factor, buffers, options);
         }
     }
 } 
-
-/**
- * @brief Aggregated results from `aggregate_across_cells::compute()`.
- * @tparam Sum_ Type of the sum, should be numeric.
- * @tparam Detected_ Type for the number of detected cells, usually integer.
- */
-template <typename Sum_, typename Detected_>
-struct Results {
-    /**
-     * Vector of length equal to the number of factor levels.
-     * Each inner vector is of length equal to the number of genes.
-     * Each entry contains the summed expression across all cells in the corresponding level for the corresponding gene.
-     *
-     * If `aggregate_across_cells::Options::compute_sums = false`, this vector is empty.
-     */
-    std::vector<std::vector<Sum_> > sums;
-
-    /**
-     * Vector of length equal to the number of factor levels.
-     * Each inner vector is of length equal to the number of genes.
-     * Each entry contains the number of cells in the corresponding level with detected expression for the corresponding gene.
-     *
-     * If `aggregate_across_cells::Options::compute_detected = false`, this vector is empty.
-     */
-    std::vector<std::vector<Detected_> > detected;
-};
 
 /**
  * @tparam Sum_ Type of the sum, should be numeric.
@@ -249,39 +261,36 @@ struct Results {
  * All levels should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique levels.
  * @param options Further options.
  *
- * @return Results of the aggregation, where the available statistics depend on `aggregate_across_cells::Options`.
+ * @return Results of the aggregation, where the available statistics depend on `AggregateAcrossCellsOptions`.
  */
 template<typename Sum_ = double, typename Detected_ = int, typename Data_, typename Index_, typename Factor_>
-Results<Sum_, Detected_> compute(const tatami::Matrix<Data_, Index_>* input, const Factor_* factor, const Options& options) {
-    size_t NC = input->ncol();
+AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(const tatami::Matrix<Data_, Index_>& input, const Factor_* factor, const AggregateAcrossCellsOptions& options) {
+    size_t NC = input.ncol();
     size_t nlevels = (NC ? *std::max_element(factor, factor + NC) + 1 : 0);
-    size_t ngenes = input->nrow();
+    size_t ngenes = input.nrow();
 
-    Results<Sum_, Detected_> output;
-    std::vector<Sum_*> sumptr;
-    std::vector<Detected_*> detptr;
+    AggregateAcrossCellsResults<Sum_, Detected_> output;
+    AggregateAcrossCellsBufferes<Sum_, Detected_> buffers;
 
     if (options.compute_sums) {
         output.sums.resize(nlevels, std::vector<Sum_>(ngenes));
-        sumptr.resize(nlevels);
+        buffers.sums.resize(nlevels);
         for (size_t l = 0; l < nlevels; ++l) {
-            sumptr[l] = output.sums[l].data();
+            buffers.sums[l] = output.sums[l].data();
         }
     }
 
     if (options.compute_detected) {
         output.detected.resize(nlevels, std::vector<Detected_>(ngenes));
-        detptr.resize(nlevels);
+        buffers.detected.resize(nlevels);
         for (size_t l = 0; l < nlevels; ++l) {
-            detptr[l] = output.detected[l].data();
+            buffers.detected[l] = output.detected[l].data();
         }
     }
 
-    compute(input, factor, std::move(sumptr), std::move(detptr), options);
+    aggregate_across_cells(input, factor, buffers, options);
     return output;
 } 
-
-}
 
 }
 
