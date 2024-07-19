@@ -19,6 +19,7 @@ macro(create_test name)
         ${name} 
         src/aggregate_across_cells.cpp
         src/combine_factors.cpp
+        src/clean_factor.cpp
     )
 
     target_link_libraries(
