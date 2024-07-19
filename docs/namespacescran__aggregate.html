@@ -274,7 +274,7 @@ template&lt;typename Factor_ , typename Output_ &gt; </div>
 <p>Clean up a categorical factor by removing unused levels. This yields the same results as <code><a class="el" href="namespacescran__aggregate.html#ac709e5530c7cb6b488e6b727fe91b890">combine_factors()</a></code> with a single factor.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Factor_</td><td>Factor type. Any type may be used here as long as it is comparable. </td></tr>
+    <tr><td class="paramname">Factor_</td><td>Factor type. Any type may be used here as long as it is hashable and has an equality operator. </td></tr>
     <tr><td class="paramname">Output_</td><td>Integer type for the cleaned factor.</td></tr>
   </table>
   </dd>
@@ -326,7 +326,7 @@ template&lt;typename Factor_ , typename Combined_ &gt; </div>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Factor_</td><td>Factor type. Any type may be used here as long as it is comparable. </td></tr>
+    <tr><td class="paramname">Factor_</td><td>Factor type. Any type may be used here as long as it implements the comparison operators. </td></tr>
     <tr><td class="paramname">Combined_</td><td>Integer type for the combined factor. This should be large enough to hold the number of unique combinations.</td></tr>
   </table>
   </dd>
