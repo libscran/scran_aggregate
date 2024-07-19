@@ -5,7 +5,7 @@
 #include "scran_aggregate/combine_factors.hpp"
 
 template<typename Factor_>
-std::pair<scran_aggregate::FactorCombinations<Factor_>, std::vector<int> > test_combine_factors(size_t n, const std::vector<const Factor_*>& factors) {
+std::pair<std::vector<std::vector<Factor_> >, std::vector<int> > test_combine_factors(size_t n, const std::vector<const Factor_*>& factors) {
     std::vector<int> combined(n);
     auto levels = scran_aggregate::combine_factors(n, factors, combined.data());
     return std::make_pair(std::move(levels), std::move(combined));
@@ -18,12 +18,9 @@ TEST(CombineFactors, Simple) {
         auto combined = test_combine_factors(stuff.size(), std::vector<const int*>{stuff.data()});
         EXPECT_EQ(combined.second, stuff);
 
-        EXPECT_EQ(combined.first.factors.size(), 1);
+        EXPECT_EQ(combined.first.size(), 1);
         std::vector<int> expected { 0, 1, 2 };
-        EXPECT_EQ(combined.first.factors[0], expected);
-
-        std::vector<size_t> counts { 2, 3, 4 };
-        EXPECT_EQ(combined.first.counts, counts);
+        EXPECT_EQ(combined.first[0], expected);
     }
 
     // Testing the unsorted case.
@@ -32,12 +29,9 @@ TEST(CombineFactors, Simple) {
         auto combined = test_combine_factors(stuff.size(), std::vector<const int*>{stuff.data()});
         EXPECT_EQ(combined.second, stuff);
 
-        EXPECT_EQ(combined.first.factors.size(), 1);
+        EXPECT_EQ(combined.first.size(), 1);
         std::vector<int> expected { 0, 1, 2, 3 };
-        EXPECT_EQ(combined.first.factors[0], expected);
-
-        std::vector<size_t> counts { 2, 3, 3, 1 };
-        EXPECT_EQ(combined.first.counts, counts);
+        EXPECT_EQ(combined.first[0], expected);
     }
 
     // Non-consecutive still works.
@@ -47,12 +41,9 @@ TEST(CombineFactors, Simple) {
         std::vector<int> expected { 0, 1, 2, 3, 4 };
         EXPECT_EQ(combined.second, expected);
 
-        EXPECT_EQ(combined.first.factors.size(), 1);
+        EXPECT_EQ(combined.first.size(), 1);
         std::vector<int> levels { 1, 3, 5, 7, 9 };
-        EXPECT_EQ(combined.first.factors[0], levels);
-
-        std::vector<size_t> counts { 1, 1, 1, 1, 1 };
-        EXPECT_EQ(combined.first.counts, counts);
+        EXPECT_EQ(combined.first[0], levels);
     }
 }
 
@@ -65,14 +56,11 @@ TEST(CombineFactors, Multiple) {
         std::vector<int> expected { 0, 1, 4, 2, 3, 7, 5, 6, 7 };
         EXPECT_EQ(combined.second, expected);
 
-        EXPECT_EQ(combined.first.factors.size(), 2);
+        EXPECT_EQ(combined.first.size(), 2);
         std::vector<int> levels1 { 0, 0, 1, 1, 1, 2, 2, 2 };
         std::vector<int> levels2 { 0, 1, 0, 1, 2, 0, 1, 2 };
-        EXPECT_EQ(combined.first.factors[0], levels1);
-        EXPECT_EQ(combined.first.factors[1], levels2);
-
-        std::vector<size_t> counts { 1, 1, 1, 1, 1, 1, 1, 2 };
-        EXPECT_EQ(combined.first.counts, counts);
+        EXPECT_EQ(combined.first[0], levels1);
+        EXPECT_EQ(combined.first[1], levels2);
     }
 
     {
@@ -109,8 +97,7 @@ TEST(CombineFactors, Multiple) {
         }
 
         EXPECT_EQ(expected, combined.second);
-        EXPECT_EQ(factor1, combined.first.factors[0]);
-        EXPECT_EQ(factor2, combined.first.factors[1]);
-        EXPECT_EQ(counts, combined.first.counts);
+        EXPECT_EQ(factor1, combined.first[0]);
+        EXPECT_EQ(factor2, combined.first[1]);
     }
 }
