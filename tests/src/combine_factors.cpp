@@ -45,6 +45,13 @@ TEST(CombineFactors, Simple) {
         std::vector<int> levels { 1, 3, 5, 7, 9 };
         EXPECT_EQ(combined.first[0], levels);
     }
+
+    // Nothing at all.
+    {
+        auto combined = test_combine_factors(10, std::vector<const int*>{});
+        EXPECT_EQ(combined.second, std::vector<int>(10));
+        EXPECT_TRUE(combined.first.empty());
+    }
 }
 
 TEST(CombineFactors, Multiple) {
@@ -99,5 +106,95 @@ TEST(CombineFactors, Multiple) {
         EXPECT_EQ(expected, combined.second);
         EXPECT_EQ(factor1, combined.first[0]);
         EXPECT_EQ(factor2, combined.first[1]);
+    }
+}
+
+template<typename Factor_, typename Number_>
+std::pair<std::vector<std::vector<Factor_> >, std::vector<int> > test_combine_factors_unused(size_t n, const std::vector<std::pair<const Factor_*, Number_> >& factors) {
+    std::vector<int> combined(n);
+    auto levels = scran_aggregate::combine_factors_unused(n, factors, combined.data());
+    return std::make_pair(std::move(levels), std::move(combined));
+}
+
+TEST(CombineFactorsUnused, Basic) {
+    std::vector<int> stuff{ 1, 3, 5, 3, 1 };
+    auto combined = test_combine_factors_unused(stuff.size(), std::vector<std::pair<const int*, int> >{ { stuff.data(), 7 } });
+    EXPECT_EQ(combined.second, stuff);
+    std::vector<int> levels{ 0, 1, 2, 3, 4, 5, 6 };
+    EXPECT_EQ(combined.first[0], levels);
+
+    auto combined2 = test_combine_factors_unused(10, std::vector<std::pair<const int*, int> >{});
+    EXPECT_EQ(combined2.second, std::vector<int>(10));
+    EXPECT_TRUE(combined2.first.empty());
+}
+
+TEST(CombineFactorsUnused, Multiple) {
+    std::vector<int> stuff1{ 0, 0, 1, 1, 1, 2, 2, 2, 2 };
+    std::vector<int> stuff2{ 0, 1, 2, 0, 1, 2, 0, 1, 2 };
+
+    {
+        auto combined = test_combine_factors_unused(stuff1.size(), 
+            std::vector<std::pair<const int*, int> >{ 
+                { stuff1.data(), 3 },
+                { stuff2.data(), 3 }
+            }
+        );
+
+        std::vector<int> expected { 0, 1, 5, 3, 4, 8, 6, 7, 8 };
+        EXPECT_EQ(combined.second, expected);
+
+        EXPECT_EQ(combined.first.size(), 2);
+        std::vector<int> levels1 { 0, 0, 0, 1, 1, 1, 2, 2, 2 };
+        std::vector<int> levels2 { 0, 1, 2, 0, 1, 2, 0, 1, 2 }; // (0, 2) is included even though it is not observed.
+        EXPECT_EQ(combined.first[0], levels1);
+        EXPECT_EQ(combined.first[1], levels2);
+    }
+
+    {
+        auto combined = test_combine_factors_unused(stuff1.size(), 
+            std::vector<std::pair<const int*, int> >{ 
+                { stuff1.data(), 4 },
+                { stuff2.data(), 3 }
+            }
+        );
+
+        std::vector<int> expected { 0, 1, 5, 3, 4, 8, 6, 7, 8 };
+        EXPECT_EQ(combined.second, expected);
+
+        EXPECT_EQ(combined.first.size(), 2);
+        std::vector<int> levels1 { 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3 };
+        std::vector<int> levels2 { 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 }; // (0, 2) and (3, *) are included even though they are not observed.
+        EXPECT_EQ(combined.first[0], levels1);
+        EXPECT_EQ(combined.first[1], levels2);
+    }
+
+    // Multiple things at play here.
+    {
+        std::vector<int> mock{ 1 };
+        auto combined = test_combine_factors_unused(1,
+            std::vector<std::pair<const int*, int> >{ 
+                { mock.data(), 2 },
+                { mock.data(), 3 },
+                { mock.data(), 4 }
+            }
+        );
+
+        EXPECT_EQ(combined.second[0], 17); // i.e., 1*3*4 + 1*4 + 1.
+
+        auto create_mock_sequence = [](size_t nlevels, size_t inner, size_t outer) -> auto { 
+            std::vector<int> output(nlevels * inner * outer);
+            auto oIt = output.begin();
+            for (size_t o = 0; o < outer; ++o) {
+                for (size_t l = 0; l < nlevels; ++l) {
+                    std::fill_n(oIt, inner, l);
+                    oIt += inner;
+                }
+            }
+            return output;
+        };
+
+        EXPECT_EQ(combined.first[0], create_mock_sequence(2, 12, 1));
+        EXPECT_EQ(combined.first[1], create_mock_sequence(3, 4, 2));
+        EXPECT_EQ(combined.first[2], create_mock_sequence(4, 1, 6));
     }
 }
