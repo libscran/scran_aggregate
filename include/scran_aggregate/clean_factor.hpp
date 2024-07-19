@@ -17,7 +17,7 @@ namespace scran_aggregate {
  * This yields the same results as `combine_factors()` with a single factor.
  *
  * @tparam Factor_ Factor type.
- * Any type may be used here as long as it is comparable.
+ * Any type may be used here as long as it is hashable and has an equality operator.
  * @tparam Output_ Integer type for the cleaned factor.
  *
  * @param n Number of observations (i.e., cells).

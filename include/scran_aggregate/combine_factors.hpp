@@ -15,7 +15,7 @@ namespace scran_aggregate {
 
 /**
  * @tparam Factor_ Factor type.
- * Any type may be used here as long as it is comparable.
+ * Any type may be used here as long as it implements the comparison operators.
  * @tparam Combined_ Integer type for the combined factor.
  * This should be large enough to hold the number of unique combinations.
  *
