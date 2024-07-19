@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>scran_aggregate: scran_aggregate/combine_factors.hpp File Reference</title>
+<title>scran_aggregate: scran_aggregate/clean_factor.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -85,44 +85,41 @@ $(function() {
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">combine_factors.hpp File Reference</div></div>
+  <div class="headertitle"><div class="title">clean_factor.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Combine categorical factors into a single factor.  
+<p>Clean up a categorical factor.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;algorithm&gt;</code><br />
+<div class="textblock"><code>#include &lt;unordered_map&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
-<code>#include &lt;map&gt;</code><br />
-<code>#include &lt;unordered_map&gt;</code><br />
+<code>#include &lt;algorithm&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
-Include dependency graph for combine_factors.hpp:</div>
+Include dependency graph for clean_factor.hpp:</div>
 <div class="dyncontent">
-<div class="center"><img src="combine__factors_8hpp__incl.png" border="0" usemap="#ascran__aggregate_2combine__factors_8hpp" alt=""/></div>
-<map name="ascran__aggregate_2combine__factors_8hpp" id="ascran__aggregate_2combine__factors_8hpp">
-<area shape="rect" title="Combine categorical factors into a single factor." alt="" coords="84,5,254,46"/>
-<area shape="rect" title=" " alt="" coords="5,94,80,120"/>
-<area shape="poly" title=" " alt="" coords="139,49,76,88,74,83,136,44"/>
-<area shape="rect" title=" " alt="" coords="103,94,161,120"/>
-<area shape="poly" title=" " alt="" coords="162,48,147,81,142,78,158,45"/>
-<area shape="rect" title=" " alt="" coords="185,94,231,120"/>
-<area shape="poly" title=" " alt="" coords="181,45,198,79,193,81,176,48"/>
-<area shape="rect" title=" " alt="" coords="255,94,366,120"/>
-<area shape="poly" title=" " alt="" coords="206,44,277,84,274,88,203,49"/>
+<div class="center"><img src="clean__factor_8hpp__incl.png" border="0" usemap="#ascran__aggregate_2clean__factor_8hpp" alt=""/></div>
+<map name="ascran__aggregate_2clean__factor_8hpp" id="ascran__aggregate_2clean__factor_8hpp">
+<area shape="rect" title="Clean up a categorical factor." alt="" coords="92,5,245,46"/>
+<area shape="rect" title=" " alt="" coords="5,94,116,120"/>
+<area shape="poly" title=" " alt="" coords="143,49,91,87,88,82,140,44"/>
+<area shape="rect" title=" " alt="" coords="140,94,197,120"/>
+<area shape="poly" title=" " alt="" coords="171,46,171,78,166,78,166,46"/>
+<area shape="rect" title=" " alt="" coords="221,94,295,120"/>
+<area shape="poly" title=" " alt="" coords="192,44,235,82,231,86,189,48"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><img src="combine__factors_8hpp__dep__incl.png" border="0" usemap="#ascran__aggregate_2combine__factors_8hppdep" alt=""/></div>
-<map name="ascran__aggregate_2combine__factors_8hppdep" id="ascran__aggregate_2combine__factors_8hppdep">
-<area shape="rect" title="Combine categorical factors into a single factor." alt="" coords="5,5,176,46"/>
-<area shape="rect" href="scran__aggregate_8hpp.html" title="Aggregate single&#45;cell expression values." alt="" coords="14,94,167,135"/>
-<area shape="poly" title=" " alt="" coords="93,62,93,94,88,94,88,62"/>
+<div class="center"><img src="clean__factor_8hpp__dep__incl.png" border="0" usemap="#ascran__aggregate_2clean__factor_8hppdep" alt=""/></div>
+<map name="ascran__aggregate_2clean__factor_8hppdep" id="ascran__aggregate_2clean__factor_8hppdep">
+<area shape="rect" title="Clean up a categorical factor." alt="" coords="6,5,158,46"/>
+<area shape="rect" href="scran__aggregate_8hpp.html" title="Aggregate single&#45;cell expression values." alt="" coords="5,94,159,135"/>
+<area shape="poly" title=" " alt="" coords="85,62,85,94,79,94,79,62"/>
 </map>
 </div>
 </div>
-<p><a href="combine__factors_8hpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="clean__factor_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
@@ -132,15 +129,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac709e5530c7cb6b488e6b727fe91b890" id="r_ac709e5530c7cb6b488e6b727fe91b890"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Combined_ &gt; </td></tr>
-<tr class="memitem:ac709e5530c7cb6b488e6b727fe91b890"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; Factor_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacescran__aggregate.html#ac709e5530c7cb6b488e6b727fe91b890">scran_aggregate::combine_factors</a> (size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *combined)</td></tr>
-<tr class="separator:ac709e5530c7cb6b488e6b727fe91b890"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0712c37387535ba42349ae78cd6fd8ff" id="r_a0712c37387535ba42349ae78cd6fd8ff"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Number_ , typename Combined_ &gt; </td></tr>
-<tr class="memitem:a0712c37387535ba42349ae78cd6fd8ff"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; Factor_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacescran__aggregate.html#a0712c37387535ba42349ae78cd6fd8ff">scran_aggregate::combine_factors_unused</a> (size_t n, const std::vector&lt; std::pair&lt; const Factor_ *, Number_ &gt; &gt; &amp;factors, Combined_ *combined)</td></tr>
-<tr class="separator:a0712c37387535ba42349ae78cd6fd8ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2324eaab6a361f7f767204b62a79764b" id="r_a2324eaab6a361f7f767204b62a79764b"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Output_ &gt; </td></tr>
+<tr class="memitem:a2324eaab6a361f7f767204b62a79764b"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Factor_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacescran__aggregate.html#a2324eaab6a361f7f767204b62a79764b">scran_aggregate::clean_factor</a> (size_t n, const Factor_ *factor, Output_ *cleaned)</td></tr>
+<tr class="separator:a2324eaab6a361f7f767204b62a79764b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Combine categorical factors into a single factor. </p>
+<div class="textblock"><p>Clean up a categorical factor. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

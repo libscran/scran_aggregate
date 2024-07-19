@@ -1,0 +1,9 @@
+<map id="scran_aggregate/clean_factor.hpp" name="scran_aggregate/clean_factor.hpp">
+<area shape="rect" id="Node000001" title="Clean up a categorical factor." alt="" coords="92,5,245,46"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,94,116,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="143,49,91,87,88,82,140,44"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="140,94,197,120"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="171,46,171,78,166,78,166,46"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="221,94,295,120"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="192,44,235,82,231,86,189,48"/>
+</map>

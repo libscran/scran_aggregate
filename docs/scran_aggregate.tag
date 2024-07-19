@@ -10,10 +10,15 @@
     <namespace>scran_aggregate</namespace>
   </compound>
   <compound kind="file">
+    <name>clean_factor.hpp</name>
+    <path>scran_aggregate/</path>
+    <filename>clean__factor_8hpp.html</filename>
+    <namespace>scran_aggregate</namespace>
+  </compound>
+  <compound kind="file">
     <name>combine_factors.hpp</name>
     <path>scran_aggregate/</path>
     <filename>combine__factors_8hpp.html</filename>
-    <class kind="struct">scran_aggregate::FactorCombinations</class>
     <namespace>scran_aggregate</namespace>
   </compound>
   <compound kind="file">
@@ -22,6 +27,7 @@
     <filename>scran__aggregate_8hpp.html</filename>
     <includes id="aggregate__across__cells_8hpp" name="aggregate_across_cells.hpp" local="yes" import="no" module="no" objc="no">aggregate_across_cells.hpp</includes>
     <includes id="combine__factors_8hpp" name="combine_factors.hpp" local="yes" import="no" module="no" objc="no">combine_factors.hpp</includes>
+    <includes id="clean__factor_8hpp" name="clean_factor.hpp" local="yes" import="no" module="no" objc="no">clean_factor.hpp</includes>
     <namespace>scran_aggregate</namespace>
   </compound>
   <compound kind="struct">
@@ -89,32 +95,12 @@
       <arglist></arglist>
     </member>
   </compound>
-  <compound kind="struct">
-    <name>scran_aggregate::FactorCombinations</name>
-    <filename>structscran__aggregate_1_1FactorCombinations.html</filename>
-    <templarg>typename Factor_</templarg>
-    <member kind="variable">
-      <type>std::vector&lt; std::vector&lt; Factor_ &gt; &gt;</type>
-      <name>factors</name>
-      <anchorfile>structscran__aggregate_1_1FactorCombinations.html</anchorfile>
-      <anchor>a385288d051eebb115e88256a66b2694b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>std::vector&lt; size_t &gt;</type>
-      <name>counts</name>
-      <anchorfile>structscran__aggregate_1_1FactorCombinations.html</anchorfile>
-      <anchor>ae635dfca70b89a538612f56e4781c224</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
   <compound kind="namespace">
     <name>scran_aggregate</name>
     <filename>namespacescran__aggregate.html</filename>
     <class kind="struct">scran_aggregate::AggregateAcrossCellsBuffers</class>
     <class kind="struct">scran_aggregate::AggregateAcrossCellsOptions</class>
     <class kind="struct">scran_aggregate::AggregateAcrossCellsResults</class>
-    <class kind="struct">scran_aggregate::FactorCombinations</class>
     <member kind="function">
       <type>void</type>
       <name>aggregate_across_cells</name>
@@ -130,11 +116,25 @@
       <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Factor_ *factor, const AggregateAcrossCellsOptions &amp;options)</arglist>
     </member>
     <member kind="function">
-      <type>FactorCombinations&lt; Factor_ &gt;</type>
+      <type>std::vector&lt; Factor_ &gt;</type>
+      <name>clean_factor</name>
+      <anchorfile>namespacescran__aggregate.html</anchorfile>
+      <anchor>a2324eaab6a361f7f767204b62a79764b</anchor>
+      <arglist>(size_t n, const Factor_ *factor, Output_ *cleaned)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; std::vector&lt; Factor_ &gt; &gt;</type>
       <name>combine_factors</name>
       <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>a6f8ee062f0a6ac0d8a7a9629dd14c459</anchor>
+      <anchor>ac709e5530c7cb6b488e6b727fe91b890</anchor>
       <arglist>(size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *combined)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; std::vector&lt; Factor_ &gt; &gt;</type>
+      <name>combine_factors_unused</name>
+      <anchorfile>namespacescran__aggregate.html</anchorfile>
+      <anchor>a0712c37387535ba42349ae78cd6fd8ff</anchor>
+      <arglist>(size_t n, const std::vector&lt; std::pair&lt; const Factor_ *, Number_ &gt; &gt; &amp;factors, Combined_ *combined)</arglist>
     </member>
   </compound>
   <compound kind="page">
