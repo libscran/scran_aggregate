@@ -51,6 +51,28 @@ res.factors[0]; // values of grouping1 for each unique combination.
 res.factors[1]; // values of grouping2 for each unique combination.
 ```
 
+We can also use the `aggregate_across_genes()` function to sum expression values across gene sets, e.g., to compute the activity of a gene signature.
+This can be done with any number of gene sets, possibly with a different weight for each gene in each set.
+
+```cpp
+std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
+
+std::vector<int> set1 { 0, 5, 10, 20 };
+gene_sets.emplace_back(set1.size(), set1.data(), static_cast<double*>(NULL)); // no weight
+
+std::vector<int> set2 { 0, 2, 4, 6, 8, 10 };
+std::vector<double> weight2 { 0.1, 0.3, 0.3, 0.2, 0.1, 0.05 };
+gene_sets.emplace_back(set2.size(), set2.data(), weight2.data()); // weighted
+
+scran_aggregate::AggregateAcrossGenesOptions g_opt;
+auto g_res = scran_aggregate::aggregate_across_genes(
+    mat,
+    gene_sets,
+    g_opt
+);
+g_res.sum[0]; // vector of sums for set 1 in each cell.
+```
+
 Check out the [reference documentation](https://libscran.github.io/scran_aggregate) for more details.
 
 ## Building projects
