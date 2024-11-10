@@ -175,7 +175,7 @@ template&lt;typename Data_ , typename Index_ , typename Factor_ , typename Sum_ 
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Compute the per-gene sum and number of cells with detected expression for each level of a grouping factor. This is typically done for the creation of pseudo-bulk expression profiles for cluster/sample combinations. Expression values are generally expected to be counts, though the same code can be trivially re-used to compute the average log-expression. We can also report the number of cells with detected (i.e., positive) expression values in each grouping.</p>
+<p>Aggregate expression values across groups of cells for each gene. We report the sum of expression values and the number of cells with detected (i.e., positive) expression values in each group. This is typically used to create pseudo-bulk expression profiles for cluster/sample combinations. Expression values are generally expected to be counts, though the same function can be used to compute the average log-expression.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Data_</td><td>Type of data in the input matrix, should be numeric. </td></tr>
@@ -189,7 +189,7 @@ template&lt;typename Data_ , typename Index_ , typename Factor_ , typename Sum_ 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">input</td><td>The input matrix where rows are features and columns are cells. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Pointer to an array of length equal to the number of columns of <code>input</code>, containing the factor level for each cell. All levels should be integers in \([0, N)\) where \(N\) is the number of unique levels. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Grouping factor. This is a pointer to an array of length equal to the number of columns of <code>input</code>, containing the factor level (i.e., assigned group) for each cell. All levels should be integers in \([0, N)\) where \(N\) is the number of unique levels/groups. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">buffers</td><td>Collection of buffers in which to store the aggregate statistics (e.g., sums, number of detected cells) for each level and gene. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">options</td><td>Further options. </td></tr>
   </table>
@@ -231,6 +231,7 @@ template&lt;typename Sum_  = double, typename Detected_  = int, typename Data_ ,
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Overload of <code><a class="el" href="namespacescran__aggregate.html#a76e8390729e70654df46d322d2e119ff">aggregate_across_cells()</a></code> that allocates memory for the results.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Sum_</td><td>Type of the sum, should be numeric. </td></tr>
@@ -244,7 +245,7 @@ template&lt;typename Sum_  = double, typename Detected_  = int, typename Data_ ,
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">input</td><td>The input matrix where rows are features and columns are cells. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Pointer to an array of length equal to the number of columns of <code>input</code>, containing the factor level for each cell. All levels should be integers in \([0, N)\) where \(N\) is the number of unique levels. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Grouping factor. This is a pointer to an array of length equal to the number of columns of <code>input</code>, containing the factor level (i.e., assigned group) for each cell. All levels should be integers in \([0, N)\) where \(N\) is the number of unique levels/groups. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">options</td><td>Further options.</td></tr>
   </table>
   </dd>
