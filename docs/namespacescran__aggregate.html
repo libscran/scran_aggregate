@@ -99,6 +99,15 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsResults.html">AggregateAcrossCellsResults</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Results of <code><a class="el" href="namespacescran__aggregate.html#a76e8390729e70654df46d322d2e119ff">aggregate_across_cells()</a></code>.  <a href="structscran__aggregate_1_1AggregateAcrossCellsResults.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html">AggregateAcrossGenesBuffers</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffers for <code><a class="el" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes()</a></code>.  <a href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <code><a class="el" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes()</a></code>.  <a href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html">AggregateAcrossGenesResults</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Results of <code><a class="el" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes()</a></code>.  <a href="structscran__aggregate_1_1AggregateAcrossGenesResults.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -108,6 +117,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a8e46dd59466d786b30ad2534055b0b11" id="r_a8e46dd59466d786b30ad2534055b0b11"><td class="memTemplParams" colspan="2">template&lt;typename Sum_  = double, typename Detected_  = int, typename Data_ , typename Index_ , typename Factor_ &gt; </td></tr>
 <tr class="memitem:a8e46dd59466d786b30ad2534055b0b11"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsResults.html">AggregateAcrossCellsResults</a>&lt; Sum_, Detected_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacescran__aggregate.html#a8e46dd59466d786b30ad2534055b0b11">aggregate_across_cells</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Data_, Index_ &gt; &amp;input, const Factor_ *factor, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html">AggregateAcrossCellsOptions</a> &amp;options)</td></tr>
 <tr class="separator:a8e46dd59466d786b30ad2534055b0b11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c5e32aa2efd50f80d02fcfa00d43837" id="r_a8c5e32aa2efd50f80d02fcfa00d43837"><td class="memTemplParams" colspan="2">template&lt;typename Data_ , typename Index_ , typename Gene_ , typename Weight_ , typename Sum_ &gt; </td></tr>
+<tr class="memitem:a8c5e32aa2efd50f80d02fcfa00d43837"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html">AggregateAcrossGenesBuffers</a>&lt; Sum_ &gt; &amp;buffers, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a> &amp;options)</td></tr>
+<tr class="separator:a8c5e32aa2efd50f80d02fcfa00d43837"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58d8a5a38223ceafca7ebaee5110c11f" id="r_a58d8a5a38223ceafca7ebaee5110c11f"><td class="memTemplParams" colspan="2">template&lt;typename Sum_  = double, typename Data_ , typename Index_ , typename Gene_ , typename Weight_ &gt; </td></tr>
+<tr class="memitem:a58d8a5a38223ceafca7ebaee5110c11f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html">AggregateAcrossGenesResults</a>&lt; Sum_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacescran__aggregate.html#a58d8a5a38223ceafca7ebaee5110c11f">aggregate_across_genes</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a> &amp;options)</td></tr>
+<tr class="separator:a58d8a5a38223ceafca7ebaee5110c11f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2324eaab6a361f7f767204b62a79764b" id="r_a2324eaab6a361f7f767204b62a79764b"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Output_ &gt; </td></tr>
 <tr class="memitem:a2324eaab6a361f7f767204b62a79764b"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Factor_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacescran__aggregate.html#a2324eaab6a361f7f767204b62a79764b">clean_factor</a> (size_t n, const Factor_ *factor, Output_ *cleaned)</td></tr>
 <tr class="separator:a2324eaab6a361f7f767204b62a79764b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -235,6 +250,124 @@ template&lt;typename Sum_  = double, typename Detected_  = int, typename Data_ ,
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Results of the aggregation, where the available statistics depend on <code><a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html" title="Options for aggregate_across_cells().">AggregateAcrossCellsOptions</a></code>. </dd></dl>
+
+</div>
+</div>
+<a id="a8c5e32aa2efd50f80d02fcfa00d43837" name="a8c5e32aa2efd50f80d02fcfa00d43837"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c5e32aa2efd50f80d02fcfa00d43837">&#9670;&#160;</a></span>aggregate_across_genes() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Data_ , typename Index_ , typename Gene_ , typename Weight_ , typename Sum_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void scran_aggregate::aggregate_across_genes </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Data_, Index_ &gt; &amp;&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>gene_sets</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html">AggregateAcrossGenesBuffers</a>&lt; Sum_ &gt; &amp;&#160;</td>
+          <td class="paramname"><em>buffers</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Aggregate expression values across gene sets for each cell. This is used to compute a sum/mean of expression values for one or more gene sets/signatures. Each gene in the set can also be weighted, e.g., to account for the strength of regulatory relationships.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Data_</td><td>Type of data in the input matrix, should be numeric. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of index in the input matrix. </td></tr>
+    <tr><td class="paramname">Gene_</td><td>Integer type for the indices of genes in each set. </td></tr>
+    <tr><td class="paramname">Weight_</td><td>Floating-point type for the weights of genes in each set. </td></tr>
+    <tr><td class="paramname">Sum_</td><td>Floating-point type of the sum.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">input</td><td>The input matrix where rows are features and columns are cells. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">gene_sets</td><td>Vector of gene sets. Each tuple corresponds to a set and contains (i) the number of genes in the set, (ii) a pointer to the row indices of the genes in the set, and (iii) a pointer to the weights of the genes in the set. The weight pointer may be NULL, in which case all weights are set to 1. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">buffers</td><td>Collection of buffers in which to store the aggregate statistics (e.g., sums) for each gene set and cell. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">options</td><td>Further options. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a58d8a5a38223ceafca7ebaee5110c11f" name="a58d8a5a38223ceafca7ebaee5110c11f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58d8a5a38223ceafca7ebaee5110c11f">&#9670;&#160;</a></span>aggregate_across_genes() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Sum_  = double, typename Data_ , typename Index_ , typename Gene_ , typename Weight_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html">AggregateAcrossGenesResults</a>&lt; Sum_ &gt; scran_aggregate::aggregate_across_genes </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Data_, Index_ &gt; &amp;&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>gene_sets</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Overload of <code><a class="el" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes()</a></code> that allocates memory for the results.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Sum_</td><td>Floating-point type of the sum. </td></tr>
+    <tr><td class="paramname">Data_</td><td>Type of data in the input matrix, should be numeric. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of index in the input matrix. </td></tr>
+    <tr><td class="paramname">Gene_</td><td>Integer type for the indices of genes in each set. </td></tr>
+    <tr><td class="paramname">Weight_</td><td>Floating-point type for the weights of genes in each set.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input</td><td>The input matrix where rows are features and columns are cells. </td></tr>
+    <tr><td class="paramname">gene_sets</td><td>Vector of gene sets. Each tuple corresponds to a set and contains (i) the number of genes in the set, (ii) a pointer to the row indices of the genes in the set, and (iii) a pointer to the weights of the genes in the set. The weight pointer may be NULL, in which case all weights are set to 1. </td></tr>
+    <tr><td class="paramname">options</td><td>Further options.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Results of the aggregation. </dd></dl>
 
 </div>
 </div>

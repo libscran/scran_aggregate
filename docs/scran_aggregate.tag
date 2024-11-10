@@ -10,6 +10,15 @@
     <namespace>scran_aggregate</namespace>
   </compound>
   <compound kind="file">
+    <name>aggregate_across_genes.hpp</name>
+    <path>scran_aggregate/</path>
+    <filename>aggregate__across__genes_8hpp.html</filename>
+    <class kind="struct">scran_aggregate::AggregateAcrossGenesOptions</class>
+    <class kind="struct">scran_aggregate::AggregateAcrossGenesBuffers</class>
+    <class kind="struct">scran_aggregate::AggregateAcrossGenesResults</class>
+    <namespace>scran_aggregate</namespace>
+  </compound>
+  <compound kind="file">
     <name>clean_factor.hpp</name>
     <path>scran_aggregate/</path>
     <filename>clean__factor_8hpp.html</filename>
@@ -95,12 +104,57 @@
       <arglist></arglist>
     </member>
   </compound>
+  <compound kind="struct">
+    <name>scran_aggregate::AggregateAcrossGenesBuffers</name>
+    <filename>structscran__aggregate_1_1AggregateAcrossGenesBuffers.html</filename>
+    <templarg>typename Sum_</templarg>
+    <member kind="variable">
+      <type>std::vector&lt; Sum_ * &gt;</type>
+      <name>sum</name>
+      <anchorfile>structscran__aggregate_1_1AggregateAcrossGenesBuffers.html</anchorfile>
+      <anchor>aa739ab1284738c1eaad2c91104c2238e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>scran_aggregate::AggregateAcrossGenesOptions</name>
+    <filename>structscran__aggregate_1_1AggregateAcrossGenesOptions.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>num_threads</name>
+      <anchorfile>structscran__aggregate_1_1AggregateAcrossGenesOptions.html</anchorfile>
+      <anchor>a97c33a8c958774db4b1296b9cd98ddcc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>average</name>
+      <anchorfile>structscran__aggregate_1_1AggregateAcrossGenesOptions.html</anchorfile>
+      <anchor>a18c169c320277b91a53d7d4633a3f09e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>scran_aggregate::AggregateAcrossGenesResults</name>
+    <filename>structscran__aggregate_1_1AggregateAcrossGenesResults.html</filename>
+    <templarg>typename Sum_</templarg>
+    <member kind="variable">
+      <type>std::vector&lt; std::vector&lt; Sum_ &gt; &gt;</type>
+      <name>sum</name>
+      <anchorfile>structscran__aggregate_1_1AggregateAcrossGenesResults.html</anchorfile>
+      <anchor>a732d5bac9266655efeaa850f27eb68eb</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
   <compound kind="namespace">
     <name>scran_aggregate</name>
     <filename>namespacescran__aggregate.html</filename>
     <class kind="struct">scran_aggregate::AggregateAcrossCellsBuffers</class>
     <class kind="struct">scran_aggregate::AggregateAcrossCellsOptions</class>
     <class kind="struct">scran_aggregate::AggregateAcrossCellsResults</class>
+    <class kind="struct">scran_aggregate::AggregateAcrossGenesBuffers</class>
+    <class kind="struct">scran_aggregate::AggregateAcrossGenesOptions</class>
+    <class kind="struct">scran_aggregate::AggregateAcrossGenesResults</class>
     <member kind="function">
       <type>void</type>
       <name>aggregate_across_cells</name>
@@ -114,6 +168,20 @@
       <anchorfile>namespacescran__aggregate.html</anchorfile>
       <anchor>a8e46dd59466d786b30ad2534055b0b11</anchor>
       <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Factor_ *factor, const AggregateAcrossCellsOptions &amp;options)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>aggregate_across_genes</name>
+      <anchorfile>namespacescran__aggregate.html</anchorfile>
+      <anchor>a8c5e32aa2efd50f80d02fcfa00d43837</anchor>
+      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesBuffers&lt; Sum_ &gt; &amp;buffers, const AggregateAcrossGenesOptions &amp;options)</arglist>
+    </member>
+    <member kind="function">
+      <type>AggregateAcrossGenesResults&lt; Sum_ &gt;</type>
+      <name>aggregate_across_genes</name>
+      <anchorfile>namespacescran__aggregate.html</anchorfile>
+      <anchor>a58d8a5a38223ceafca7ebaee5110c11f</anchor>
+      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Factor_ &gt;</type>

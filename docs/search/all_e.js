@@ -18,5 +18,6 @@ var searchData=
   ['sparsifiedwrapper_2ehpp_15',['SparsifiedWrapper.hpp',['https://tatami-inc.github.io/tatami/SparsifiedWrapper_8hpp.html',1,'']]],
   ['specialcompareoperation_16',['SpecialCompareOperation',['https://tatami-inc.github.io/tatami/namespacetatami.html#a4ef624db40413dabc3fea554fc936d39',1,'tatami']]],
   ['substitute_5fhelpers_2ehpp_17',['substitute_helpers.hpp',['https://tatami-inc.github.io/tatami/substitute__helpers_8hpp.html',1,'']]],
-  ['sums_18',['sums',['../structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#af18936a8bb6ba1fbdb32f4584683288c',1,'scran_aggregate::AggregateAcrossCellsBuffers::sums'],['../structscran__aggregate_1_1AggregateAcrossCellsResults.html#ad09fedfa434a9be5074b47fd950098b7',1,'scran_aggregate::AggregateAcrossCellsResults::sums']]]
+  ['sum_18',['sum',['../structscran__aggregate_1_1AggregateAcrossGenesBuffers.html#aa739ab1284738c1eaad2c91104c2238e',1,'scran_aggregate::AggregateAcrossGenesBuffers::sum'],['../structscran__aggregate_1_1AggregateAcrossGenesResults.html#a732d5bac9266655efeaa850f27eb68eb',1,'scran_aggregate::AggregateAcrossGenesResults::sum']]],
+  ['sums_19',['sums',['../structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#af18936a8bb6ba1fbdb32f4584683288c',1,'scran_aggregate::AggregateAcrossCellsBuffers::sums'],['../structscran__aggregate_1_1AggregateAcrossCellsResults.html#ad09fedfa434a9be5074b47fd950098b7',1,'scran_aggregate::AggregateAcrossCellsResults::sums']]]
 ];
