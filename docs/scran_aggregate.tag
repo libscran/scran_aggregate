@@ -34,6 +34,7 @@
     <name>scran_aggregate.hpp</name>
     <path>scran_aggregate/</path>
     <filename>scran__aggregate_8hpp.html</filename>
+    <includes id="aggregate__across__genes_8hpp" name="aggregate_across_genes.hpp" local="yes" import="no" module="no" objc="no">aggregate_across_genes.hpp</includes>
     <includes id="aggregate__across__cells_8hpp" name="aggregate_across_cells.hpp" local="yes" import="no" module="no" objc="no">aggregate_across_cells.hpp</includes>
     <includes id="combine__factors_8hpp" name="combine_factors.hpp" local="yes" import="no" module="no" objc="no">combine_factors.hpp</includes>
     <includes id="clean__factor_8hpp" name="clean_factor.hpp" local="yes" import="no" module="no" objc="no">clean_factor.hpp</includes>
