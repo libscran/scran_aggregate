@@ -225,10 +225,10 @@ void compute_aggregate_by_column(
  */
 
 /**
- * Compute the per-gene sum and number of cells with detected expression for each level of a grouping factor.
- * This is typically done for the creation of pseudo-bulk expression profiles for cluster/sample combinations.
- * Expression values are generally expected to be counts, though the same code can be trivially re-used to compute the average log-expression.
- * We can also report the number of cells with detected (i.e., positive) expression values in each grouping.
+ * Aggregate expression values across groups of cells for each gene.
+ * We report the sum of expression values and the number of cells with detected (i.e., positive) expression values in each group.
+ * This is typically used to create pseudo-bulk expression profiles for cluster/sample combinations.
+ * Expression values are generally expected to be counts, though the same function can be used to compute the average log-expression.
  *
  * @tparam Data_ Type of data in the input matrix, should be numeric.
  * @tparam Index_ Integer type of index in the input matrix.
@@ -237,9 +237,9 @@ void compute_aggregate_by_column(
  * @tparam Detected_ Type for the number of detected cells, usually integer.
  *
  * @param input The input matrix where rows are features and columns are cells.
- * @param[in] factor Pointer to an array of length equal to the number of columns of `input`,
- * containing the factor level for each cell.
- * All levels should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique levels.
+ * @param[in] factor Grouping factor.
+ * This is a pointer to an array of length equal to the number of columns of `input`, containing the factor level (i.e., assigned group) for each cell.
+ * All levels should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique levels/groups.
  * @param[out] buffers Collection of buffers in which to store the aggregate statistics (e.g., sums, number of detected cells) for each level and gene.
  * @param options Further options.
  */
@@ -266,6 +266,8 @@ void aggregate_across_cells(
 } 
 
 /**
+ * Overload of `aggregate_across_cells()` that allocates memory for the results.
+ *
  * @tparam Sum_ Type of the sum, should be numeric.
  * @tparam Detected_ Type for the number of detected cells, usually integer.
  * @tparam Data_ Type of data in the input matrix, should be numeric.
@@ -273,9 +275,9 @@ void aggregate_across_cells(
  * @tparam Factor_ Integer type of the factor.
  *
  * @param input The input matrix where rows are features and columns are cells.
- * @param[in] factor Pointer to an array of length equal to the number of columns of `input`,
- * containing the factor level for each cell.
- * All levels should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique levels.
+ * @param[in] factor Grouping factor.
+ * This is a pointer to an array of length equal to the number of columns of `input`, containing the factor level (i.e., assigned group) for each cell.
+ * All levels should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique levels/groups.
  * @param options Further options.
  *
  * @return Results of the aggregation, where the available statistics depend on `AggregateAcrossCellsOptions`.
