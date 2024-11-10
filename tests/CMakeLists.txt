@@ -9,6 +9,7 @@ FetchContent_MakeAvailable(scran_tests)
 add_executable(
     libtest 
     src/aggregate_across_cells.cpp
+    src/aggregate_across_genes.cpp
     src/combine_factors.cpp
     src/clean_factor.cpp
 )
