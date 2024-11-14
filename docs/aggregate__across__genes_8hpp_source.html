@@ -223,7 +223,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    <span class="comment">// Identifying the subset of rows that actually need to be extracted.</span></div>
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <span class="keyword">auto</span> subset = create_subset&lt;Index_&gt;(gene_sets);</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    <span class="keywordtype">size_t</span> nsubs = subset.size();</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    <span class="keyword">auto</span> sub_oracle = std::make_shared&lt;tatami::FixedViewOracle&lt;Index_&gt; &gt;(subset.data(), subset.size());</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    <span class="keyword">auto</span> sub_oracle = std::make_shared&lt;tatami::FixedViewOracle&lt;Index_&gt; &gt;(subset.data(), nsubs);</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> num_sets = gene_sets.size();</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    std::vector&lt;std::vector&lt;std::pair&lt;size_t, Weight_&gt; &gt; &gt; remapping(nsubs);</div>
@@ -257,112 +257,116 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>            std::vector&lt;Data_&gt; vbuffer(length);</div>
 <div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>            std::vector&lt;Index_&gt; ibuffer(length);</div>
 <div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; sets : remapping) {</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> sub = 0; sub &lt; nsubs; ++sub) {</div>
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>                <span class="keyword">auto</span> range = ext-&gt;fetch(vbuffer.data(), ibuffer.data());</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>                <span class="keywordflow">for</span> (Index_ c = 0; c &lt; range.number; ++c) {</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                    <span class="keyword">auto</span> cell = range.index[c];</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                    <span class="keyword">auto</span> val = range.value[c];</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; s : sets) {</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                        buffers.sum[s.first][cell] += val * s.second;</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                    }</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                }</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            }</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        }, NC, options.num_threads);</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a08e0387bc00e8045a0364d6e35d120">tatami::parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ start, Index_ length) {</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>            <span class="keyword">auto</span> ext = <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::new_extractor&lt;false, true&gt;</a>(&amp;p, <span class="keyword">true</span>, sub_oracle, start, length);</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            std::vector&lt;Data_&gt; vbuffer(length);</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span> </div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; sets : remapping) {</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>                <span class="keyword">auto</span> ptr = ext-&gt;fetch(vbuffer.data());</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>                <span class="keywordflow">for</span> (Index_ cell = 0; cell &lt; length; ++cell) {</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>                    <span class="keyword">auto</span> val = ptr[cell];</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>                    <span class="keywordtype">size_t</span> pos = cell + start;</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>                    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; s : sets) {</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                        buffers.sum[s.first][pos] += val * s.second;</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                    }</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                }</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>            }</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>        }, NC, options.num_threads);</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    }</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>}</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span> </div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>}</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Data_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Gene_, <span class="keyword">typename</span> Weight_, <span class="keyword">typename</span> Sum_&gt;</div>
-<div class="foldopen" id="foldopen00256" data-start="{" data-end="}">
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno"><a class="line" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">  256</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes</a>(</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Data_, Index_&gt;</a>&amp; input,</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    <span class="keyword">const</span> std::vector&lt;std::tuple&lt;size_t, const Gene_*, const Weight_*&gt; &gt;&amp; gene_sets,</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html">AggregateAcrossGenesBuffers&lt;Sum_&gt;</a>&amp; buffers,</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a>&amp; options)</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>{</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    <span class="keywordflow">if</span> (input.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">prefer_rows</a>()) {</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>        aggregate_across_genes_internal::compute_aggregate_by_row(input, gene_sets, buffers, options);</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        aggregate_across_genes_internal::compute_aggregate_by_column(input, gene_sets, buffers, options);</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    }</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span> </div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html#a18c169c320277b91a53d7d4633a3f09e">average</a>) {</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        <span class="keywordtype">size_t</span> nsets = gene_sets.size();</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>        <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a08e0387bc00e8045a0364d6e35d120">tatami::parallelize</a>([&amp;](<span class="keywordtype">int</span>, <span class="keywordtype">size_t</span> start, <span class="keywordtype">size_t</span> length) {</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>            <span class="keywordtype">size_t</span> NC = input.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> s = start, end = start + length; s &lt; end; ++s) {</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>                <span class="keyword">const</span> <span class="keyword">auto</span>&amp; set = gene_sets[s];</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                <span class="keyword">auto</span> set_size = std::get&lt;0&gt;(set);</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>                Sum_ denom = 0;</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>                <span class="keyword">auto</span> set_weights = std::get&lt;2&gt;(set);</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>                <span class="keywordflow">if</span> (set_weights) {</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>                    denom = std::accumulate(set_weights, set_weights + set_size, <span class="keyword">static_cast&lt;</span>Sum_<span class="keyword">&gt;</span>(0)); </div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>                    denom = set_size;</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>                }</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span> </div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>                <span class="keyword">auto</span> current = buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html#aa739ab1284738c1eaad2c91104c2238e">sum</a>[s];</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> c = 0; c &lt; NC; ++c) {</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>                    current[c] /= denom;</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>                }</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>            }</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>        }, nsets, options.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html#a97c33a8c958774db4b1296b9cd98ddcc">num_threads</a>);</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>    }</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>} </div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>                <span class="keyword">const</span> <span class="keyword">auto</span>&amp; sets = remapping[sub];</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                <span class="keywordflow">for</span> (Index_ c = 0; c &lt; range.number; ++c) {</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                    <span class="keyword">auto</span> cell = range.index[c];</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                    <span class="keyword">auto</span> val = range.value[c];</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; sw : sets) {</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                        buffers.sum[sw.first][cell] += val * sw.second;</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                    }</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                }</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>            }</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        }, NC, options.num_threads);</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span> </div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>        <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a08e0387bc00e8045a0364d6e35d120">tatami::parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ start, Index_ length) {</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>            <span class="keyword">auto</span> ext = <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::new_extractor&lt;false, true&gt;</a>(&amp;p, <span class="keyword">true</span>, sub_oracle, start, length);</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>            std::vector&lt;Data_&gt; vbuffer(length);</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span> </div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> sub = 0; sub &lt; nsubs; ++sub) {</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>                <span class="keyword">auto</span> ptr = ext-&gt;fetch(vbuffer.data());</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>                <span class="keyword">const</span> <span class="keyword">auto</span>&amp; sets = remapping[sub];</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span> </div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                <span class="keywordflow">for</span> (Index_ cell = 0; cell &lt; length; ++cell) {</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                    <span class="keyword">auto</span> val = ptr[cell];</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                    <span class="keywordtype">size_t</span> pos = cell + start;</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; sw : sets) {</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                        buffers.sum[sw.first][pos] += val * sw.second;</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                    }</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>                }</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>            }</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        }, NC, options.num_threads);</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>    }</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>}</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>}</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Data_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Gene_, <span class="keyword">typename</span> Weight_, <span class="keyword">typename</span> Sum_&gt;</div>
+<div class="foldopen" id="foldopen00260" data-start="{" data-end="}">
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno"><a class="line" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">  260</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes</a>(</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Data_, Index_&gt;</a>&amp; input,</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    <span class="keyword">const</span> std::vector&lt;std::tuple&lt;size_t, const Gene_*, const Weight_*&gt; &gt;&amp; gene_sets,</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html">AggregateAcrossGenesBuffers&lt;Sum_&gt;</a>&amp; buffers,</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a>&amp; options)</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>{</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    <span class="keywordflow">if</span> (input.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">prefer_rows</a>()) {</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        aggregate_across_genes_internal::compute_aggregate_by_row(input, gene_sets, buffers, options);</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        aggregate_across_genes_internal::compute_aggregate_by_column(input, gene_sets, buffers, options);</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>    }</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span> </div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html#a18c169c320277b91a53d7d4633a3f09e">average</a>) {</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        <span class="keywordtype">size_t</span> nsets = gene_sets.size();</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        <a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a08e0387bc00e8045a0364d6e35d120">tatami::parallelize</a>([&amp;](<span class="keywordtype">int</span>, <span class="keywordtype">size_t</span> start, <span class="keywordtype">size_t</span> length) {</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>            <span class="keywordtype">size_t</span> NC = input.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> s = start, end = start + length; s &lt; end; ++s) {</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>                <span class="keyword">const</span> <span class="keyword">auto</span>&amp; set = gene_sets[s];</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>                <span class="keyword">auto</span> set_size = std::get&lt;0&gt;(set);</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span> </div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>                Sum_ denom = 0;</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>                <span class="keyword">auto</span> set_weights = std::get&lt;2&gt;(set);</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>                <span class="keywordflow">if</span> (set_weights) {</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>                    denom = std::accumulate(set_weights, set_weights + set_size, <span class="keyword">static_cast&lt;</span>Sum_<span class="keyword">&gt;</span>(0)); </div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>                    denom = set_size;</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>                }</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>                <span class="keyword">auto</span> current = buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html#aa739ab1284738c1eaad2c91104c2238e">sum</a>[s];</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> c = 0; c &lt; NC; ++c) {</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>                    current[c] /= denom;</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                }</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>            }</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        }, nsets, options.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html#a97c33a8c958774db4b1296b9cd98ddcc">num_threads</a>);</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>    }</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>} </div>
 </div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span> </div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Sum_ = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Data_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Gene_, <span class="keyword">typename</span> Weight_&gt;</div>
-<div class="foldopen" id="foldopen00313" data-start="{" data-end="}">
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno"><a class="line" href="namespacescran__aggregate.html#a58d8a5a38223ceafca7ebaee5110c11f">  313</a></span><a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html">AggregateAcrossGenesResults&lt;Sum_&gt;</a> <a class="code hl_function" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes</a>(</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Data_, Index_&gt;</a>&amp; input,</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>    <span class="keyword">const</span> std::vector&lt;std::tuple&lt;size_t, const Gene_*, const Weight_*&gt; &gt;&amp; gene_sets,</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a>&amp; options)</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>{</div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>    <a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html">AggregateAcrossGenesResults&lt;Sum_&gt;</a> output;</div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>    <a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html">AggregateAcrossGenesBuffers&lt;Sum_&gt;</a> buffers;</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span> </div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>    <span class="keywordtype">size_t</span> NC = input.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>    <span class="keywordtype">size_t</span> nsets = gene_sets.size();</div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>    output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html#a732d5bac9266655efeaa850f27eb68eb">sum</a>.resize(nsets);</div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>    buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html#aa739ab1284738c1eaad2c91104c2238e">sum</a>.resize(nsets);</div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span> </div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> s = 0; s &lt; nsets; ++s) {</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>        output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html#a732d5bac9266655efeaa850f27eb68eb">sum</a>[s].resize(NC);</div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>        buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html#aa739ab1284738c1eaad2c91104c2238e">sum</a>[s] = output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html#a732d5bac9266655efeaa850f27eb68eb">sum</a>[s].data();</div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>    }</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span> </div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>    <a class="code hl_function" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes</a>(input, gene_sets, buffers, options);</div>
-<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>    <span class="keywordflow">return</span> output;</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>} </div>
-</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span> </div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Sum_ = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Data_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Gene_, <span class="keyword">typename</span> Weight_&gt;</div>
+<div class="foldopen" id="foldopen00317" data-start="{" data-end="}">
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno"><a class="line" href="namespacescran__aggregate.html#a58d8a5a38223ceafca7ebaee5110c11f">  317</a></span><a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html">AggregateAcrossGenesResults&lt;Sum_&gt;</a> <a class="code hl_function" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes</a>(</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>    <span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;Data_, Index_&gt;</a>&amp; input,</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>    <span class="keyword">const</span> std::vector&lt;std::tuple&lt;size_t, const Gene_*, const Weight_*&gt; &gt;&amp; gene_sets,</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a>&amp; options)</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>{</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>    <a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html">AggregateAcrossGenesResults&lt;Sum_&gt;</a> output;</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>    <a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html">AggregateAcrossGenesBuffers&lt;Sum_&gt;</a> buffers;</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span> </div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>    <span class="keywordtype">size_t</span> NC = input.<a class="code hl_functionRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>    <span class="keywordtype">size_t</span> nsets = gene_sets.size();</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html#a732d5bac9266655efeaa850f27eb68eb">sum</a>.resize(nsets);</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>    buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html#aa739ab1284738c1eaad2c91104c2238e">sum</a>.resize(nsets);</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span> </div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> s = 0; s &lt; nsets; ++s) {</div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>        output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html#a732d5bac9266655efeaa850f27eb68eb">sum</a>[s].resize(NC);</div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>        buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html#aa739ab1284738c1eaad2c91104c2238e">sum</a>[s] = output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html#a732d5bac9266655efeaa850f27eb68eb">sum</a>[s].data();</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>    }</div>
 <div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span> </div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>}</div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span> </div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>    <a class="code hl_function" href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes</a>(input, gene_sets, buffers, options);</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>    <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>} </div>
+</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span> </div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>}</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span> </div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a1f6fec43d5bae3f831841646bc02377b"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">tatami::Matrix::ncol</a></div><div class="ttdeci">virtual Index_ ncol() const=0</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a69382d2a4e66cda1a9eb48dc25ab113a"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">tatami::Matrix::prefer_rows</a></div><div class="ttdeci">virtual bool prefer_rows() const=0</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_af84772cc4e911a87948d45a1edcabbd0"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">tatami::Matrix::sparse</a></div><div class="ttdeci">virtual std::unique_ptr&lt; MyopicSparseExtractor&lt; Value_, Index_ &gt; &gt; sparse(bool row, const Options &amp;opt) const=0</div></div>
 <div class="ttc" id="anamespacescran__aggregate_html"><div class="ttname"><a href="namespacescran__aggregate.html">scran_aggregate</a></div><div class="ttdoc">Aggregate single-cell expression values.</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:13</div></div>
-<div class="ttc" id="anamespacescran__aggregate_html_a8c5e32aa2efd50f80d02fcfa00d43837"><div class="ttname"><a href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">scran_aggregate::aggregate_across_genes</a></div><div class="ttdeci">void aggregate_across_genes(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesBuffers&lt; Sum_ &gt; &amp;buffers, const AggregateAcrossGenesOptions &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_genes.hpp:256</div></div>
+<div class="ttc" id="anamespacescran__aggregate_html_a8c5e32aa2efd50f80d02fcfa00d43837"><div class="ttname"><a href="namespacescran__aggregate.html#a8c5e32aa2efd50f80d02fcfa00d43837">scran_aggregate::aggregate_across_genes</a></div><div class="ttdeci">void aggregate_across_genes(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesBuffers&lt; Sum_ &gt; &amp;buffers, const AggregateAcrossGenesOptions &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_genes.hpp:260</div></div>
 <div class="ttc" id="anamespacetatami_html_a5a08e0387bc00e8045a0364d6e35d120"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#a5a08e0387bc00e8045a0364d6e35d120">tatami::parallelize</a></div><div class="ttdeci">void parallelize(Function_ fun, Index_ tasks, int threads)</div></div>
 <div class="ttc" id="anamespacetatami_html_abbb0bdf0b79fe19e504b49b43984f634"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#abbb0bdf0b79fe19e504b49b43984f634">tatami::VectorPtr</a></div><div class="ttdeci">std::shared_ptr&lt; const std::vector&lt; Index_ &gt; &gt; VectorPtr</div></div>
 <div class="ttc" id="anamespacetatami_html_af05590455e558621c8ffc1b98c4fd454"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::consecutive_extractor</a></div><div class="ttdeci">auto consecutive_extractor(const Matrix&lt; Value_, Index_ &gt; *mat, bool row, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</div></div>
