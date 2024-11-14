@@ -162,7 +162,7 @@ void compute_aggregate_by_row(
     // Identifying the subset of rows that actually need to be extracted.
     auto subset = create_subset<Index_>(gene_sets);
     size_t nsubs = subset.size();
-    auto sub_oracle = std::make_shared<tatami::FixedViewOracle<Index_> >(subset.data(), subset.size());
+    auto sub_oracle = std::make_shared<tatami::FixedViewOracle<Index_> >(subset.data(), nsubs);
 
     const size_t num_sets = gene_sets.size();
     std::vector<std::vector<std::pair<size_t, Weight_> > > remapping(nsubs);
@@ -196,13 +196,15 @@ void compute_aggregate_by_row(
             std::vector<Data_> vbuffer(length);
             std::vector<Index_> ibuffer(length);
 
-            for (const auto& sets : remapping) {
+            for (size_t sub = 0; sub < nsubs; ++sub) {
                 auto range = ext->fetch(vbuffer.data(), ibuffer.data());
+                const auto& sets = remapping[sub];
+
                 for (Index_ c = 0; c < range.number; ++c) {
                     auto cell = range.index[c];
                     auto val = range.value[c];
-                    for (const auto& s : sets) {
-                        buffers.sum[s.first][cell] += val * s.second;
+                    for (const auto& sw : sets) {
+                        buffers.sum[sw.first][cell] += val * sw.second;
                     }
                 }
             }
@@ -213,13 +215,15 @@ void compute_aggregate_by_row(
             auto ext = tatami::new_extractor<false, true>(&p, true, sub_oracle, start, length);
             std::vector<Data_> vbuffer(length);
 
-            for (const auto& sets : remapping) {
+            for (size_t sub = 0; sub < nsubs; ++sub) {
                 auto ptr = ext->fetch(vbuffer.data());
+                const auto& sets = remapping[sub];
+
                 for (Index_ cell = 0; cell < length; ++cell) {
                     auto val = ptr[cell];
                     size_t pos = cell + start;
-                    for (const auto& s : sets) {
-                        buffers.sum[s.first][pos] += val * s.second;
+                    for (const auto& sw : sets) {
+                        buffers.sum[sw.first][pos] += val * sw.second;
                     }
                 }
             }
