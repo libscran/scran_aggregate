@@ -11,8 +11,8 @@ std::pair<std::vector<std::vector<Factor_> >, std::vector<int> > test_combine_fa
     return std::make_pair(std::move(levels), std::move(combined));
 }
 
-TEST(CombineFactors, Simple) {
-    // Simple sorted case.
+TEST(CombineFactors, Special) {
+    // Single factor, just defers to clean_factor.
     {
         std::vector<int> stuff{0, 0, 1, 1, 1, 2, 2, 2, 2 };
         auto combined = test_combine_factors(stuff.size(), std::vector<const int*>{stuff.data()});
@@ -21,29 +21,6 @@ TEST(CombineFactors, Simple) {
         EXPECT_EQ(combined.first.size(), 1);
         std::vector<int> expected { 0, 1, 2 };
         EXPECT_EQ(combined.first[0], expected);
-    }
-
-    // Testing the unsorted case.
-    {
-        std::vector<int> stuff{ 1, 0, 1, 2, 1, 0, 2, 3, 2 };
-        auto combined = test_combine_factors(stuff.size(), std::vector<const int*>{stuff.data()});
-        EXPECT_EQ(combined.second, stuff);
-
-        EXPECT_EQ(combined.first.size(), 1);
-        std::vector<int> expected { 0, 1, 2, 3 };
-        EXPECT_EQ(combined.first[0], expected);
-    }
-
-    // Non-consecutive still works.
-    {
-        std::vector<int> stuff{ 1, 3, 5, 7, 9 };
-        auto combined = test_combine_factors(stuff.size(), std::vector<const int*>{stuff.data()});
-        std::vector<int> expected { 0, 1, 2, 3, 4 };
-        EXPECT_EQ(combined.second, expected);
-
-        EXPECT_EQ(combined.first.size(), 1);
-        std::vector<int> levels { 1, 3, 5, 7, 9 };
-        EXPECT_EQ(combined.first[0], levels);
     }
 
     // Nothing at all.
@@ -55,6 +32,48 @@ TEST(CombineFactors, Simple) {
 }
 
 TEST(CombineFactors, Multiple) {
+    // Single factor, the other is a no-op.
+    {
+        std::vector<int> stuff1{0, 0, 1, 1, 1, 2, 2, 2, 2 };
+        std::vector<int> stuff2(stuff1.size());
+        auto combined = test_combine_factors(stuff1.size(), std::vector<const int*>{stuff1.data(), stuff2.data()});
+        EXPECT_EQ(combined.second, stuff1);
+
+        EXPECT_EQ(combined.first.size(), 2);
+        std::vector<int> expected1 { 0, 1, 2 };
+        EXPECT_EQ(combined.first[0], expected1);
+        std::vector<int> expected2 { 0, 0, 0 };
+        EXPECT_EQ(combined.first[1], expected2);
+    }
+
+    {
+        std::vector<int> stuff1{ 1, 0, 1, 2, 1, 0, 2, 3, 2 };
+        std::vector<int> stuff2(stuff1.size());
+        auto combined = test_combine_factors(stuff1.size(), std::vector<const int*>{stuff1.data(), stuff2.data()});
+        EXPECT_EQ(combined.second, stuff1);
+
+        EXPECT_EQ(combined.first.size(), 2);
+        std::vector<int> expected1 { 0, 1, 2, 3 };
+        EXPECT_EQ(combined.first[0], expected1);
+        std::vector<int> expected2 { 0, 0, 0, 0 };
+        EXPECT_EQ(combined.first[1], expected2);
+    }
+
+    {
+        std::vector<int> stuff2{ 1, 3, 5, 7, 9 };
+        std::vector<int> stuff1(stuff2.size());
+        auto combined = test_combine_factors(stuff1.size(), std::vector<const int*>{stuff1.data(), stuff2.data()});
+        std::vector<int> expected { 0, 1, 2, 3, 4 };
+        EXPECT_EQ(combined.second, expected);
+
+        EXPECT_EQ(combined.first.size(), 2);
+        std::vector<int> expected1 { 0, 0, 0, 0, 0 };
+        EXPECT_EQ(combined.first[0], expected1);
+        std::vector<int> expected2 { 1, 3, 5, 7, 9 };
+        EXPECT_EQ(combined.first[1], expected2);
+    }
+
+    // Multiple non-trivial factors.
     {
         std::vector<int> stuff1{ 0, 0, 1, 1, 1, 2, 2, 2, 2 };
         std::vector<int> stuff2{ 0, 1, 2, 0, 1, 2, 0, 1, 2 };
@@ -70,6 +89,7 @@ TEST(CombineFactors, Multiple) {
         EXPECT_EQ(combined.first[1], levels2);
     }
 
+    // Simulated example.
     {
         std::map<std::pair<int, int>, std::vector<int> > collected;
         std::vector<int> stuff1;

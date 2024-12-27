@@ -32,12 +32,6 @@ TEST(CleanFactors, Simple) {
 
         std::vector<int> expected { 0, 1, 2, 5 };
         EXPECT_EQ(cleand.first, expected);
-
-        // Same as combine_factors.
-        std::vector<int> combined(stuff.size());
-        auto comlevels = scran_aggregate::combine_factors(stuff.size(), std::vector<const int*>{ stuff.data() }, combined.data());
-        EXPECT_EQ(combined, cleand.second);
-        EXPECT_EQ(comlevels[0], cleand.first);
     }
 
     // Non-consecutive still works.
@@ -49,11 +43,15 @@ TEST(CleanFactors, Simple) {
 
         std::vector<int> levels { 1, 3, 5, 7, 9 };
         EXPECT_EQ(cleand.first, levels);
+    }
 
-        // Same as combine_factors.
-        std::vector<int> combined(stuff.size());
-        auto comlevels = scran_aggregate::combine_factors(stuff.size(), std::vector<const int*>{ stuff.data() }, combined.data());
-        EXPECT_EQ(combined, cleand.second);
-        EXPECT_EQ(comlevels[0], cleand.first);
+    {
+        std::vector<int> stuff{ 9, 1, 5, 1, 7, 1, 3 };
+        auto cleand = test_clean_factor(stuff.size(), stuff.data());
+        std::vector<int> cleaned { 4, 0, 2, 0, 3, 0, 1 };
+        EXPECT_EQ(cleand.second, cleaned);
+
+        std::vector<int> levels { 1, 3, 5, 7, 9 };
+        EXPECT_EQ(cleand.first, levels);
     }
 }

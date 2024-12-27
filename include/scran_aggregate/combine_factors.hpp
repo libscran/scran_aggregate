@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <unordered_map>
+#include <typeindex>
 
 #include "clean_factor.hpp"
 
@@ -50,57 +51,70 @@ std::vector<std::vector<Factor_> > combine_factors(size_t n, const std::vector<c
         return output;
     }
 
-    // Using a map with a custom comparator that uses the index
-    // of first occurrence of each factor as the key. Currently using a map
-    // to (i) avoid issues with collisions of combined hashes and (ii)
-    // avoid having to write more code for sorting a vector of arrays.
-    auto cmp = [&](size_t left, size_t right) -> bool {
-        for (auto curf : factors) {
-            if (curf[left] < curf[right]) {
-                return true;
-            } else if (curf[left] > curf[right]) {
-                return false;
-            }
-        }
-        return false;
+    // Creating a hashmap on the combinations of each factor.
+    struct Combination {
+        Combination(size_t i) : index(i) {}
+        size_t index;
     };
 
-    auto eq = [&](size_t left, size_t right) -> bool {
-        for (auto curf : factors) {
-            if (curf[left] != curf[right]) {
-                return false;
+    auto unique = [&]{ // scoping this in an IIFE to release map memory sooner.
+        // Using a map with a custom comparator that uses the index
+        // of first occurrence of each factor as the key. Currently using a map
+        // to (i) avoid issues with collisions of combined hashes and (ii)
+        // avoid having to write more code for sorting a vector of arrays.
+        auto cmp = [&](const Combination& left, const Combination& right) -> bool {
+            for (auto curf : factors) {
+                if (curf[left.index] < curf[right.index]) {
+                    return true;
+                } else if (curf[left.index] > curf[right.index]) {
+                    return false;
+                }
+            }
+            return false;
+        };
+
+        auto eq = [&](const Combination& left, const Combination& right) -> bool {
+            for (auto curf : factors) {
+                if (curf[left.index] != curf[right.index]) {
+                    return false;
+                }
+            }
+            return true;
+        };
+
+        std::map<Combination, Combined_, decltype(cmp)> mapping(std::move(cmp));
+        for (size_t i = 0; i < n; ++i) {
+            Combination current(i);
+            auto mIt = mapping.find(current);
+            if (mIt == mapping.end() || !eq(mIt->first, current)) {
+                Combined_ alt = mapping.size();
+                mapping.insert(mIt, std::make_pair(current, alt));
+                combined[i] = alt;
+            } else {
+                combined[i] = mIt->second;
             }
         }
-        return true;
-    };
 
-    std::map<size_t, Combined_, decltype(cmp)> mapping(cmp);
-    for (size_t i = 0; i < n; ++i) {
-        auto mIt = mapping.find(i);
-        if (mIt == mapping.end() || !eq(i, mIt->first)) {
-            mapping.insert(mIt, std::pair<size_t, Combined_>(i, 0));
-        }
-    }
+        return std::vector<std::pair<Combination, Combined_> >(mapping.begin(), mapping.end());
+    }();
 
-    // Obtaining the sorted set of unique combinations; easy to do for a
-    // map because it's already sorted!
-    size_t nuniq = mapping.size();
+    // Remapping to a sorted set.
+    size_t nuniq = unique.size();
     for (auto& ofac : output) {
         ofac.reserve(nuniq);
     }
-
-    auto mIt = mapping.begin();
-    for (size_t u = 0; u < nuniq; ++u, ++mIt) {
-        auto ix = mIt->first;
+    std::vector<Combined_> remapping(nuniq);
+    for (size_t u = 0; u < nuniq; ++u) {
+        auto ix = unique[u].first.index;
         for (size_t f = 0; f < nfac; ++f) {
             output[f].push_back(factors[f][ix]);
         }
-        mIt->second = u;
+        remapping[unique[u].second] = u;
     }
 
-    // Mapping each cell to its unique combination.
+    // Mapping each cell to its sorted combination.
     for (size_t i = 0; i < n; ++i) {
-        combined[i] = mapping[i];
+        combined[i] = remapping[combined[i]];
     }
 
     return output;

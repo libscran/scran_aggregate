@@ -31,30 +31,35 @@ namespace scran_aggregate {
  */
 template<typename Factor_, typename Output_>
 std::vector<Factor_> clean_factor(size_t n, const Factor_* factor, Output_* cleaned) {
-    std::unordered_map<Factor_, Output_> mapping;
-    for (size_t i = 0; i < n; ++i) {
-        auto current = factor[i];
-        mapping[current] = 0;
-    }
+    auto unique = [&]{ // scoping this in an IIFE to release map memory sooner.
+        std::unordered_map<Factor_, Output_> mapping;
+        for (size_t i = 0; i < n; ++i) {
+            auto current = factor[i];
+            auto mIt = mapping.find(current);
+            if (mIt != mapping.end()) {
+                cleaned[i] = mIt->second;
+            } else {
+                Output_ alt = mapping.size();
+                mapping[current] = alt;
+                cleaned[i] = alt;
+            }
+        }
+        return std::vector<std::pair<Factor_, Output_> >(mapping.begin(), mapping.end());
+    }();
 
-    // Obtaining the sorted set of unique combinations.
-    std::vector<Factor_> output;
-    size_t nuniq = mapping.size();
-    output.reserve(nuniq);
-    for (const auto& mp : mapping) {
-        output.push_back(mp.first);
-    }
-    std::sort(output.begin(), output.end());
-
-    Output_ counter = 0;
-    for (auto key : output) {
-        mapping[key] = counter;
-        ++counter;
+    // Remapping to a sorted set.
+    std::sort(unique.begin(), unique.end());
+    size_t nuniq = unique.size();
+    std::vector<Output_> remapping(nuniq);
+    std::vector<Factor_> output(nuniq);
+    for (size_t u = 0; u < nuniq; ++u) {
+        remapping[unique[u].second] = u;
+        output[u] = unique[u].first;
     }
 
     // Mapping each cell to its sorted factor.
     for (size_t i = 0; i < n; ++i) {
-        cleaned[i] = mapping[factor[i]];
+        cleaned[i] = remapping[cleaned[i]];
     }
 
     return output;

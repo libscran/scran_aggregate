@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 project(scran_aggregate
-    VERSION 0.2.1
+    VERSION 0.2.2
     DESCRIPTION "Aggregate expression values across cells"
     LANGUAGES CXX)
 
