@@ -28,6 +28,7 @@
     <name>combine_factors.hpp</name>
     <path>scran_aggregate/</path>
     <filename>combine__factors_8hpp.html</filename>
+    <includes id="clean__factor_8hpp" name="clean_factor.hpp" local="yes" import="no" module="no" objc="no">clean_factor.hpp</includes>
     <namespace>scran_aggregate</namespace>
   </compound>
   <compound kind="file">
