@@ -175,7 +175,7 @@ void compute_aggregate_by_column(
 
     tatami::parallelize([&](size_t, Index_ s, Index_ l) {
         auto NC = p.ncol();
-        auto ext = tatami::consecutive_extractor<sparse_>(&p, false, 0, NC, s, l, opt);
+        auto ext = tatami::consecutive_extractor<sparse_>(&p, false, static_cast<Index_>(0), NC, s, l, opt);
         std::vector<Data_> vbuffer(l);
         typename std::conditional<sparse_, std::vector<Index_>, Index_>::type ibuffer(l);
 
