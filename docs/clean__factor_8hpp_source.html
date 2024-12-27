@@ -102,39 +102,44 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Factor_, <span class="keyword">typename</span> Output_&gt;</div>
 <div class="foldopen" id="foldopen00033" data-start="{" data-end="}">
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="namespacescran__aggregate.html#a2324eaab6a361f7f767204b62a79764b">   33</a></span>std::vector&lt;Factor_&gt; <a class="code hl_function" href="namespacescran__aggregate.html#a2324eaab6a361f7f767204b62a79764b">clean_factor</a>(<span class="keywordtype">size_t</span> n, <span class="keyword">const</span> Factor_* factor, Output_* cleaned) {</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    std::unordered_map&lt;Factor_, Output_&gt; mapping;</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; n; ++i) {</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        <span class="keyword">auto</span> current = factor[i];</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        mapping[current] = 0;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    }</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="comment">// Obtaining the sorted set of unique combinations.</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    std::vector&lt;Factor_&gt; output;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordtype">size_t</span> nuniq = mapping.size();</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    output.reserve(nuniq);</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; mp : mapping) {</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        output.push_back(mp.first);</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    }</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    std::sort(output.begin(), output.end());</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    Output_ counter = 0;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> key : output) {</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        mapping[key] = counter;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        ++counter;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    }</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="comment">// Mapping each cell to its sorted factor.</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; n; ++i) {</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        cleaned[i] = mapping[factor[i]];</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keyword">auto</span> unique = [&amp;]{ <span class="comment">// scoping this in an IIFE to release map memory sooner.</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        std::unordered_map&lt;Factor_, Output_&gt; mapping;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; n; ++i) {</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>            <span class="keyword">auto</span> current = factor[i];</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>            <span class="keyword">auto</span> mIt = mapping.find(current);</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            <span class="keywordflow">if</span> (mIt != mapping.end()) {</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>                cleaned[i] = mIt-&gt;second;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>                Output_ alt = mapping.size();</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>                mapping[current] = alt;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                cleaned[i] = alt;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>            }</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        }</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keywordflow">return</span> std::vector&lt;std::pair&lt;Factor_, Output_&gt; &gt;(mapping.begin(), mapping.end());</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    }();</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="comment">// Remapping to a sorted set.</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    std::sort(unique.begin(), unique.end());</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordtype">size_t</span> nuniq = unique.size();</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    std::vector&lt;Output_&gt; remapping(nuniq);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    std::vector&lt;Factor_&gt; output(nuniq);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> u = 0; u &lt; nuniq; ++u) {</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        remapping[unique[u].second] = u;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        output[u] = unique[u].first;</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    }</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordflow">return</span> output;</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}</div>
-</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>}</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="comment">// Mapping each cell to its sorted factor.</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; n; ++i) {</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        cleaned[i] = remapping[cleaned[i]];</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    }</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>}</div>
+</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>}</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacescran__aggregate_html"><div class="ttname"><a href="namespacescran__aggregate.html">scran_aggregate</a></div><div class="ttdoc">Aggregate single-cell expression values.</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:13</div></div>
 <div class="ttc" id="anamespacescran__aggregate_html_a2324eaab6a361f7f767204b62a79764b"><div class="ttname"><a href="namespacescran__aggregate.html#a2324eaab6a361f7f767204b62a79764b">scran_aggregate::clean_factor</a></div><div class="ttdeci">std::vector&lt; Factor_ &gt; clean_factor(size_t n, const Factor_ *factor, Output_ *cleaned)</div><div class="ttdef"><b>Definition</b> clean_factor.hpp:33</div></div>
 </div><!-- fragment --></div><!-- contents -->
