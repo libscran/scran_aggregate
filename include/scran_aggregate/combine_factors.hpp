@@ -6,6 +6,8 @@
 #include <map>
 #include <unordered_map>
 
+#include "clean_factor.hpp"
+
 /**
  * @file combine_factors.hpp
  * @brief Combine categorical factors into a single factor. 
@@ -35,6 +37,19 @@ namespace scran_aggregate {
  */
 template<typename Factor_, typename Combined_>
 std::vector<std::vector<Factor_> > combine_factors(size_t n, const std::vector<const Factor_*>& factors, Combined_* combined) {
+    size_t nfac = factors.size();
+    std::vector<std::vector<Factor_> > output(nfac);
+
+    // Handling the special cases.
+    if (nfac == 0) {
+        std::fill_n(combined, n, 0);
+        return output;
+    }
+    if (nfac == 1) {
+        output[0] = clean_factor(n, factors.front(), combined);
+        return output;
+    }
+
     // Using a map with a custom comparator that uses the index
     // of first occurrence of each factor as the key. Currently using a map
     // to (i) avoid issues with collisions of combined hashes and (ii)
@@ -69,8 +84,6 @@ std::vector<std::vector<Factor_> > combine_factors(size_t n, const std::vector<c
 
     // Obtaining the sorted set of unique combinations; easy to do for a
     // map because it's already sorted!
-    size_t nfac = factors.size();
-    std::vector<std::vector<Factor_> > output(nfac);
     size_t nuniq = mapping.size();
     for (auto& ofac : output) {
         ofac.reserve(nuniq);
@@ -120,54 +133,56 @@ std::vector<std::vector<Factor_> > combine_factors_unused(size_t n, const std::v
     size_t nfac = factors.size();
     std::vector<std::vector<Factor_> > output(nfac);
 
-    if (nfac > 1) {
-        // We iterate from back to front, where the first factor is the slowest changing.
-        std::copy_n(factors[nfac - 1].first, n, combined); 
-        Combined_ mult = factors[nfac - 1].second;
-        for (size_t f = nfac - 1; f > 0; --f) {
-            const auto& finfo = factors[f - 1];
-            auto ff = finfo.first;
-            for (size_t i = 0; i < n; ++i) {
-                combined[i] += mult * ff[i];
-            }
-            mult *= finfo.second;
-        }
-
-        auto ncombos = mult;
-        Combined_ outer_repeats = mult;
-        Combined_ inner_repeats = 1;
-        for (size_t f = nfac; f > 0; --f) {
-            auto& out = output[f - 1];
-            out.reserve(ncombos);
-
-            const auto& finfo = factors[f - 1];
-            size_t initial_size = inner_repeats * finfo.second;
-            out.resize(initial_size);
-
-            if (inner_repeats == 1) {
-                std::iota(out.begin(), out.end(), static_cast<Combined_>(0));
-            } else {
-                auto oIt = out.begin();
-                for (Number_ l = 0; l < finfo.second; ++l) {
-                    std::fill_n(oIt, inner_repeats, l);
-                    oIt += inner_repeats;
-                }
-            }
-            inner_repeats = initial_size;
-
-            outer_repeats /= finfo.second;
-            for (Combined_ r = 1; r < outer_repeats; ++r) {
-                out.insert(out.end(), out.begin(), out.begin() + initial_size);
-            }
-        }
-
-    } else if (nfac == 1) {
+    // Handling the special cases.
+    if (nfac == 0) {
+        std::fill_n(combined, n, 0);
+        return output;
+    }
+    if (nfac == 1) {
         output[0].resize(factors[0].second);
         std::iota(output[0].begin(), output[0].end(), static_cast<Combined_>(0));
         std::copy_n(factors[0].first, n, combined);
+        return output;
+    }
 
-    } else {
-        std::fill_n(combined, n, 0);
+    // We iterate from back to front, where the first factor is the slowest changing.
+    std::copy_n(factors[nfac - 1].first, n, combined); 
+    Combined_ mult = factors[nfac - 1].second;
+    for (size_t f = nfac - 1; f > 0; --f) {
+        const auto& finfo = factors[f - 1];
+        auto ff = finfo.first;
+        for (size_t i = 0; i < n; ++i) {
+            combined[i] += mult * ff[i];
+        }
+        mult *= finfo.second;
+    }
+
+    auto ncombos = mult;
+    Combined_ outer_repeats = mult;
+    Combined_ inner_repeats = 1;
+    for (size_t f = nfac; f > 0; --f) {
+        auto& out = output[f - 1];
+        out.reserve(ncombos);
+
+        const auto& finfo = factors[f - 1];
+        size_t initial_size = inner_repeats * finfo.second;
+        out.resize(initial_size);
+
+        if (inner_repeats == 1) {
+            std::iota(out.begin(), out.end(), static_cast<Combined_>(0));
+        } else {
+            auto oIt = out.begin();
+            for (Number_ l = 0; l < finfo.second; ++l) {
+                std::fill_n(oIt, inner_repeats, l);
+                oIt += inner_repeats;
+            }
+        }
+        inner_repeats = initial_size;
+
+        outer_repeats /= finfo.second;
+        for (Combined_ r = 1; r < outer_repeats; ++r) {
+            out.insert(out.end(), out.begin(), out.begin() + initial_size);
+        }
     }
 
     return output;

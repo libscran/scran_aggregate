@@ -116,7 +116,7 @@ std::pair<std::vector<std::vector<Factor_> >, std::vector<int> > test_combine_fa
     return std::make_pair(std::move(levels), std::move(combined));
 }
 
-TEST(CombineFactorsUnused, Basic) {
+TEST(CombineFactorsUnused, Special) {
     std::vector<int> stuff{ 1, 3, 5, 3, 1 };
     auto combined = test_combine_factors_unused(stuff.size(), std::vector<std::pair<const int*, int> >{ { stuff.data(), 7 } });
     EXPECT_EQ(combined.second, stuff);
