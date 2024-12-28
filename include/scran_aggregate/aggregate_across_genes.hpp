@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <vector>
 #include <unordered_set>
+#include <stdexcept>
 
 #include "tatami/tatami.hpp"
 
@@ -65,15 +66,22 @@ struct AggregateAcrossGenesResults {
 namespace aggregate_across_genes_internal {
 
 template<typename Index_, typename Gene_, typename Weight_>
-std::vector<Gene_> create_subset(const std::vector<std::tuple<size_t, const Gene_*, const Weight_*> >& gene_sets) {
+std::vector<Gene_> create_subset(const std::vector<std::tuple<size_t, const Gene_*, const Weight_*> >& gene_sets, Index_ nrow) {
     std::unordered_set<Gene_> of_interest;
     for (const auto& set : gene_sets) {
         auto set_size = std::get<0>(set);
         auto set_genes = std::get<1>(set);
         of_interest.insert(set_genes, set_genes + set_size);
     }
+
     std::vector<Index_> subset(of_interest.begin(), of_interest.end());
-    std::sort(subset.begin(), subset.end());
+    if (!subset.empty()) {
+        std::sort(subset.begin(), subset.end());
+        if (subset.front() < 0 || subset.back() >= nrow) {
+            throw std::runtime_error("set indices are out of range");
+        }
+    }
+
     return subset;
 }
 
@@ -97,7 +105,7 @@ void compute_aggregate_by_column(
     const AggregateAcrossGenesOptions& options)
 {
     // Identifying the subset of rows that actually need to be extracted.
-    tatami::VectorPtr<Index_> subset_of_interest = std::make_shared<std::vector<Index_> >(create_subset<Index_>(gene_sets));
+    tatami::VectorPtr<Index_> subset_of_interest = std::make_shared<std::vector<Index_> >(create_subset<Index_>(gene_sets, p.nrow()));
     const auto& subset = *subset_of_interest;
     size_t nsubs = subset.size();
 
@@ -160,7 +168,7 @@ void compute_aggregate_by_row(
     const AggregateAcrossGenesOptions& options)
 {
     // Identifying the subset of rows that actually need to be extracted.
-    auto subset = create_subset<Index_>(gene_sets);
+    auto subset = create_subset<Index_>(gene_sets, p.nrow());
     size_t nsubs = subset.size();
     auto sub_oracle = std::make_shared<tatami::FixedViewOracle<Index_> >(subset.data(), nsubs);
 

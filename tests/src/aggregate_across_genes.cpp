@@ -177,3 +177,28 @@ INSTANTIATE_TEST_SUITE_P(
     AggregateAcrossGenesTest,
     ::testing::Values(1, 3) // number of threads
 );
+
+TEST(AggregateAcrossGenes, OutOfRange) {
+    int nr = 11, nc = 78;
+    auto vec = scran_tests::simulate_vector(nr * nc, []{
+        scran_tests::SimulationParameters sparams;
+        sparams.density = 0.1;
+        return sparams;
+    }());
+
+    tatami::DenseRowMatrix<double, int> mat(nr, nc, std::move(vec));
+    std::vector<int> example { 1, 10, 100 };
+    std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
+    gene_sets.emplace_back(3, example.data(), static_cast<double*>(NULL));
+
+    scran_aggregate::AggregateAcrossGenesOptions opt;
+    scran_tests::expect_error([&]() {
+        scran_aggregate::aggregate_across_genes(mat, gene_sets, opt);
+    }, "out of range");
+
+    // Also fails if there are negative values.
+    example[0] = -1;
+    scran_tests::expect_error([&]() {
+        scran_aggregate::aggregate_across_genes(mat, gene_sets, opt);
+    }, "out of range");
+}
