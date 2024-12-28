@@ -1,34 +1,36 @@
 <map id="scran_aggregate/scran_aggregate.hpp" name="scran_aggregate/scran_aggregate.hpp">
-<area shape="rect" id="Node000001" title="Aggregate single&#45;cell expression values." alt="" coords="443,5,596,46"/>
-<area shape="rect" id="Node000002" href="$aggregate__across__genes_8hpp.html" title="Aggregate expression values across genes." alt="" coords="5,168,196,193"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="466,49,149,164,147,159,464,44"/>
-<area shape="rect" id="Node000007" href="$aggregate__across__cells_8hpp.html" title="Aggregate expression values across cells." alt="" coords="220,168,402,193"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="494,49,342,160,338,156,491,44"/>
-<area shape="rect" id="Node000008" href="$combine__factors_8hpp.html" title="Combine categorical factors into a single factor." alt="" coords="518,94,659,120"/>
-<area shape="poly" id="edge10_Node000001_Node000008" title=" " alt="" coords="538,45,570,80,566,84,534,48"/>
-<area shape="rect" id="Node000012" href="$clean__factor_8hpp.html" title="Clean up a categorical factor." alt="" coords="696,168,812,193"/>
-<area shape="poly" id="edge20_Node000001_Node000012" title=" " alt="" coords="579,44,626,65,673,92,709,122,737,154,733,158,705,126,670,96,623,69,576,49"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="381,241,455,267"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="155,191,366,239,365,244,154,197"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="520,241,577,267"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="177,191,505,243,504,248,177,197"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="49,241,152,267"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="103,194,103,226,98,226,98,194"/>
-<area shape="rect" id="Node000006" href="/github/workspace/docs/tatami.tag$tatami_8hpp.html" title=" " alt="" coords="213,241,335,267"/>
-<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="131,191,231,233,229,237,129,196"/>
-<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="331,192,388,230,386,235,328,196"/>
-<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="352,191,506,237,504,242,351,196"/>
-<area shape="poly" id="edge9_Node000007_Node000006" title=" " alt="" coords="307,195,290,229,285,226,303,192"/>
-<area shape="poly" id="edge11_Node000008_Node000003" title=" " alt="" coords="549,123,507,141,466,170,444,198,429,228,425,226,440,195,463,166,504,137,547,118"/>
-<area shape="poly" id="edge12_Node000008_Node000004" title=" " alt="" coords="588,121,558,227,553,226,583,119"/>
-<area shape="rect" id="Node000009" title=" " alt="" coords="625,168,672,193"/>
-<area shape="poly" id="edge13_Node000008_Node000009" title=" " alt="" coords="600,118,631,154,627,157,596,122"/>
-<area shape="rect" id="Node000010" title=" " alt="" coords="747,241,857,267"/>
-<area shape="poly" id="edge14_Node000008_Node000010" title=" " alt="" coords="660,114,758,133,800,148,827,166,833,181,833,198,821,230,816,228,828,197,828,183,822,169,798,152,757,138,659,119"/>
-<area shape="rect" id="Node000011" title=" " alt="" coords="476,168,552,193"/>
-<area shape="poly" id="edge15_Node000008_Node000011" title=" " alt="" coords="578,122,539,159,535,155,574,118"/>
-<area shape="poly" id="edge16_Node000008_Node000012" title=" " alt="" coords="618,118,713,159,711,164,615,123"/>
-<area shape="poly" id="edge19_Node000012_Node000003" title=" " alt="" coords="697,197,471,244,470,239,696,191"/>
-<area shape="poly" id="edge18_Node000012_Node000004" title=" " alt="" coords="720,196,593,240,591,235,718,191"/>
-<area shape="poly" id="edge17_Node000012_Node000010" title=" " alt="" coords="764,192,787,227,783,230,760,195"/>
+<area shape="rect" id="Node000001" title="Aggregate single&#45;cell expression values." alt="" coords="442,5,595,46"/>
+<area shape="rect" id="Node000002" href="$aggregate__across__genes_8hpp.html" title="Aggregate expression values across genes." alt="" coords="45,168,235,193"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="471,49,185,164,183,159,469,44"/>
+<area shape="rect" id="Node000008" href="$aggregate__across__cells_8hpp.html" title="Aggregate expression values across cells." alt="" coords="260,168,442,193"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="499,49,377,159,373,155,495,45"/>
+<area shape="rect" id="Node000009" href="$combine__factors_8hpp.html" title="Combine categorical factors into a single factor." alt="" coords="624,94,765,120"/>
+<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="564,44,655,85,653,90,562,49"/>
+<area shape="rect" id="Node000013" href="$clean__factor_8hpp.html" title="Clean up a categorical factor." alt="" coords="517,168,633,193"/>
+<area shape="poly" id="edge21_Node000001_Node000013" title=" " alt="" coords="528,45,567,152,562,154,523,47"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="430,241,504,267"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="196,191,415,239,414,244,195,197"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="537,241,594,267"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="229,191,365,212,516,239,522,240,521,245,516,244,364,217,228,197"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="107,241,210,267"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="146,193,154,226,149,227,141,194"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="5,241,83,267"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="125,196,74,234,70,230,122,192"/>
+<area shape="rect" id="Node000007" href="/github/workspace/docs/tatami.tag$tatami_8hpp.html" title=" " alt="" coords="271,241,393,267"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="173,191,286,233,284,238,172,196"/>
+<area shape="poly" id="edge8_Node000008_Node000003" title=" " alt="" coords="372,192,436,231,433,235,369,196"/>
+<area shape="poly" id="edge9_Node000008_Node000004" title=" " alt="" coords="388,191,523,236,521,241,386,196"/>
+<area shape="poly" id="edge10_Node000008_Node000007" title=" " alt="" coords="350,194,342,227,336,226,345,193"/>
+<area shape="poly" id="edge12_Node000009_Node000003" title=" " alt="" coords="624,118,562,136,532,150,506,170,486,197,475,227,470,225,481,194,502,166,530,146,561,131,623,113"/>
+<area shape="poly" id="edge13_Node000009_Node000004" title=" " alt="" coords="740,118,774,131,805,148,816,158,823,169,823,182,817,195,803,207,782,217,728,233,666,244,610,251,609,246,665,239,726,228,780,212,800,202,813,192,818,181,818,171,812,161,802,152,772,135,738,123"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="757,168,803,193"/>
+<area shape="poly" id="edge14_Node000009_Node000010" title=" " alt="" coords="711,118,756,156,753,160,707,122"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="722,241,833,267"/>
+<area shape="poly" id="edge15_Node000009_Node000011" title=" " alt="" coords="767,113,818,131,842,146,861,166,866,187,857,206,840,222,819,236,816,232,836,218,853,202,861,186,856,169,838,150,816,135,765,118"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="657,168,732,193"/>
+<area shape="poly" id="edge16_Node000009_Node000012" title=" " alt="" coords="697,120,697,152,692,152,692,120"/>
+<area shape="poly" id="edge17_Node000009_Node000013" title=" " alt="" coords="676,123,609,162,607,157,673,118"/>
+<area shape="poly" id="edge20_Node000013_Node000003" title=" " alt="" coords="558,196,499,235,496,230,555,192"/>
+<area shape="poly" id="edge19_Node000013_Node000004" title=" " alt="" coords="576,194,572,226,566,226,570,193"/>
+<area shape="poly" id="edge18_Node000013_Node000011" title=" " alt="" coords="610,191,729,233,727,238,608,196"/>
 </map>
