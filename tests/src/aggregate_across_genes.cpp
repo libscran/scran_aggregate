@@ -202,3 +202,62 @@ TEST(AggregateAcrossGenes, OutOfRange) {
         scran_aggregate::aggregate_across_genes(mat, gene_sets, opt);
     }, "out of range");
 }
+
+TEST(AggregateAcrossGenes, DirtyBuffers) {
+    int nr = 110, nc = 78;
+    auto vec = scran_tests::simulate_vector(nr * nc, []{
+        scran_tests::SimulationParameters sparams;
+        sparams.density = 0.1;
+        return sparams;
+    }());
+
+    tatami::DenseRowMatrix<double, int> dense_row(nr, nc, std::move(vec));
+    auto sparse_column = tatami::convert_to_compressed_sparse(&dense_row, false);
+
+    // Setting up the gene sets.
+    size_t nsets = 100;
+    std::vector<std::vector<int> > groupings(nsets);
+    {
+        std::mt19937_64 rng(999);
+        std::uniform_real_distribution runif;
+        for (auto& grp : groupings) {
+            for (int g = 0; g < nr; ++g) {
+                if (runif(rng) < 0.15) {
+                    grp.push_back(g);
+                }
+            }
+        }
+    }
+
+    std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
+    gene_sets.reserve(groupings.size());
+    for (const auto& grp : groupings) {
+        gene_sets.emplace_back(grp.size(), grp.data(), static_cast<double*>(NULL));
+    }
+
+    // Setting up some buffers.
+    scran_aggregate::AggregateAcrossGenesResults<double> store;
+    scran_aggregate::AggregateAcrossGenesBuffers<double> buffers;
+    store.sum.resize(nsets);
+    buffers.sum.resize(nsets);
+    for (size_t s = 0; s < nsets; ++s) {
+        store.sum[s].resize(nc, -1); // using -1 to simulate uninitialized values.
+        buffers.sum[s] = store.sum[s].data();
+    }
+
+    // Checking that the dirtiness doesn't affect the results.
+    scran_aggregate::AggregateAcrossGenesOptions opt;
+    auto ref = scran_aggregate::aggregate_across_genes(dense_row, gene_sets, opt);
+    scran_aggregate::aggregate_across_genes(dense_row, gene_sets, buffers, opt);
+    for (size_t s = 0; s < nsets; ++s) {
+        EXPECT_EQ(ref.sum[s], store.sum[s]);
+    }
+
+    for (size_t s = 0; s < nsets; ++s) {
+        std::fill_n(store.sum[s].data(), nc, -1); // dirtying it again for another run.
+    }
+    scran_aggregate::aggregate_across_genes(*sparse_column, gene_sets, buffers, opt);
+    for (size_t s = 0; s < nsets; ++s) {
+        EXPECT_EQ(ref.sum[s], store.sum[s]);
+    }
+}

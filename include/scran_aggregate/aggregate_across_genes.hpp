@@ -197,7 +197,12 @@ void compute_aggregate_by_row(
         }
     }
 
+    // Zeroing all of the buffers before iterating.
     Index_ NC = p.ncol();
+    for (size_t s = 0; s < num_sets; ++s) {
+        std::fill_n(buffers.sum[s], NC, static_cast<Sum_>(0));
+    }
+
     if (p.sparse()) {
         tatami::parallelize([&](size_t, Index_ start, Index_ length) {
             auto ext = tatami::new_extractor<true, true>(&p, true, sub_oracle, start, length);
