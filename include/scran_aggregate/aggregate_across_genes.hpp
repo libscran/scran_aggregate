@@ -211,13 +211,11 @@ void compute_aggregate_by_row(
 
             for (size_t sub = 0; sub < nsubs; ++sub) {
                 auto range = ext->fetch(vbuffer.data(), ibuffer.data());
-                const auto& sets = remapping[sub];
-
-                for (Index_ c = 0; c < range.number; ++c) {
-                    auto cell = range.index[c];
-                    auto val = range.value[c];
-                    for (const auto& sw : sets) {
-                        buffers.sum[sw.first][cell] += val * sw.second;
+                for (const auto& sw : remapping[sub]) {
+                    auto outptr = buffers.sum[sw.first];
+                    auto wt = sw.second;
+                    for (Index_ c = 0; c < range.number; ++c) {
+                        outptr[range.index[c]] += range.value[c] * wt;
                     }
                 }
             }
@@ -230,13 +228,11 @@ void compute_aggregate_by_row(
 
             for (size_t sub = 0; sub < nsubs; ++sub) {
                 auto ptr = ext->fetch(vbuffer.data());
-                const auto& sets = remapping[sub];
-
-                for (Index_ cell = 0; cell < length; ++cell) {
-                    auto val = ptr[cell];
-                    size_t pos = cell + start;
-                    for (const auto& sw : sets) {
-                        buffers.sum[sw.first][pos] += val * sw.second;
+                for (const auto& sw : remapping[sub]) {
+                    auto outptr = buffers.sum[sw.first];
+                    auto wt = sw.second;
+                    for (Index_ cell = 0; cell < length; ++cell) {
+                        outptr[cell + start] += ptr[cell] * wt;
                     }
                 }
             }
