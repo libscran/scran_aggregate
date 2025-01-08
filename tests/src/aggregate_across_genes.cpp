@@ -5,6 +5,21 @@
 #include <map>
 #include <random>
 
+static std::vector<std::vector<int> > create_sets(size_t nsets, int ngenes, size_t seed) {
+    size_t nsets = 100;
+    std::vector<std::vector<int> > groupings(nsets);
+    std::mt19937_64 rng(seed);
+    std::uniform_real_distribution runif;
+    for (auto& grp : groupings) {
+        for (int g = 0; g < ngenes; ++g) {
+            if (runif(rng) < 0.15) {
+                grp.push_back(g);
+            }
+        }
+    }
+    return groupings;
+}
+
 /*********************************************/
 
 class AggregateAcrossGenesTest : public ::testing::TestWithParam<int> {
@@ -29,24 +44,13 @@ protected:
 TEST_P(AggregateAcrossGenesTest, Unweighted) {
     auto nthreads = GetParam();
 
-    size_t nsets = 100;
+    const size_t nsets = 100;
     int ngenes = dense_row->nrow();
-    std::vector<std::vector<int> > groupings(nsets);
-    {
-        std::mt19937_64 rng(nsets * nthreads);
-        std::uniform_real_distribution runif;
-        for (auto& grp : groupings) {
-            for (int g = 0; g < ngenes; ++g) {
-                if (runif(rng) < 0.15) {
-                    grp.push_back(g);
-                }
-            }
-        }
-    }
+    auto mock_sets = create_sets(nsets, ngenes, nsets * nthreads);
 
     std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
-    gene_sets.reserve(groupings.size());
-    for (const auto& grp : groupings) {
+    gene_sets.reserve(mock_sets.size());
+    for (const auto& grp : mock_sets) {
         gene_sets.emplace_back(grp.size(), grp.data(), static_cast<double*>(NULL));
     }
 
@@ -91,20 +95,17 @@ TEST_P(AggregateAcrossGenesTest, Weighted) {
 
     size_t nsets = 50;
     int ngenes = dense_row->nrow();
-    std::vector<std::vector<int> > groupings(nsets);
+    auto mock_sets = create_sets(nsets, ngenes, nsets * nthreads + 13);
+
     std::vector<std::vector<double> > weights(nsets);
     {
-        std::mt19937_64 rng(nsets * nthreads);
+        std::mt19937_64 rng(nsets * nthreads + 17);
         std::uniform_real_distribution runif;
         for (size_t s = 0; s < nsets; ++s) {
-            auto& grp = groupings[s];
+            const auto& grp = groupings[s];
             auto& wt = weights[s];
-
-            for (int g = 0; g < ngenes; ++g) {
-                if (runif(rng) < 0.15) {
-                    grp.push_back(g);
-                    wt.push_back(runif(rng));
-                }
+            for (size_t g = 0, end = grp.size(); g < end; ++g) {
+                wt.push_back(runif(rng));
             }
         }
     }
@@ -216,18 +217,7 @@ TEST(AggregateAcrossGenes, DirtyBuffers) {
 
     // Setting up the gene sets.
     size_t nsets = 100;
-    std::vector<std::vector<int> > groupings(nsets);
-    {
-        std::mt19937_64 rng(999);
-        std::uniform_real_distribution runif;
-        for (auto& grp : groupings) {
-            for (int g = 0; g < nr; ++g) {
-                if (runif(rng) < 0.15) {
-                    grp.push_back(g);
-                }
-            }
-        }
-    }
+    auto mock_sets = create_sets(nsets);
 
     std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
     gene_sets.reserve(groupings.size());
