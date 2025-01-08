@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "tatami/tatami.hpp"
-#include "tatami_stats/tatami_stats.hpp"
 
 /**
  * @file aggregate_across_cells.hpp
