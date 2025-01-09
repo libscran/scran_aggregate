@@ -2,11 +2,16 @@
 
 #include <random>
 
+#include "utils.h" // must be included before scran_aggregate
 #include "scran_aggregate/combine_factors.hpp"
 
 template<typename Factor_>
 std::pair<std::vector<std::vector<Factor_> >, std::vector<int> > test_combine_factors(size_t n, const std::vector<const Factor_*>& factors) {
-    std::vector<int> combined(n);
+    std::vector<int> combined(n
+#ifdef SCRAN_AGGREGATE_TEST_INIT
+        , SCRAN_AGGREGATE_TEST_INIT
+#endif
+    );
     auto levels = scran_aggregate::combine_factors(n, factors, combined.data());
     return std::make_pair(std::move(levels), std::move(combined));
 }
@@ -131,7 +136,11 @@ TEST(CombineFactors, Multiple) {
 
 template<typename Factor_, typename Number_>
 std::pair<std::vector<std::vector<Factor_> >, std::vector<int> > test_combine_factors_unused(size_t n, const std::vector<std::pair<const Factor_*, Number_> >& factors) {
-    std::vector<int> combined(n);
+    std::vector<int> combined(n
+#ifdef SCRAN_AGGREGATE_TEST_INIT
+        , SCRAN_AGGREGATE_TEST_INIT
+#endif
+    );
     auto levels = scran_aggregate::combine_factors_unused(n, factors, combined.data());
     return std::make_pair(std::move(levels), std::move(combined));
 }

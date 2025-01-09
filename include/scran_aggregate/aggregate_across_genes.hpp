@@ -337,7 +337,11 @@ AggregateAcrossGenesResults<Sum_> aggregate_across_genes(
     buffers.sum.resize(nsets);
 
     for (size_t s = 0; s < nsets; ++s) {
-        output.sum[s].resize(NC);
+        output.sum[s].resize(NC
+#ifdef SCRAN_AGGREGATE_TEST_INIT
+        , SCRAN_AGGREGATE_TEST_INIT
+#endif
+        );
         buffers.sum[s] = output.sum[s].data();
     }
 

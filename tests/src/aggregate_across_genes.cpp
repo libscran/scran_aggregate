@@ -1,25 +1,10 @@
-#include <gtest/gtest.h>
-
-#include "scran_aggregate/aggregate_across_genes.hpp"
 #include "scran_tests/scran_tests.hpp"
+
 #include <map>
 #include <random>
 
-static std::vector<std::vector<int> > create_sets(size_t nsets, int ngenes, size_t seed) {
-    std::vector<std::vector<int> > groupings(nsets);
-    std::mt19937_64 rng(seed);
-    std::uniform_real_distribution runif;
-    for (auto& grp : groupings) {
-        for (int g = 0; g < ngenes; ++g) {
-            if (runif(rng) < 0.15) {
-                grp.push_back(g);
-            }
-        }
-    }
-    return groupings;
-}
-
-/*********************************************/
+#include "utils.h" // must be included before scran_aggregate
+#include "scran_aggregate/aggregate_across_genes.hpp"
 
 class AggregateAcrossGenesTest : public ::testing::TestWithParam<int> {
 protected:
@@ -45,10 +30,19 @@ TEST_P(AggregateAcrossGenesTest, Unweighted) {
 
     const size_t nsets = 100;
     int ngenes = dense_row->nrow();
-    auto mock_sets = create_sets(nsets, ngenes, /* seed = */ nsets * nthreads);
+    std::vector<std::vector<int> > mock_sets(nsets);
+    std::mt19937_64 rng(nsets * nthreads);
+    std::uniform_real_distribution runif;
+    for (auto& grp : mock_sets) {
+        for (int g = 0; g < ngenes; ++g) {
+            if (runif(rng) < 0.15) {
+                grp.push_back(g);
+            }
+        }
+    }
 
     std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
-    gene_sets.reserve(mock_sets.size());
+    gene_sets.reserve(nsets);
     for (const auto& grp : mock_sets) {
         gene_sets.emplace_back(grp.size(), grp.data(), static_cast<double*>(NULL));
     }
@@ -203,52 +197,4 @@ TEST(AggregateAcrossGenes, OutOfRange) {
     scran_tests::expect_error([&]() {
         scran_aggregate::aggregate_across_genes(mat, gene_sets, opt);
     }, "out of range");
-}
-
-TEST(AggregateAcrossGenes, DirtyBuffers) {
-    int nr = 110, nc = 78;
-    auto vec = scran_tests::simulate_vector(nr * nc, []{
-        scran_tests::SimulationParameters sparams;
-        sparams.density = 0.1;
-        return sparams;
-    }());
-
-    tatami::DenseRowMatrix<double, int> dense_row(nr, nc, std::move(vec));
-    auto sparse_column = tatami::convert_to_compressed_sparse(&dense_row, false);
-
-    // Setting up the gene sets.
-    size_t nsets = 100;
-    auto mock_sets = create_sets(nsets, nr, /* seed = */ 99);
-
-    std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
-    gene_sets.reserve(mock_sets.size());
-    for (const auto& grp : mock_sets) {
-        gene_sets.emplace_back(grp.size(), grp.data(), static_cast<double*>(NULL));
-    }
-
-    // Setting up some buffers.
-    scran_aggregate::AggregateAcrossGenesResults<double> store;
-    scran_aggregate::AggregateAcrossGenesBuffers<double> buffers;
-    store.sum.resize(nsets);
-    buffers.sum.resize(nsets);
-    for (size_t s = 0; s < nsets; ++s) {
-        store.sum[s].resize(nc, -1); // using -1 to simulate uninitialized values.
-        buffers.sum[s] = store.sum[s].data();
-    }
-
-    // Checking that the dirtiness doesn't affect the results.
-    scran_aggregate::AggregateAcrossGenesOptions opt;
-    auto ref = scran_aggregate::aggregate_across_genes(dense_row, gene_sets, opt);
-    scran_aggregate::aggregate_across_genes(dense_row, gene_sets, buffers, opt);
-    for (size_t s = 0; s < nsets; ++s) {
-        EXPECT_EQ(ref.sum[s], store.sum[s]);
-    }
-
-    for (size_t s = 0; s < nsets; ++s) {
-        std::fill_n(store.sum[s].data(), nc, -1); // dirtying it again for another run.
-    }
-    scran_aggregate::aggregate_across_genes(*sparse_column, gene_sets, buffers, opt);
-    for (size_t s = 0; s < nsets; ++s) {
-        EXPECT_EQ(ref.sum[s], store.sum[s]);
-    }
 }

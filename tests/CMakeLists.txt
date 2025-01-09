@@ -28,5 +28,10 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_link_options(libtest PRIVATE --coverage)
 endif()
 
+option(TEST_DIRTY_INIT "Test dirty vector initialization" OFF)
+if(TEST_DIRTY_INIT)
+    target_compile_definitions(libtest PRIVATE "SCRAN_AGGREGATE_TEST_INIT=initial_value()")
+endif()
+
 include(GoogleTest)
 gtest_discover_tests(libtest)

@@ -317,7 +317,11 @@ AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(
     AggregateAcrossCellsBuffers<Sum_, Detected_> buffers;
 
     if (options.compute_sums) {
-        output.sums.resize(nlevels, std::vector<Sum_>(ngenes));
+        output.sums.resize(nlevels, std::vector<Sum_>(ngenes
+#ifdef SCRAN_AGGREGATE_TEST_INIT
+        , SCRAN_AGGREGATE_TEST_INIT
+#endif
+        ));
         buffers.sums.resize(nlevels);
         for (size_t l = 0; l < nlevels; ++l) {
             buffers.sums[l] = output.sums[l].data();
@@ -325,7 +329,11 @@ AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(
     }
 
     if (options.compute_detected) {
-        output.detected.resize(nlevels, std::vector<Detected_>(ngenes));
+        output.detected.resize(nlevels, std::vector<Detected_>(ngenes
+#ifdef SCRAN_AGGREGATE_TEST_INIT
+        , SCRAN_AGGREGATE_TEST_INIT
+#endif
+        ));
         buffers.detected.resize(nlevels);
         for (size_t l = 0; l < nlevels; ++l) {
             buffers.detected[l] = output.detected[l].data();

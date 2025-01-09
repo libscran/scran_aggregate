@@ -2,12 +2,16 @@
 
 #include <random>
 
+#include "utils.h" // must be included before scran_aggregate
 #include "scran_aggregate/clean_factor.hpp"
-#include "scran_aggregate/combine_factors.hpp"
 
 template<typename Factor_>
 std::pair<std::vector<Factor_>, std::vector<int> > test_clean_factor(size_t n, const Factor_* factor) {
-    std::vector<int> cleand(n);
+    std::vector<int> cleand(n
+#ifdef SCRAN_AGGREGATE_TEST_INIT
+        , SCRAN_AGGREGATE_TEST_INIT
+#endif
+    );
     auto levels = scran_aggregate::clean_factor(n, factor, cleand.data());
     return std::make_pair(std::move(levels), std::move(cleand));
 }
