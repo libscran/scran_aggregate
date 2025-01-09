@@ -30,7 +30,7 @@ endif()
 
 option(TEST_DIRTY_INIT "Test dirty vector initialization" OFF)
 if(TEST_DIRTY_INIT)
-    target_compile_definitions(libtest PRIVATE "SCRAN_AGGREGATE_TEST_INIT=initial_value()")
+    target_compile_definitions(libtest PRIVATE "SCRAN_AGGREGATE_TEST_INIT=scran_tests::initial_value()")
 endif()
 
 include(GoogleTest)

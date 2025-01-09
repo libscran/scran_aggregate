@@ -3,7 +3,6 @@
 #include <map>
 #include <random>
 
-#include "utils.h" // must be included before scran_aggregate. 
 #include "scran_aggregate/aggregate_across_cells.hpp"
 
 static std::vector<int> create_groupings(size_t n, int ngroups) {

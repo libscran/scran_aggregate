@@ -1,8 +1,7 @@
-#include <gtest/gtest.h>
+#include "scran_tests/scran_tests.hpp"
 
 #include <random>
 
-#include "utils.h" // must be included before scran_aggregate
 #include "scran_aggregate/clean_factor.hpp"
 
 template<typename Factor_>

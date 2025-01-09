@@ -3,7 +3,6 @@
 #include <map>
 #include <random>
 
-#include "utils.h" // must be included before scran_aggregate
 #include "scran_aggregate/aggregate_across_genes.hpp"
 
 class AggregateAcrossGenesTest : public ::testing::TestWithParam<int> {
