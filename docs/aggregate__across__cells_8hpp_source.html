@@ -318,30 +318,38 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    <a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html">AggregateAcrossCellsBuffers&lt;Sum_, Detected_&gt;</a> buffers;</div>
 <div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span> </div>
 <div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html#ad45ae84870be13fad30a9dbdd0299d62">compute_sums</a>) {</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>        output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsResults.html#ad09fedfa434a9be5074b47fd950098b7">sums</a>.resize(nlevels, std::vector&lt;Sum_&gt;(ngenes));</div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>        buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#af18936a8bb6ba1fbdb32f4584683288c">sums</a>.resize(nlevels);</div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> l = 0; l &lt; nlevels; ++l) {</div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>            buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#af18936a8bb6ba1fbdb32f4584683288c">sums</a>[l] = output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsResults.html#ad09fedfa434a9be5074b47fd950098b7">sums</a>[l].data();</div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>        }</div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>    }</div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span> </div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html#a698760c10561b3d904cb52abdbbe710e">compute_detected</a>) {</div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>        output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsResults.html#abd1392875a4be38f5a7317b128c7b13b">detected</a>.resize(nlevels, std::vector&lt;Detected_&gt;(ngenes));</div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>        buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#a468273e5a9566bbc2caae8e204a0d070">detected</a>.resize(nlevels);</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> l = 0; l &lt; nlevels; ++l) {</div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>            buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#a468273e5a9566bbc2caae8e204a0d070">detected</a>[l] = output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsResults.html#abd1392875a4be38f5a7317b128c7b13b">detected</a>[l].data();</div>
-<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>        }</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>    }</div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span> </div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>    <a class="code hl_function" href="namespacescran__aggregate.html#a76e8390729e70654df46d322d2e119ff">aggregate_across_cells</a>(input, factor, buffers, options);</div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>    <span class="keywordflow">return</span> output;</div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>} </div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>        output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsResults.html#ad09fedfa434a9be5074b47fd950098b7">sums</a>.resize(nlevels, std::vector&lt;Sum_&gt;(ngenes</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>#ifdef SCRAN_AGGREGATE_TEST_INIT</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>        , SCRAN_AGGREGATE_TEST_INIT</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>#endif</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>        ));</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>        buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#af18936a8bb6ba1fbdb32f4584683288c">sums</a>.resize(nlevels);</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> l = 0; l &lt; nlevels; ++l) {</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>            buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#af18936a8bb6ba1fbdb32f4584683288c">sums</a>[l] = output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsResults.html#ad09fedfa434a9be5074b47fd950098b7">sums</a>[l].data();</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>        }</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>    }</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span> </div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>    <span class="keywordflow">if</span> (options.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html#a698760c10561b3d904cb52abdbbe710e">compute_detected</a>) {</div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>        output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsResults.html#abd1392875a4be38f5a7317b128c7b13b">detected</a>.resize(nlevels, std::vector&lt;Detected_&gt;(ngenes</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>#ifdef SCRAN_AGGREGATE_TEST_INIT</div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>        , SCRAN_AGGREGATE_TEST_INIT</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>#endif</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>        ));</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>        buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#a468273e5a9566bbc2caae8e204a0d070">detected</a>.resize(nlevels);</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> l = 0; l &lt; nlevels; ++l) {</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>            buffers.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#a468273e5a9566bbc2caae8e204a0d070">detected</a>[l] = output.<a class="code hl_variable" href="structscran__aggregate_1_1AggregateAcrossCellsResults.html#abd1392875a4be38f5a7317b128c7b13b">detected</a>[l].data();</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>        }</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    }</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span> </div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>    <a class="code hl_function" href="namespacescran__aggregate.html#a76e8390729e70654df46d322d2e119ff">aggregate_across_cells</a>(input, factor, buffers, options);</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>    <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>} </div>
 </div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span> </div>
-<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>}</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span> </div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>}</div>
 </div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span> </div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span> </div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a1f6fec43d5bae3f831841646bc02377b"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">tatami::Matrix::ncol</a></div><div class="ttdeci">virtual Index_ ncol() const=0</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a54fe7b4baf78069d35ff00357a1b6cc6"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">tatami::Matrix::nrow</a></div><div class="ttdeci">virtual Index_ nrow() const=0</div></div>
