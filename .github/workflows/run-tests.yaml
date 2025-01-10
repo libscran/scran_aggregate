@@ -20,11 +20,6 @@ jobs:
             cov: true
           }
         - {
-            name: "Ubuntu Latest GCC, dirty initialization", 
-            os: ubuntu-latest,
-            dirty: true
-          }
-        - {
             name: "macOS Latest Clang", 
             os: macos-latest
           }
@@ -38,10 +33,6 @@ jobs:
     - name: Configure the build with coverage
       if: ${{ matrix.config.cov }}
       run: cmake -S . -B build -DCODE_COVERAGE=ON
-
-    - name: Configure the build with dirty initialization
-      if: ${{ matrix.config.dirty }}
-      run: cmake -S . -B build -DTEST_DIRTY_INIT=ON
 
     - name: Configure the build with custom parallelization
       if: ${{ ! matrix.config.cov }}

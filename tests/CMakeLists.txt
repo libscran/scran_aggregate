@@ -6,6 +6,31 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(scran_tests)
 
+include(GoogleTest)
+
+option(CODE_COVERAGE "Enable coverage testing" OFF)
+set(DO_CODE_COVERAGE OFF)
+if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set(DO_CODE_COVERAGE ON)
+endif()
+
+macro(decorate_test target)
+    target_link_libraries(
+        ${target}
+        scran_aggregate
+        scran_tests
+    )
+
+    target_compile_options(${target} PRIVATE -Wall -Werror -Wpedantic -Wextra)
+
+    if(DO_CODE_COVERAGE)
+        target_compile_options(${target} PRIVATE -O0 -g --coverage)
+        target_link_options(${target} PRIVATE --coverage)
+    endif()
+
+    gtest_discover_tests(${target})
+endmacro()
+
 add_executable(
     libtest 
     src/aggregate_across_cells.cpp
@@ -13,25 +38,22 @@ add_executable(
     src/combine_factors.cpp
     src/clean_factor.cpp
 )
+decorate_test(libtest)
 
-target_link_libraries(
-    libtest
-    scran_aggregate
-    scran_tests
+add_executable(
+    dirtytest 
+    src/aggregate_across_cells.cpp
+    src/aggregate_across_genes.cpp
+    src/combine_factors.cpp
+    src/clean_factor.cpp
 )
+decorate_test(dirtytest)
+target_compile_definitions(dirtytest PRIVATE "SCRAN_AGGREGATE_TEST_INIT=scran_tests::initial_value()")
 
-target_compile_options(libtest PRIVATE -Wall -Werror -Wpedantic -Wextra)
-
-option(CODE_COVERAGE "Enable coverage testing" OFF)
-if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(libtest PRIVATE -O0 -g --coverage)
-    target_link_options(libtest PRIVATE --coverage)
-endif()
-
-option(TEST_DIRTY_INIT "Test dirty vector initialization" OFF)
-if(TEST_DIRTY_INIT)
-    target_compile_definitions(libtest PRIVATE "SCRAN_AGGREGATE_TEST_INIT=scran_tests::initial_value()")
-endif()
-
-include(GoogleTest)
-gtest_discover_tests(libtest)
+add_executable(
+    cuspartest
+    src/aggregate_across_cells.cpp
+    src/aggregate_across_genes.cpp
+)
+decorate_test(cuspartest)
+target_compile_definitions(cuspartest PRIVATE SUBPAR_CUSTOM_PARALLELIZE_RANGE=::subpar::test_parallelize_range)
