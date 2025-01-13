@@ -175,24 +175,18 @@ void compute_aggregate_by_column(
     tatami::Options opt;
     opt.sparse_ordered_index = false;
 
-    tatami::parallelize([&](size_t t, Index_ s, Index_ l) {
+    tatami::parallelize([&](size_t t, Index_ start, Index_ length) {
         auto NC = p.ncol();
-        auto ext = tatami::consecutive_extractor<sparse_>(&p, false, static_cast<Index_>(0), NC, s, l, opt);
-        std::vector<Data_> vbuffer(l);
-        typename std::conditional<sparse_, std::vector<Index_>, Index_>::type ibuffer(l);
+        auto ext = tatami::consecutive_extractor<sparse_>(&p, false, static_cast<Index_>(0), NC, start, length, opt);
+        std::vector<Data_> vbuffer(length);
+        typename std::conditional<sparse_, std::vector<Index_>, Index_>::type ibuffer(length);
 
         size_t num_sums = buffers.sums.size();
-        std::vector<tatami_stats::LocalOutputBuffer<Sum_> > local_sums;
-        local_sums.reserve(num_sums);
-        for (auto ptr : buffers.sums) {
-            local_sums.emplace_back(t, s, l, ptr);
-        }
+        auto get_sum = [&](Index_ i) -> Sum_* { return buffers.sums[i]; };
+        tatami_stats::LocalOutputBuffers<Sum_, decltype(get_sum)> local_sums(t, num_sums, start, length, std::move(get_sum));
+        auto get_detected = [&](Index_ i) -> Detected_* { return buffers.detected[i]; };
         size_t num_detected = buffers.detected.size();
-        std::vector<tatami_stats::LocalOutputBuffer<Detected_> > local_detected;
-        local_detected.reserve(num_detected);
-        for (auto ptr : buffers.detected) {
-            local_detected.emplace_back(t, s, l, ptr);
-        }
+        tatami_stats::LocalOutputBuffers<Detected_, decltype(get_detected)> local_detected(t, num_detected, start, length, std::move(get_detected));
 
         for (Index_ x = 0; x < NC; ++x) {
             auto current = factor[x];
@@ -200,43 +194,37 @@ void compute_aggregate_by_column(
             if constexpr(sparse_) {
                 auto col = ext->fetch(vbuffer.data(), ibuffer.data());
                 if (num_sums) {
-                    auto cursum = local_sums[current].data();
+                    auto cursum = local_sums.data(current);
                     for (Index_ i = 0; i < col.number; ++i) {
-                        cursum[col.index[i] - s] += col.value[i];
+                        cursum[col.index[i] - start] += col.value[i];
                     }
                 }
-
                 if (num_detected) {
-                    auto curdetected = local_detected[current].data();
+                    auto curdetected = local_detected.data(current);
                     for (Index_ i = 0; i < col.number; ++i) {
-                        curdetected[col.index[i] - s] += (col.value[i] > 0);
+                        curdetected[col.index[i] - start] += (col.value[i] > 0);
                     }
                 }
 
             } else {
                 auto col = ext->fetch(vbuffer.data());
                 if (num_sums) {
-                    auto cursum = local_sums[current].data();
-                    for (Index_ i = 0; i < l; ++i) {
+                    auto cursum = local_sums.data(current);
+                    for (Index_ i = 0; i < length; ++i) {
                         cursum[i] += col[i];
                     }
                 }
-
                 if (num_detected) {
-                    auto curdetected = local_detected[current].data();
-                    for (Index_ i = 0; i < l; ++i) {
+                    auto curdetected = local_detected.data(current);
+                    for (Index_ i = 0; i < length; ++i) {
                         curdetected[i] += (col[i] > 0);
                     }
                 }
             }
         }
 
-        for (auto& lsums : local_sums) {
-            lsums.transfer();
-        }
-        for (auto& ldetected : local_detected) {
-            ldetected.transfer();
-        }
+        local_sums.transfer();
+        local_detected.transfer();
     }, p.nrow(), options.num_threads);
 }
 

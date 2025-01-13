@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 #include "tatami/tatami.hpp"
+#include "tatami_stats/tatami_stats.hpp"
 
 /**
  * @file aggregate_across_genes.hpp
@@ -197,47 +198,45 @@ void compute_aggregate_by_row(
         }
     }
 
-    // Zeroing all of the buffers before iterating.
-    Index_ NC = p.ncol();
-    for (size_t s = 0; s < num_sets; ++s) {
-        std::fill_n(buffers.sum[s], NC, static_cast<Sum_>(0));
-    }
+    tatami::parallelize([&](size_t t, Index_ start, Index_ length) {
+        auto get_sum = [&](Index_ i) -> Sum_* { return buffers.sum[i]; };
+        tatami_stats::LocalOutputBuffers<Sum_, decltype(get_sum)> local_sums(t, num_sets, start, length, std::move(get_sum));
 
-    if (p.sparse()) {
-        tatami::parallelize([&](size_t, Index_ start, Index_ length) {
+        if (p.sparse()) {
             auto ext = tatami::new_extractor<true, true>(&p, true, sub_oracle, start, length);
             std::vector<Data_> vbuffer(length);
             std::vector<Index_> ibuffer(length);
 
             for (size_t sub = 0; sub < nsubs; ++sub) {
                 auto range = ext->fetch(vbuffer.data(), ibuffer.data());
+
                 for (const auto& sw : remapping[sub]) {
-                    auto outptr = buffers.sum[sw.first];
+                    auto outptr = local_sums.data(sw.first);
                     auto wt = sw.second;
                     for (Index_ c = 0; c < range.number; ++c) {
-                        outptr[range.index[c]] += range.value[c] * wt;
+                        outptr[range.index[c] - start] += range.value[c] * wt;
                     }
                 }
             }
-        }, NC, options.num_threads);
 
-    } else {
-        tatami::parallelize([&](size_t, Index_ start, Index_ length) {
+        } else {
             auto ext = tatami::new_extractor<false, true>(&p, true, sub_oracle, start, length);
             std::vector<Data_> vbuffer(length);
 
             for (size_t sub = 0; sub < nsubs; ++sub) {
                 auto ptr = ext->fetch(vbuffer.data());
                 for (const auto& sw : remapping[sub]) {
-                    auto outptr = buffers.sum[sw.first];
+                    auto outptr = local_sums.data(sw.first);
                     auto wt = sw.second;
                     for (Index_ cell = 0; cell < length; ++cell) {
-                        outptr[cell + start] += ptr[cell] * wt;
+                        outptr[cell] += ptr[cell] * wt;
                     }
                 }
             }
-        }, NC, options.num_threads);
-    }
+        }
+
+        local_sums.transfer();
+    }, p.ncol(), options.num_threads);
 }
 
 }
