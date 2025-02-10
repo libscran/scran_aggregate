@@ -132,7 +132,7 @@ void compute_aggregate_by_column(
         }
     }
 
-    tatami::parallelize([&](size_t, Index_ start, Index_ length) {
+    tatami::parallelize([&](size_t, Index_ start, Index_ length) -> void {
         // We extract as sparse even if it is dense, as it's just
         // easier to index from a dense vector.
         auto ext = tatami::consecutive_extractor<false>(&p, false, start, length, subset_of_interest);
@@ -198,7 +198,7 @@ void compute_aggregate_by_row(
         }
     }
 
-    tatami::parallelize([&](size_t t, Index_ start, Index_ length) {
+    tatami::parallelize([&](size_t t, Index_ start, Index_ length) -> void {
         auto get_sum = [&](Index_ i) -> Sum_* { return buffers.sum[i]; };
         tatami_stats::LocalOutputBuffers<Sum_, decltype(get_sum)> local_sums(t, num_sets, start, length, std::move(get_sum));
 
@@ -279,7 +279,7 @@ void aggregate_across_genes(
 
     if (options.average) {
         size_t nsets = gene_sets.size();
-        tatami::parallelize([&](int, size_t start, size_t length) {
+        tatami::parallelize([&](int, size_t start, size_t length) -> void {
             size_t NC = input.ncol();
             for (size_t s = start, end = start + length; s < end; ++s) {
                 const auto& set = gene_sets[s];

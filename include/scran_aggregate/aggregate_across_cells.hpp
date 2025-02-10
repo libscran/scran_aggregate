@@ -105,7 +105,7 @@ void compute_aggregate_by_row(
     tatami::Options opt;
     opt.sparse_ordered_index = false;
 
-    tatami::parallelize([&](size_t, Index_ s, Index_ l) {
+    tatami::parallelize([&](size_t, Index_ s, Index_ l) -> void {
         auto ext = tatami::consecutive_extractor<sparse_>(&p, true, s, l, opt);
         size_t nsums = buffers.sums.size();
         std::vector<Sum_> tmp_sums(nsums);
@@ -117,7 +117,7 @@ void compute_aggregate_by_row(
         typename std::conditional<sparse_, std::vector<Index_>, Index_>::type ibuffer(NC);
 
         for (Index_ x = s, end = s + l; x < end; ++x) {
-            auto row = [&]() {
+            auto row = [&]{
                 if constexpr(sparse_) {
                     return ext->fetch(vbuffer.data(), ibuffer.data());
                 } else {
@@ -175,7 +175,7 @@ void compute_aggregate_by_column(
     tatami::Options opt;
     opt.sparse_ordered_index = false;
 
-    tatami::parallelize([&](size_t t, Index_ start, Index_ length) {
+    tatami::parallelize([&](size_t t, Index_ start, Index_ length) -> void {
         auto NC = p.ncol();
         auto ext = tatami::consecutive_extractor<sparse_>(&p, false, static_cast<Index_>(0), NC, start, length, opt);
         std::vector<Data_> vbuffer(length);
