@@ -115,13 +115,13 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Results of <code><a class="el" href="#a76e8390729e70654df46d322d2e119ff">aggregate_across_cells()</a></code>.  <a href="structscran__aggregate_1_1AggregateAcrossCellsResults.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html">AggregateAcrossGenesBuffers</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffers for <code><a class="el" href="#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes()</a></code>.  <a href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffers for <code><a class="el" href="#abf6732ea8012e17cc65039228663eae0">aggregate_across_genes()</a></code>.  <a href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <code><a class="el" href="#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes()</a></code>.  <a href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for <code><a class="el" href="#abf6732ea8012e17cc65039228663eae0">aggregate_across_genes()</a></code>.  <a href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html">AggregateAcrossGenesResults</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Results of <code><a class="el" href="#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes()</a></code>.  <a href="structscran__aggregate_1_1AggregateAcrossGenesResults.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Results of <code><a class="el" href="#abf6732ea8012e17cc65039228663eae0">aggregate_across_genes()</a></code>.  <a href="structscran__aggregate_1_1AggregateAcrossGenesResults.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -132,21 +132,21 @@ Functions</h2></td></tr>
 <tr class="memitem:a8e46dd59466d786b30ad2534055b0b11" id="r_a8e46dd59466d786b30ad2534055b0b11"><td class="memTemplParams" colspan="2">template&lt;typename Sum_  = double, typename Detected_  = int, typename Data_ , typename Index_ , typename Factor_ &gt; </td></tr>
 <tr class="memitem:a8e46dd59466d786b30ad2534055b0b11"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsResults.html">AggregateAcrossCellsResults</a>&lt; Sum_, Detected_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8e46dd59466d786b30ad2534055b0b11">aggregate_across_cells</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Data_, Index_ &gt; &amp;input, const Factor_ *factor, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html">AggregateAcrossCellsOptions</a> &amp;options)</td></tr>
 <tr class="separator:a8e46dd59466d786b30ad2534055b0b11"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c5e32aa2efd50f80d02fcfa00d43837" id="r_a8c5e32aa2efd50f80d02fcfa00d43837"><td class="memTemplParams" colspan="2">template&lt;typename Data_ , typename Index_ , typename Gene_ , typename Weight_ , typename Sum_ &gt; </td></tr>
-<tr class="memitem:a8c5e32aa2efd50f80d02fcfa00d43837"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html">AggregateAcrossGenesBuffers</a>&lt; Sum_ &gt; &amp;buffers, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a> &amp;options)</td></tr>
-<tr class="separator:a8c5e32aa2efd50f80d02fcfa00d43837"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58d8a5a38223ceafca7ebaee5110c11f" id="r_a58d8a5a38223ceafca7ebaee5110c11f"><td class="memTemplParams" colspan="2">template&lt;typename Sum_  = double, typename Data_ , typename Index_ , typename Gene_ , typename Weight_ &gt; </td></tr>
-<tr class="memitem:a58d8a5a38223ceafca7ebaee5110c11f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html">AggregateAcrossGenesResults</a>&lt; Sum_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a58d8a5a38223ceafca7ebaee5110c11f">aggregate_across_genes</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a> &amp;options)</td></tr>
-<tr class="separator:a58d8a5a38223ceafca7ebaee5110c11f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2324eaab6a361f7f767204b62a79764b" id="r_a2324eaab6a361f7f767204b62a79764b"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Output_ &gt; </td></tr>
-<tr class="memitem:a2324eaab6a361f7f767204b62a79764b"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Factor_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a2324eaab6a361f7f767204b62a79764b">clean_factor</a> (size_t n, const Factor_ *factor, Output_ *cleaned)</td></tr>
-<tr class="separator:a2324eaab6a361f7f767204b62a79764b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac709e5530c7cb6b488e6b727fe91b890" id="r_ac709e5530c7cb6b488e6b727fe91b890"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Combined_ &gt; </td></tr>
-<tr class="memitem:ac709e5530c7cb6b488e6b727fe91b890"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; Factor_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac709e5530c7cb6b488e6b727fe91b890">combine_factors</a> (size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *combined)</td></tr>
-<tr class="separator:ac709e5530c7cb6b488e6b727fe91b890"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0712c37387535ba42349ae78cd6fd8ff" id="r_a0712c37387535ba42349ae78cd6fd8ff"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Number_ , typename Combined_ &gt; </td></tr>
-<tr class="memitem:a0712c37387535ba42349ae78cd6fd8ff"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; Factor_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0712c37387535ba42349ae78cd6fd8ff">combine_factors_unused</a> (size_t n, const std::vector&lt; std::pair&lt; const Factor_ *, Number_ &gt; &gt; &amp;factors, Combined_ *combined)</td></tr>
-<tr class="separator:a0712c37387535ba42349ae78cd6fd8ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf6732ea8012e17cc65039228663eae0" id="r_abf6732ea8012e17cc65039228663eae0"><td class="memTemplParams" colspan="2">template&lt;typename Data_ , typename Index_ , typename Gene_ , typename Weight_ , typename Sum_ &gt; </td></tr>
+<tr class="memitem:abf6732ea8012e17cc65039228663eae0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abf6732ea8012e17cc65039228663eae0">aggregate_across_genes</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; std::size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesBuffers.html">AggregateAcrossGenesBuffers</a>&lt; Sum_ &gt; &amp;buffers, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a> &amp;options)</td></tr>
+<tr class="separator:abf6732ea8012e17cc65039228663eae0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20815db8de3133fc282433dfa74443d9" id="r_a20815db8de3133fc282433dfa74443d9"><td class="memTemplParams" colspan="2">template&lt;typename Sum_  = double, typename Data_ , typename Index_ , typename Gene_ , typename Weight_ &gt; </td></tr>
+<tr class="memitem:a20815db8de3133fc282433dfa74443d9"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html">AggregateAcrossGenesResults</a>&lt; Sum_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a20815db8de3133fc282433dfa74443d9">aggregate_across_genes</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; std::size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a> &amp;options)</td></tr>
+<tr class="separator:a20815db8de3133fc282433dfa74443d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78ac149e374b917fac601b8558d76018" id="r_a78ac149e374b917fac601b8558d76018"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Output_ &gt; </td></tr>
+<tr class="memitem:a78ac149e374b917fac601b8558d76018"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Factor_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a78ac149e374b917fac601b8558d76018">clean_factor</a> (std::size_t n, const Factor_ *factor, Output_ *cleaned)</td></tr>
+<tr class="separator:a78ac149e374b917fac601b8558d76018"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a696f058825d040f98710019f715197fb" id="r_a696f058825d040f98710019f715197fb"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Combined_ &gt; </td></tr>
+<tr class="memitem:a696f058825d040f98710019f715197fb"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; Factor_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a696f058825d040f98710019f715197fb">combine_factors</a> (std::size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *combined)</td></tr>
+<tr class="separator:a696f058825d040f98710019f715197fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bdfc4f8c18c5a2c52862d2a3dec242b" id="r_a4bdfc4f8c18c5a2c52862d2a3dec242b"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Number_ , typename Combined_ &gt; </td></tr>
+<tr class="memitem:a4bdfc4f8c18c5a2c52862d2a3dec242b"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; Factor_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4bdfc4f8c18c5a2c52862d2a3dec242b">combine_factors_unused</a> (std::size_t n, const std::vector&lt; std::pair&lt; const Factor_ *, Number_ &gt; &gt; &amp;factors, Combined_ *combined)</td></tr>
+<tr class="separator:a4bdfc4f8c18c5a2c52862d2a3dec242b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Aggregate single-cell expression values. </p>
@@ -252,8 +252,8 @@ template&lt;typename Sum_  = double, typename Detected_  = int, typename Data_ ,
 
 </div>
 </div>
-<a id="a8c5e32aa2efd50f80d02fcfa00d43837" name="a8c5e32aa2efd50f80d02fcfa00d43837"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8c5e32aa2efd50f80d02fcfa00d43837">&#9670;&#160;</a></span>aggregate_across_genes() <span class="overload">[1/2]</span></h2>
+<a id="abf6732ea8012e17cc65039228663eae0" name="abf6732ea8012e17cc65039228663eae0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf6732ea8012e17cc65039228663eae0">&#9670;&#160;</a></span>aggregate_across_genes() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -268,7 +268,7 @@ template&lt;typename Data_ , typename Index_ , typename Gene_ , typename Weight_
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>gene_sets</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; std::tuple&lt; std::size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>gene_sets</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -305,8 +305,8 @@ template&lt;typename Data_ , typename Index_ , typename Gene_ , typename Weight_
 
 </div>
 </div>
-<a id="a58d8a5a38223ceafca7ebaee5110c11f" name="a58d8a5a38223ceafca7ebaee5110c11f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a58d8a5a38223ceafca7ebaee5110c11f">&#9670;&#160;</a></span>aggregate_across_genes() <span class="overload">[2/2]</span></h2>
+<a id="a20815db8de3133fc282433dfa74443d9" name="a20815db8de3133fc282433dfa74443d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20815db8de3133fc282433dfa74443d9">&#9670;&#160;</a></span>aggregate_across_genes() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -321,7 +321,7 @@ template&lt;typename Sum_  = double, typename Data_ , typename Index_ , typename
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>gene_sets</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; std::tuple&lt; std::size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>gene_sets</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -330,7 +330,7 @@ template&lt;typename Sum_  = double, typename Data_ , typename Index_ , typename
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Overload of <code><a class="el" href="#a8c5e32aa2efd50f80d02fcfa00d43837">aggregate_across_genes()</a></code> that allocates memory for the results.</p>
+<p>Overload of <code><a class="el" href="#abf6732ea8012e17cc65039228663eae0">aggregate_across_genes()</a></code> that allocates memory for the results.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Sum_</td><td>Floating-point type of the sum. </td></tr>
@@ -353,8 +353,8 @@ template&lt;typename Sum_  = double, typename Data_ , typename Index_ , typename
 
 </div>
 </div>
-<a id="a2324eaab6a361f7f767204b62a79764b" name="a2324eaab6a361f7f767204b62a79764b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2324eaab6a361f7f767204b62a79764b">&#9670;&#160;</a></span>clean_factor()</h2>
+<a id="a78ac149e374b917fac601b8558d76018" name="a78ac149e374b917fac601b8558d76018"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78ac149e374b917fac601b8558d76018">&#9670;&#160;</a></span>clean_factor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -364,7 +364,7 @@ template&lt;typename Factor_ , typename Output_ &gt; </div>
         <tr>
           <td class="memname">std::vector&lt; Factor_ &gt; scran_aggregate::clean_factor </td>
           <td>(</td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -378,7 +378,7 @@ template&lt;typename Factor_ , typename Output_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Clean up a categorical factor by removing unused levels. This yields the same results as <code><a class="el" href="#ac709e5530c7cb6b488e6b727fe91b890">combine_factors()</a></code> with a single factor.</p>
+<p>Clean up a categorical factor by removing unused levels. This yields the same results as <code><a class="el" href="#a696f058825d040f98710019f715197fb">combine_factors()</a></code> with a single factor.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Factor_</td><td>Factor type. Any type may be used here as long as it is hashable and has an equality operator. </td></tr>
@@ -398,8 +398,8 @@ template&lt;typename Factor_ , typename Output_ &gt; </div>
 
 </div>
 </div>
-<a id="ac709e5530c7cb6b488e6b727fe91b890" name="ac709e5530c7cb6b488e6b727fe91b890"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac709e5530c7cb6b488e6b727fe91b890">&#9670;&#160;</a></span>combine_factors()</h2>
+<a id="a696f058825d040f98710019f715197fb" name="a696f058825d040f98710019f715197fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a696f058825d040f98710019f715197fb">&#9670;&#160;</a></span>combine_factors()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -409,7 +409,7 @@ template&lt;typename Factor_ , typename Combined_ &gt; </div>
         <tr>
           <td class="memname">std::vector&lt; std::vector&lt; Factor_ &gt; &gt; scran_aggregate::combine_factors </td>
           <td>(</td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -442,8 +442,8 @@ template&lt;typename Factor_ , typename Combined_ &gt; </div>
 
 </div>
 </div>
-<a id="a0712c37387535ba42349ae78cd6fd8ff" name="a0712c37387535ba42349ae78cd6fd8ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0712c37387535ba42349ae78cd6fd8ff">&#9670;&#160;</a></span>combine_factors_unused()</h2>
+<a id="a4bdfc4f8c18c5a2c52862d2a3dec242b" name="a4bdfc4f8c18c5a2c52862d2a3dec242b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4bdfc4f8c18c5a2c52862d2a3dec242b">&#9670;&#160;</a></span>combine_factors_unused()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -453,7 +453,7 @@ template&lt;typename Factor_ , typename Number_ , typename Combined_ &gt; </div>
         <tr>
           <td class="memname">std::vector&lt; std::vector&lt; Factor_ &gt; &gt; scran_aggregate::combine_factors_unused </td>
           <td>(</td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -467,7 +467,7 @@ template&lt;typename Factor_ , typename Number_ , typename Combined_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>This function is a variation of <code><a class="el" href="#ac709e5530c7cb6b488e6b727fe91b890">combine_factors()</a></code> that considers unobserved combinations of factor levels.</p>
+<p>This function is a variation of <code><a class="el" href="#a696f058825d040f98710019f715197fb">combine_factors()</a></code> that considers unobserved combinations of factor levels.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Factor_</td><td>Factor type. Any type may be used here as long as it is comparable. </td></tr>
@@ -479,12 +479,12 @@ template&lt;typename Factor_ , typename Number_ , typename Combined_ &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">n</td><td>Number of observations (i.e., cells). </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">factors</td><td>Vector of pairs, each of which corresponds to a factor. The first element of the pair is a pointer to an array of length <code>n</code>, containing the factor level for each observation. The second element is the total number of levels for this factor, which may be greater than the largeset observed level. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">combined</td><td>Pointer to an array of length <code>n</code> in which the combined factor is to be stored. On output, each entry determines the corresponding observation's combination of levels by indexing into the inner vectors of the returned object; see the argument of the same name in <code><a class="el" href="#ac709e5530c7cb6b488e6b727fe91b890">combine_factors()</a></code> for more details.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">factors</td><td>Vector of pairs, each of which corresponds to a factor. The first element of the pair is a pointer to an array of length <code>n</code>, containing the factor level for each observation. The second element is the total number of levels for this factor, which may be greater than the largest observed level. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">combined</td><td>Pointer to an array of length <code>n</code> in which the combined factor is to be stored. On output, each entry determines the corresponding observation's combination of levels by indexing into the inner vectors of the returned object; see the argument of the same name in <code><a class="el" href="#a696f058825d040f98710019f715197fb">combine_factors()</a></code> for more details.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Vector of vectors containing each unique combinations of factor levels. This has the same structure as the output of <code><a class="el" href="#ac709e5530c7cb6b488e6b727fe91b890">combine_factors()</a></code>, with the only difference being that unobserved combinations are also reported. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Vector of vectors containing each unique combinations of factor levels. This has the same structure as the output of <code><a class="el" href="#a696f058825d040f98710019f715197fb">combine_factors()</a></code>, with the only difference being that unobserved combinations are also reported. </dd></dl>
 
 </div>
 </div>

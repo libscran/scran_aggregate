@@ -175,36 +175,36 @@
       <type>void</type>
       <name>aggregate_across_genes</name>
       <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>a8c5e32aa2efd50f80d02fcfa00d43837</anchor>
-      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesBuffers&lt; Sum_ &gt; &amp;buffers, const AggregateAcrossGenesOptions &amp;options)</arglist>
+      <anchor>abf6732ea8012e17cc65039228663eae0</anchor>
+      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; std::size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesBuffers&lt; Sum_ &gt; &amp;buffers, const AggregateAcrossGenesOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>AggregateAcrossGenesResults&lt; Sum_ &gt;</type>
       <name>aggregate_across_genes</name>
       <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>a58d8a5a38223ceafca7ebaee5110c11f</anchor>
-      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesOptions &amp;options)</arglist>
+      <anchor>a20815db8de3133fc282433dfa74443d9</anchor>
+      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; std::size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Factor_ &gt;</type>
       <name>clean_factor</name>
       <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>a2324eaab6a361f7f767204b62a79764b</anchor>
-      <arglist>(size_t n, const Factor_ *factor, Output_ *cleaned)</arglist>
+      <anchor>a78ac149e374b917fac601b8558d76018</anchor>
+      <arglist>(std::size_t n, const Factor_ *factor, Output_ *cleaned)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; std::vector&lt; Factor_ &gt; &gt;</type>
       <name>combine_factors</name>
       <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>ac709e5530c7cb6b488e6b727fe91b890</anchor>
-      <arglist>(size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *combined)</arglist>
+      <anchor>a696f058825d040f98710019f715197fb</anchor>
+      <arglist>(std::size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *combined)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; std::vector&lt; Factor_ &gt; &gt;</type>
       <name>combine_factors_unused</name>
       <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>a0712c37387535ba42349ae78cd6fd8ff</anchor>
-      <arglist>(size_t n, const std::vector&lt; std::pair&lt; const Factor_ *, Number_ &gt; &gt; &amp;factors, Combined_ *combined)</arglist>
+      <anchor>a4bdfc4f8c18c5a2c52862d2a3dec242b</anchor>
+      <arglist>(std::size_t n, const std::vector&lt; std::pair&lt; const Factor_ *, Number_ &gt; &gt; &amp;factors, Combined_ *combined)</arglist>
     </member>
   </compound>
   <compound kind="page">
