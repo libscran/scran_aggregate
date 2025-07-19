@@ -90,7 +90,7 @@ std::vector<Gene_> create_subset(const std::vector<std::tuple<std::size_t, const
 
 template<typename Index_>
 std::pair<std::vector<Index_>, Index_> create_subset_mapping(const std::vector<Index_>& subset) {
-    Index_ offset = 0;
+    Index_ offset = subset.front();
     Index_ span = subset.back() - offset + 1;
     auto mapping = tatami::create_container_of_Index_size<std::vector<Index_> >(span);
     auto nsubs = subset.size();
