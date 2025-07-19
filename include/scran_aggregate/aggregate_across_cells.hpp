@@ -3,9 +3,12 @@
 
 #include <algorithm>
 #include <vector>
+#include <cstddef>
+#include <type_traits>
 
 #include "tatami/tatami.hpp"
 #include "tatami_stats/tatami_stats.hpp"
+#include "sanisizer/sanisizer.hpp"
 
 /**
  * @file aggregate_across_cells.hpp
@@ -105,16 +108,22 @@ void compute_aggregate_by_row(
     tatami::Options opt;
     opt.sparse_ordered_index = false;
 
-    tatami::parallelize([&](size_t, Index_ s, Index_ l) -> void {
+    tatami::parallelize([&](int, Index_ s, Index_ l) -> void {
         auto ext = tatami::consecutive_extractor<sparse_>(&p, true, s, l, opt);
-        size_t nsums = buffers.sums.size();
-        std::vector<Sum_> tmp_sums(nsums);
-        size_t ndetected = buffers.detected.size();
-        std::vector<Detected_> tmp_detected(ndetected);
+        auto nsums = buffers.sums.size();
+        auto tmp_sums = sanisizer::create<std::vector<Sum_> >(nsums);
+        auto ndetected = buffers.detected.size();
+        auto tmp_detected = sanisizer::create<std::vector<Detected_> >(ndetected);
 
         auto NC = p.ncol();
-        std::vector<Data_> vbuffer(NC);
-        typename std::conditional<sparse_, std::vector<Index_>, Index_>::type ibuffer(NC);
+        auto vbuffer = tatami::create_container_of_Index_size<std::vector<Data_> >(NC);
+        auto ibuffer = [&]{
+            if constexpr(sparse_) {
+                return tatami::create_container_of_Index_size<std::vector<Index_> >(NC);
+            } else {
+                return false;
+            }
+        }();
 
         for (Index_ x = s, end = s + l; x < end; ++x) {
             auto row = [&]{
@@ -139,7 +148,7 @@ void compute_aggregate_by_row(
                 }
 
                 // Computing before transferring for more cache-friendliness.
-                for (size_t l = 0; l < nsums; ++l) {
+                for (decltype(nsums) l = 0; l < nsums; ++l) {
                     buffers.sums[l][x] = tmp_sums[l];
                 }
             }
@@ -157,7 +166,7 @@ void compute_aggregate_by_row(
                     }
                 }
 
-                for (size_t l = 0; l < ndetected; ++l) {
+                for (decltype(ndetected) l = 0; l < ndetected; ++l) {
                     buffers.detected[l][x] = tmp_detected[l];
                 }
             }
@@ -175,17 +184,23 @@ void compute_aggregate_by_column(
     tatami::Options opt;
     opt.sparse_ordered_index = false;
 
-    tatami::parallelize([&](size_t t, Index_ start, Index_ length) -> void {
+    tatami::parallelize([&](int t, Index_ start, Index_ length) -> void {
         auto NC = p.ncol();
         auto ext = tatami::consecutive_extractor<sparse_>(&p, false, static_cast<Index_>(0), NC, start, length, opt);
-        std::vector<Data_> vbuffer(length);
-        typename std::conditional<sparse_, std::vector<Index_>, Index_>::type ibuffer(length);
+        auto vbuffer = tatami::create_container_of_Index_size<std::vector<Data_> >(length);
+        auto ibuffer = [&]{
+            if constexpr(sparse_) {
+                return tatami::create_container_of_Index_size<std::vector<Index_> >(length);
+            } else {
+                return false;
+            }
+        }();
 
-        size_t num_sums = buffers.sums.size();
+        auto num_sums = buffers.sums.size();
         auto get_sum = [&](Index_ i) -> Sum_* { return buffers.sums[i]; };
         tatami_stats::LocalOutputBuffers<Sum_, decltype(get_sum)> local_sums(t, num_sums, start, length, std::move(get_sum));
         auto get_detected = [&](Index_ i) -> Detected_* { return buffers.detected[i]; };
-        size_t num_detected = buffers.detected.size();
+        auto num_detected = buffers.detected.size();
         tatami_stats::LocalOutputBuffers<Detected_, decltype(get_detected)> local_detected(t, num_detected, start, length, std::move(get_detected));
 
         for (Index_ x = 0; x < NC; ++x) {
@@ -297,33 +312,49 @@ AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(
     const Factor_* factor,
     const AggregateAcrossCellsOptions& options)
 {
-    size_t NC = input.ncol();
-    size_t nlevels = (NC ? *std::max_element(factor, factor + NC) + 1 : 0);
-    size_t ngenes = input.nrow();
+    Index_ NR = input.nrow();
+    Index_ NC = input.ncol();
+    std::size_t nlevels = [&]{
+        if (NC) {
+            return sanisizer::sum<std::size_t>(*std::max_element(factor, factor + NC), 1);
+        } else {
+            return static_cast<std::size_t>(0);
+        }
+    }();
 
     AggregateAcrossCellsResults<Sum_, Detected_> output;
     AggregateAcrossCellsBuffers<Sum_, Detected_> buffers;
 
     if (options.compute_sums) {
-        output.sums.resize(nlevels, std::vector<Sum_>(ngenes
+        output.sums.resize(
+            sanisizer::cast<decltype(output.sums.size())>(nlevels),
+            tatami::create_container_of_Index_size<std::vector<Sum_> >(NR
 #ifdef SCRAN_AGGREGATE_TEST_INIT
-        , SCRAN_AGGREGATE_TEST_INIT
+                , SCRAN_AGGREGATE_TEST_INIT
 #endif
-        ));
-        buffers.sums.resize(nlevels);
-        for (size_t l = 0; l < nlevels; ++l) {
+            )
+        );
+        buffers.sums.resize(
+            sanisizer::cast<decltype(buffers.sums.size())>(nlevels)
+        );
+        for (decltype(nlevels) l = 0; l < nlevels; ++l) {
             buffers.sums[l] = output.sums[l].data();
         }
     }
 
     if (options.compute_detected) {
-        output.detected.resize(nlevels, std::vector<Detected_>(ngenes
+        output.detected.resize(
+            sanisizer::cast<decltype(output.detected.size())>(nlevels),
+            tatami::create_container_of_Index_size<std::vector<Detected_> >(NR
 #ifdef SCRAN_AGGREGATE_TEST_INIT
-        , SCRAN_AGGREGATE_TEST_INIT
+                , SCRAN_AGGREGATE_TEST_INIT
 #endif
-        ));
-        buffers.detected.resize(nlevels);
-        for (size_t l = 0; l < nlevels; ++l) {
+            )
+        );
+        buffers.detected.resize(
+            sanisizer::cast<decltype(buffers.detected.size())>(nlevels)
+        );
+        for (decltype(nlevels) l = 0; l < nlevels; ++l) {
             buffers.detected[l] = output.detected[l].data();
         }
     }

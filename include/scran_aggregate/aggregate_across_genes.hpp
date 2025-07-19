@@ -5,9 +5,11 @@
 #include <vector>
 #include <unordered_set>
 #include <stdexcept>
+#include <cstddef>
 
 #include "tatami/tatami.hpp"
 #include "tatami_stats/tatami_stats.hpp"
+#include "sanisizer/sanisizer.hpp"
 
 /**
  * @file aggregate_across_genes.hpp
@@ -67,7 +69,7 @@ struct AggregateAcrossGenesResults {
 namespace aggregate_across_genes_internal {
 
 template<typename Index_, typename Gene_, typename Weight_>
-std::vector<Gene_> create_subset(const std::vector<std::tuple<size_t, const Gene_*, const Weight_*> >& gene_sets, Index_ nrow) {
+std::vector<Gene_> create_subset(const std::vector<std::tuple<std::size_t, const Gene_*, const Weight_*> >& gene_sets, Index_ nrow) {
     std::unordered_set<Gene_> of_interest;
     for (const auto& set : gene_sets) {
         auto set_size = std::get<0>(set);
@@ -89,10 +91,10 @@ std::vector<Gene_> create_subset(const std::vector<std::tuple<size_t, const Gene
 template<typename Index_>
 std::pair<std::vector<Index_>, Index_> create_subset_mapping(const std::vector<Index_>& subset) {
     Index_ offset = 0;
-    size_t span = subset.back() - offset + 1;
-    std::vector<Index_> mapping(span);
-    size_t nsubs = subset.size();
-    for (size_t i = 0; i < nsubs; ++i) {
+    Index_ span = subset.back() - offset + 1;
+    auto mapping = tatami::create_container_of_Index_size<std::vector<Index_> >(span);
+    auto nsubs = subset.size();
+    for (decltype(nsubs) i = 0; i < nsubs; ++i) {
         mapping[subset[i] - offset] = i;
     }
     return std::make_pair(std::move(mapping), offset);
@@ -101,51 +103,51 @@ std::pair<std::vector<Index_>, Index_> create_subset_mapping(const std::vector<I
 template<typename Data_, typename Index_, typename Gene_, typename Weight_, typename Sum_>
 void compute_aggregate_by_column(
     const tatami::Matrix<Data_, Index_>& p,
-    const std::vector<std::tuple<size_t, const Gene_*, const Weight_*> >& gene_sets,
+    const std::vector<std::tuple<std::size_t, const Gene_*, const Weight_*> >& gene_sets,
     const AggregateAcrossGenesBuffers<Sum_>& buffers,
     const AggregateAcrossGenesOptions& options)
 {
     // Identifying the subset of rows that actually need to be extracted.
     tatami::VectorPtr<Index_> subset_of_interest = std::make_shared<std::vector<Index_> >(create_subset<Index_>(gene_sets, p.nrow()));
     const auto& subset = *subset_of_interest;
-    size_t nsubs = subset.size();
+    Index_ nsubs = subset.size();
 
     // Creating a mapping back to the gene indices in the subset.
-    const size_t num_sets = gene_sets.size();
-    std::vector<std::pair<std::vector<Index_>, const Weight_*> > remapping(num_sets);
+    auto num_sets = gene_sets.size();
+    auto remapping = sanisizer::create<std::vector<std::pair<std::vector<Index_>, const Weight_*> > >(num_sets);
     if (nsubs) {
         auto sub_mapping = create_subset_mapping(subset);
         const auto& mapping = sub_mapping.first;
         Gene_ offset = sub_mapping.second;
 
-        for (size_t s = 0; s < num_sets; ++s) {
+        for (decltype(num_sets) s = 0; s < num_sets; ++s) {
             const auto& set = gene_sets[s];
             auto set_size = std::get<0>(set);
             auto set_genes = std::get<1>(set);
 
             auto& remapped = remapping[s].first;
             remapped.reserve(set_size);
-            for (size_t g = 0; g < set_size; ++g) {
+            for (decltype(set_size) g = 0; g < set_size; ++g) {
                 remapped.push_back(mapping[set_genes[g] - offset]);
             }
             remapping[s].second = std::get<2>(set);
         }
     }
 
-    tatami::parallelize([&](size_t, Index_ start, Index_ length) -> void {
+    tatami::parallelize([&](int, Index_ start, Index_ length) -> void {
         // We extract as sparse even if it is dense, as it's just
         // easier to index from a dense vector.
         auto ext = tatami::consecutive_extractor<false>(&p, false, start, length, subset_of_interest);
-        std::vector<Data_> vbuffer(nsubs);
+        auto vbuffer = tatami::create_container_of_Index_size<std::vector<Data_> >(nsubs);
 
         for (Index_ x = start, end = start + length; x < end; ++x) {
             auto ptr = ext->fetch(vbuffer.data());
-            for (size_t s = 0; s < num_sets; ++s) {
+            for (decltype(num_sets) s = 0; s < num_sets; ++s) {
                 const auto& set = remapping[s];
 
                 Sum_ value = 0;
                 if (set.second) {
-                    for (size_t i = 0, send = set.first.size(); i < send; ++i) {
+                    for (decltype(set.first.size()) i = 0, send = set.first.size(); i < send; ++i) {
                         value += ptr[set.first[i]] * set.second[i];
                     }
                 } else {
@@ -164,50 +166,50 @@ void compute_aggregate_by_column(
 template<typename Data_, typename Index_, typename Gene_, typename Weight_, typename Sum_>
 void compute_aggregate_by_row(
     const tatami::Matrix<Data_, Index_>& p,
-    const std::vector<std::tuple<size_t, const Gene_*, const Weight_*> >& gene_sets,
+    const std::vector<std::tuple<std::size_t, const Gene_*, const Weight_*> >& gene_sets,
     const AggregateAcrossGenesBuffers<Sum_>& buffers,
     const AggregateAcrossGenesOptions& options)
 {
     // Identifying the subset of rows that actually need to be extracted.
     auto subset = create_subset<Index_>(gene_sets, p.nrow());
-    size_t nsubs = subset.size();
+    Index_ nsubs = subset.size();
     auto sub_oracle = std::make_shared<tatami::FixedViewOracle<Index_> >(subset.data(), nsubs);
 
-    const size_t num_sets = gene_sets.size();
-    std::vector<std::vector<std::pair<size_t, Weight_> > > remapping(nsubs);
+    auto num_sets = gene_sets.size();
+    auto remapping = tatami::create_container_of_Index_size<std::vector<std::vector<std::pair<std::size_t, Weight_> > > >(nsubs);
     if (nsubs) {
         auto sub_mapping = create_subset_mapping(subset);
         const auto& mapping = sub_mapping.first;
         Gene_ offset = sub_mapping.second;
 
-        for (size_t s = 0; s < num_sets; ++s) {
+        for (decltype(num_sets) s = 0; s < num_sets; ++s) {
             const auto& set = gene_sets[s];
             auto set_size = std::get<0>(set);
             auto set_genes = std::get<1>(set);
             auto set_weights = std::get<2>(set);
 
             if (set_weights) {
-                for (size_t g = 0; g < set_size; ++g) {
+                for (decltype(set_size) g = 0; g < set_size; ++g) {
                     remapping[mapping[set_genes[g] - offset]].emplace_back(s, set_weights[g]); 
                 }
             } else {
-                for (size_t g = 0; g < set_size; ++g) {
+                for (decltype(set_size) g = 0; g < set_size; ++g) {
                     remapping[mapping[set_genes[g] - offset]].emplace_back(s, 1);
                 }
             }
         }
     }
 
-    tatami::parallelize([&](size_t t, Index_ start, Index_ length) -> void {
+    tatami::parallelize([&](int t, Index_ start, Index_ length) -> void {
         auto get_sum = [&](Index_ i) -> Sum_* { return buffers.sum[i]; };
         tatami_stats::LocalOutputBuffers<Sum_, decltype(get_sum)> local_sums(t, num_sets, start, length, std::move(get_sum));
 
         if (p.sparse()) {
             auto ext = tatami::new_extractor<true, true>(&p, true, sub_oracle, start, length);
-            std::vector<Data_> vbuffer(length);
-            std::vector<Index_> ibuffer(length);
+            auto vbuffer = tatami::create_container_of_Index_size<std::vector<Data_> >(length);
+            auto ibuffer = tatami::create_container_of_Index_size<std::vector<Index_> >(length);
 
-            for (size_t sub = 0; sub < nsubs; ++sub) {
+            for (Index_ sub = 0; sub < nsubs; ++sub) {
                 auto range = ext->fetch(vbuffer.data(), ibuffer.data());
 
                 for (const auto& sw : remapping[sub]) {
@@ -221,9 +223,9 @@ void compute_aggregate_by_row(
 
         } else {
             auto ext = tatami::new_extractor<false, true>(&p, true, sub_oracle, start, length);
-            std::vector<Data_> vbuffer(length);
+            auto vbuffer = tatami::create_container_of_Index_size<std::vector<Data_> >(length);
 
-            for (size_t sub = 0; sub < nsubs; ++sub) {
+            for (Index_ sub = 0; sub < nsubs; ++sub) {
                 auto ptr = ext->fetch(vbuffer.data());
                 for (const auto& sw : remapping[sub]) {
                     auto outptr = local_sums.data(sw.first);
@@ -267,7 +269,7 @@ void compute_aggregate_by_row(
 template<typename Data_, typename Index_, typename Gene_, typename Weight_, typename Sum_>
 void aggregate_across_genes(
     const tatami::Matrix<Data_, Index_>& input,
-    const std::vector<std::tuple<size_t, const Gene_*, const Weight_*> >& gene_sets,
+    const std::vector<std::tuple<std::size_t, const Gene_*, const Weight_*> >& gene_sets,
     const AggregateAcrossGenesBuffers<Sum_>& buffers,
     const AggregateAcrossGenesOptions& options)
 {
@@ -278,10 +280,10 @@ void aggregate_across_genes(
     }
 
     if (options.average) {
-        size_t nsets = gene_sets.size();
-        tatami::parallelize([&](int, size_t start, size_t length) -> void {
-            size_t NC = input.ncol();
-            for (size_t s = start, end = start + length; s < end; ++s) {
+        auto nsets = gene_sets.size();
+        tatami::parallelize([&](int, Index_ start, Index_ length) -> void {
+            Index_ NC = input.ncol();
+            for (Index_ s = start, end = start + length; s < end; ++s) {
                 const auto& set = gene_sets[s];
                 auto set_size = std::get<0>(set);
 
@@ -294,7 +296,7 @@ void aggregate_across_genes(
                 }
 
                 auto current = buffers.sum[s];
-                for (size_t c = 0; c < NC; ++c) {
+                for (Index_ c = 0; c < NC; ++c) {
                     current[c] /= denom;
                 }
             }
@@ -324,21 +326,23 @@ void aggregate_across_genes(
 template<typename Sum_ = double, typename Data_, typename Index_, typename Gene_, typename Weight_>
 AggregateAcrossGenesResults<Sum_> aggregate_across_genes(
     const tatami::Matrix<Data_, Index_>& input,
-    const std::vector<std::tuple<size_t, const Gene_*, const Weight_*> >& gene_sets,
+    const std::vector<std::tuple<std::size_t, const Gene_*, const Weight_*> >& gene_sets,
     const AggregateAcrossGenesOptions& options)
 {
     AggregateAcrossGenesResults<Sum_> output;
     AggregateAcrossGenesBuffers<Sum_> buffers;
 
-    size_t NC = input.ncol();
-    size_t nsets = gene_sets.size();
-    output.sum.resize(nsets);
-    buffers.sum.resize(nsets);
+    Index_ NC = input.ncol();
+    auto nsets = gene_sets.size();
+    output.sum.resize(sanisizer::cast<decltype(output.sum.size())>(nsets));
+    buffers.sum.resize(sanisizer::cast<decltype(buffers.sum.size())>(nsets));
 
-    for (size_t s = 0; s < nsets; ++s) {
-        output.sum[s].resize(NC
+    for (decltype(nsets) s = 0; s < nsets; ++s) {
+        tatami::resize_container_to_Index_size(
+            output.sum[s],
+            NC
 #ifdef SCRAN_AGGREGATE_TEST_INIT
-        , SCRAN_AGGREGATE_TEST_INIT
+            , SCRAN_AGGREGATE_TEST_INIT
 #endif
         );
         buffers.sum[s] = output.sum[s].data();
