@@ -1,8 +1,0 @@
-<map id="scran_aggregate/clean_factor.hpp" name="scran_aggregate/clean_factor.hpp">
-<area shape="rect" id="Node000001" title="Clean up a categorical factor." alt="" coords="76,5,228,46"/>
-<area shape="rect" id="Node000002" href="$combine__factors_8hpp.html" title="Combine categorical factors into a single factor." alt="" coords="5,94,176,135"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="131,60,107,95,102,92,127,57"/>
-<area shape="rect" id="Node000003" href="$scran__aggregate_8hpp.html" title="Aggregate single&#45;cell expression values." alt="" coords="75,183,228,223"/>
-<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="176,58,190,93,194,114,190,135,181,161,168,184,163,181,176,159,185,134,188,114,185,95,171,60"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="115,146,140,181,136,184,111,149"/>
-</map>

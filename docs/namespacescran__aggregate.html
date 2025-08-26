@@ -138,14 +138,17 @@ Functions</h2></td></tr>
 <tr class="memitem:a20815db8de3133fc282433dfa74443d9" id="r_a20815db8de3133fc282433dfa74443d9"><td class="memTemplParams" colspan="2">template&lt;typename Sum_  = double, typename Data_ , typename Index_ , typename Gene_ , typename Weight_ &gt; </td></tr>
 <tr class="memitem:a20815db8de3133fc282433dfa74443d9"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesResults.html">AggregateAcrossGenesResults</a>&lt; Sum_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a20815db8de3133fc282433dfa74443d9">aggregate_across_genes</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; std::size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const <a class="el" href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">AggregateAcrossGenesOptions</a> &amp;options)</td></tr>
 <tr class="separator:a20815db8de3133fc282433dfa74443d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac14284076a7d9332cd95646e8db4e769" id="r_ac14284076a7d9332cd95646e8db4e769"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Output_ &gt; </td></tr>
-<tr class="memitem:ac14284076a7d9332cd95646e8db4e769"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Factor_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac14284076a7d9332cd95646e8db4e769">clean_factor</a> (const std::size_t n, const Factor_ *const factor, Output_ *const cleaned)</td></tr>
+<tr class="memitem:ac14284076a7d9332cd95646e8db4e769" id="r_ac14284076a7d9332cd95646e8db4e769"><td class="memTemplParams" colspan="2"><a id="ac14284076a7d9332cd95646e8db4e769" name="ac14284076a7d9332cd95646e8db4e769"></a>
+template&lt;typename Factor_ , typename Output_ &gt; </td></tr>
+<tr class="memitem:ac14284076a7d9332cd95646e8db4e769"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Factor_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>clean_factor</b> (const std::size_t n, const Factor_ *const factor, Output_ *const cleaned)</td></tr>
 <tr class="separator:ac14284076a7d9332cd95646e8db4e769"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad80f3b36beb047078b69038867e8e714" id="r_ad80f3b36beb047078b69038867e8e714"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Combined_ &gt; </td></tr>
-<tr class="memitem:ad80f3b36beb047078b69038867e8e714"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; Factor_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad80f3b36beb047078b69038867e8e714">combine_factors</a> (const std::size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *const combined)</td></tr>
+<tr class="memitem:ad80f3b36beb047078b69038867e8e714" id="r_ad80f3b36beb047078b69038867e8e714"><td class="memTemplParams" colspan="2"><a id="ad80f3b36beb047078b69038867e8e714" name="ad80f3b36beb047078b69038867e8e714"></a>
+template&lt;typename Factor_ , typename Combined_ &gt; </td></tr>
+<tr class="memitem:ad80f3b36beb047078b69038867e8e714"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; Factor_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>combine_factors</b> (const std::size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *const combined)</td></tr>
 <tr class="separator:ad80f3b36beb047078b69038867e8e714"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a252b9226f106b365c068f50a206597e5" id="r_a252b9226f106b365c068f50a206597e5"><td class="memTemplParams" colspan="2">template&lt;typename Factor_ , typename Number_ , typename Combined_ &gt; </td></tr>
-<tr class="memitem:a252b9226f106b365c068f50a206597e5"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; Factor_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a252b9226f106b365c068f50a206597e5">combine_factors_unused</a> (const std::size_t n, const std::vector&lt; std::pair&lt; const Factor_ *, Number_ &gt; &gt; &amp;factors, Combined_ *const combined)</td></tr>
+<tr class="memitem:a252b9226f106b365c068f50a206597e5" id="r_a252b9226f106b365c068f50a206597e5"><td class="memTemplParams" colspan="2"><a id="a252b9226f106b365c068f50a206597e5" name="a252b9226f106b365c068f50a206597e5"></a>
+template&lt;typename Factor_ , typename Number_ , typename Combined_ &gt; </td></tr>
+<tr class="memitem:a252b9226f106b365c068f50a206597e5"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; Factor_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>combine_factors_unused</b> (const std::size_t n, const std::vector&lt; std::pair&lt; const Factor_ *, Number_ &gt; &gt; &amp;factors, Combined_ *const combined)</td></tr>
 <tr class="separator:a252b9226f106b365c068f50a206597e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -349,141 +352,6 @@ template&lt;typename Sum_  = double, typename Data_ , typename Index_ , typename
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Results of the aggregation. </dd></dl>
-
-</div>
-</div>
-<a id="ac14284076a7d9332cd95646e8db4e769" name="ac14284076a7d9332cd95646e8db4e769"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac14284076a7d9332cd95646e8db4e769">&#9670;&#160;</a></span>clean_factor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Factor_ , typename Output_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; Factor_ &gt; scran_aggregate::clean_factor </td>
-          <td>(</td>
-          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Factor_ *const</td>          <td class="paramname"><span class="paramname"><em>factor</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Output_ *const</td>          <td class="paramname"><span class="paramname"><em>cleaned</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Clean up a categorical factor by removing unused levels. This yields the same results as <code><a class="el" href="#ad80f3b36beb047078b69038867e8e714">combine_factors()</a></code> with a single factor.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Factor_</td><td>Factor type. Any type may be used here as long as it is hashable and has an equality operator. </td></tr>
-    <tr><td class="paramname">Output_</td><td>Integer type for the cleaned factor.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Number of observations (i.e., cells). </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">factor</td><td>Pointer to an array of length <code>n</code> containing a factor. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">cleaned</td><td>Pointer to an array of length <code>n</code> in which the cleaned factor is to be stored. All values are integers in \([0, N)\) where \(N\) is the length of the output vector; all integers in this range are guaranteed to be present at least once in <code>cleaned</code>.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A sorted vector of the original levels that were observed at least once in <code>factor</code>. For any observation <code>i</code>, it is guaranteed that <code>output[cleaned[i]] == factor[i]</code>. </dd></dl>
-
-</div>
-</div>
-<a id="ad80f3b36beb047078b69038867e8e714" name="ad80f3b36beb047078b69038867e8e714"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad80f3b36beb047078b69038867e8e714">&#9670;&#160;</a></span>combine_factors()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Factor_ , typename Combined_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; std::vector&lt; Factor_ &gt; &gt; scran_aggregate::combine_factors </td>
-          <td>(</td>
-          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; const Factor_ * &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>factors</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Combined_ *const</td>          <td class="paramname"><span class="paramname"><em>combined</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Factor_</td><td>Factor type. Any type may be used here as long as it implements the comparison operators. </td></tr>
-    <tr><td class="paramname">Combined_</td><td>Integer type for the combined factor. This should be large enough to hold the number of unique combinations.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Number of observations (i.e., cells). </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">factors</td><td>Vector of pointers to arrays of length <code>n</code>, each containing a different factor. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">combined</td><td>Pointer to an array of length <code>n</code> in which the combined factor is to be stored. On output, each entry determines the corresponding observation's combination of levels by indexing into the inner vectors of the returned object, i.e., <code>j := combined[i]</code> represents the combination <code>(output[0][j], output[1][j], ...)</code>.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Vector of vectors containing each unique combinations of factor levels. Each inner vector corresponds to a factor in <code>factors</code>, and all inner vectors have the same length. Corresponding entries of the inner vectors define a particular combination of levels, i.e., the first combination is defined as <code>(output[0][0], output[1][0], ...)</code>, the second combination is defined as <code>(output[0][1], output[1][1], ...)</code>, and so on. Combinations are guaranteed to be sorted by the first factor, then the second, etc. </dd></dl>
-
-</div>
-</div>
-<a id="a252b9226f106b365c068f50a206597e5" name="a252b9226f106b365c068f50a206597e5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a252b9226f106b365c068f50a206597e5">&#9670;&#160;</a></span>combine_factors_unused()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Factor_ , typename Number_ , typename Combined_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; std::vector&lt; Factor_ &gt; &gt; scran_aggregate::combine_factors_unused </td>
-          <td>(</td>
-          <td class="paramtype">const std::size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::pair&lt; const Factor_ *, Number_ &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>factors</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Combined_ *const</td>          <td class="paramname"><span class="paramname"><em>combined</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>This function is a variation of <code><a class="el" href="#ad80f3b36beb047078b69038867e8e714">combine_factors()</a></code> that considers unobserved combinations of factor levels.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Factor_</td><td>Factor type. Any type may be used here as long as it is comparable. </td></tr>
-    <tr><td class="paramname">Number_</td><td>Integer type for the number of levels in each factor. </td></tr>
-    <tr><td class="paramname">Combined_</td><td>Integer type for the combined factor. This should be large enough to hold the number of unique (possibly unused) combinations.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Number of observations (i.e., cells). </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">factors</td><td>Vector of pairs, each of which corresponds to a factor. The first element of the pair is a pointer to an array of length <code>n</code>, containing the factor level for each observation. The second element is the total number of levels for this factor, which may be greater than the largest observed level. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">combined</td><td>Pointer to an array of length <code>n</code> in which the combined factor is to be stored. On output, each entry determines the corresponding observation's combination of levels by indexing into the inner vectors of the returned object; see the argument of the same name in <code><a class="el" href="#ad80f3b36beb047078b69038867e8e714">combine_factors()</a></code> for more details.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Vector of vectors containing each unique combinations of factor levels. This has the same structure as the output of <code><a class="el" href="#ad80f3b36beb047078b69038867e8e714">combine_factors()</a></code>, with the only difference being that unobserved combinations are also reported. </dd></dl>
 
 </div>
 </div>

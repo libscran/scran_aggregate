@@ -19,26 +19,11 @@
     <namespace>scran_aggregate</namespace>
   </compound>
   <compound kind="file">
-    <name>clean_factor.hpp</name>
-    <path>scran_aggregate/</path>
-    <filename>clean__factor_8hpp.html</filename>
-    <namespace>scran_aggregate</namespace>
-  </compound>
-  <compound kind="file">
-    <name>combine_factors.hpp</name>
-    <path>scran_aggregate/</path>
-    <filename>combine__factors_8hpp.html</filename>
-    <includes id="clean__factor_8hpp" name="clean_factor.hpp" local="yes" import="no" module="no" objc="no">clean_factor.hpp</includes>
-    <namespace>scran_aggregate</namespace>
-  </compound>
-  <compound kind="file">
     <name>scran_aggregate.hpp</name>
     <path>scran_aggregate/</path>
     <filename>scran__aggregate_8hpp.html</filename>
     <includes id="aggregate__across__genes_8hpp" name="aggregate_across_genes.hpp" local="yes" import="no" module="no" objc="no">aggregate_across_genes.hpp</includes>
     <includes id="aggregate__across__cells_8hpp" name="aggregate_across_cells.hpp" local="yes" import="no" module="no" objc="no">aggregate_across_cells.hpp</includes>
-    <includes id="combine__factors_8hpp" name="combine_factors.hpp" local="yes" import="no" module="no" objc="no">combine_factors.hpp</includes>
-    <includes id="clean__factor_8hpp" name="clean_factor.hpp" local="yes" import="no" module="no" objc="no">clean_factor.hpp</includes>
     <namespace>scran_aggregate</namespace>
   </compound>
   <compound kind="struct">
@@ -184,27 +169,6 @@
       <anchorfile>namespacescran__aggregate.html</anchorfile>
       <anchor>a20815db8de3133fc282433dfa74443d9</anchor>
       <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; std::size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesOptions &amp;options)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Factor_ &gt;</type>
-      <name>clean_factor</name>
-      <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>ac14284076a7d9332cd95646e8db4e769</anchor>
-      <arglist>(const std::size_t n, const Factor_ *const factor, Output_ *const cleaned)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; std::vector&lt; Factor_ &gt; &gt;</type>
-      <name>combine_factors</name>
-      <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>ad80f3b36beb047078b69038867e8e714</anchor>
-      <arglist>(const std::size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *const combined)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; std::vector&lt; Factor_ &gt; &gt;</type>
-      <name>combine_factors_unused</name>
-      <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>a252b9226f106b365c068f50a206597e5</anchor>
-      <arglist>(const std::size_t n, const std::vector&lt; std::pair&lt; const Factor_ *, Number_ &gt; &gt; &amp;factors, Combined_ *const combined)</arglist>
     </member>
   </compound>
   <compound kind="page">

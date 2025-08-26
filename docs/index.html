@@ -105,6 +105,8 @@ $(function(){ initResizable(false); });
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="scran__aggregate_8hpp.html">scran_aggregate/scran_aggregate.hpp</a>&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">const</span> <a class="code hl_classRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt;double, int&gt;</a>&amp; mat = some_data_source();</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Array of groupings should contain integer assignments to groups 0, 1, 2, etc.</span></div>
 <div class="line">std::vector&lt;int&gt; groupings = some_groupings();</div>
 <div class="line"> </div>
 <div class="line"><a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html">scran_aggregate::AggregateAcrossCellsOptions</a> opt;</div>
@@ -117,21 +119,6 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="anamespacescran__aggregate_html_a455854154026f84c3d8c52a216472c2b"><div class="ttname"><a href="namespacescran__aggregate.html#a455854154026f84c3d8c52a216472c2b">scran_aggregate::aggregate_across_cells</a></div><div class="ttdeci">void aggregate_across_cells(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Group_ *const group, const AggregateAcrossCellsBuffers&lt; Sum_, Detected_ &gt; &amp;buffers, const AggregateAcrossCellsOptions &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:273</div></div>
 <div class="ttc" id="ascran__aggregate_8hpp_html"><div class="ttname"><a href="scran__aggregate_8hpp.html">scran_aggregate.hpp</a></div><div class="ttdoc">Aggregate single-cell expression values.</div></div>
 <div class="ttc" id="astructscran__aggregate_1_1AggregateAcrossCellsOptions_html"><div class="ttname"><a href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html">scran_aggregate::AggregateAcrossCellsOptions</a></div><div class="ttdoc">Options for aggregate_across_cells().</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:25</div></div>
-</div><!-- fragment --><p>The array of groupings should contain integer assignments to groups 0, 1, 2, etc. For more complex groupings defined from combinations of multiple factors, the <code>combine_factors()</code> utility will create group assignments from unique combinations of those factors:</p>
-<div class="fragment"><div class="line">std::vector&lt;int&gt; grouping1 { 0, 0, 1, 1, 2, 2 };</div>
-<div class="line">std::vector&lt;int&gt; grouping2 { 0, 1, 0, 1, 0, 1 };</div>
-<div class="line"> </div>
-<div class="line">std::vector&lt;int&gt; combined(grouping1.size()); </div>
-<div class="line"><span class="keyword">auto</span> res = <a class="code hl_function" href="namespacescran__aggregate.html#ad80f3b36beb047078b69038867e8e714">scran_aggregate::combine_factors</a>(</div>
-<div class="line">    grouping1.size(), </div>
-<div class="line">    std::vector&lt;int*&gt;{ grouping1.data(), grouping2.data() },</div>
-<div class="line">    combined.data()</div>
-<div class="line">);</div>
-<div class="line"> </div>
-<div class="line">combined; <span class="comment">// defines unique combinations of (grouping1, grouping2).</span></div>
-<div class="line">res.factors[0]; <span class="comment">// values of grouping1 for each unique combination.</span></div>
-<div class="line">res.factors[1]; <span class="comment">// values of grouping2 for each unique combination.</span></div>
-<div class="ttc" id="anamespacescran__aggregate_html_ad80f3b36beb047078b69038867e8e714"><div class="ttname"><a href="namespacescran__aggregate.html#ad80f3b36beb047078b69038867e8e714">scran_aggregate::combine_factors</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; Factor_ &gt; &gt; combine_factors(const std::size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *const combined)</div><div class="ttdef"><b>Definition</b> combine_factors.hpp:43</div></div>
 </div><!-- fragment --><p>We can also use the <code>aggregate_across_genes()</code> function to sum expression values across gene sets, e.g., to compute the activity of a gene signature. This can be done with any number of gene sets, possibly with a different weight for each gene in each set.</p>
 <div class="fragment"><div class="line">std::vector&lt;std::tuple&lt;size_t, const int*, const double*&gt; &gt; gene_sets;</div>
 <div class="line"> </div>
