@@ -24,13 +24,13 @@ namespace scran_aggregate {
  */
 struct AggregateAcrossCellsOptions {
     /**
-     * Whether to compute the sum within each factor level.
+     * Whether to compute the sum within each group.
      * This option only affects the `aggregate_across_cells()` overload where an `AggregateAcrossCellsResults` object is returned.
      */
     bool compute_sums = true;
 
     /**
-     * Whether to compute the number of detected cells within each factor level.
+     * Whether to compute the number of detected cells within each group.
      * This option only affects the `aggregate_across_cells()` overload where an `AggregateAcrossCellsResults` object is returned.
      */
     bool compute_detected = true;
@@ -50,20 +50,20 @@ struct AggregateAcrossCellsOptions {
 template <typename Sum_, typename Detected_>
 struct AggregateAcrossCellsBuffers {
     /**
-     * Vector of length equal to the number of factor levels.
+     * Vector of length equal to the number of groups.
      * Each element is a pointer to an array of length equal to the number of genes,
-     * to be filled with the summed expression across all cells in the corresponding level for each gene.
+     * to be filled with the summed expression across all cells in the corresponding group for each gene.
      *
-     * If this is empty, the sums for each level are not computed.
+     * If this is empty, the sums for each group are not computed.
      */
     std::vector<Sum_*> sums;
 
     /**
-     * Vector of length equal to the number of factor levels.
+     * Vector of length equal to the number of groups.
      * Each element is a pointer to an array of length equal to the number of genes,
-     * to be filled with the number of cells in the corresponding level with detected expression for each gene.
+     * to be filled with the number of cells in the corresponding group with detected expression for each gene.
      * 
-     * If this is empty, the number of detected cells for each level is not computed.
+     * If this is empty, the number of detected cells for each group is not computed.
      */
     std::vector<Detected_*> detected;
 
@@ -77,18 +77,18 @@ struct AggregateAcrossCellsBuffers {
 template <typename Sum_, typename Detected_>
 struct AggregateAcrossCellsResults {
     /**
-     * Vector of length equal to the number of factor levels.
+     * Vector of length equal to the number of groups.
      * Each inner vector is of length equal to the number of genes.
-     * Each entry contains the summed expression across all cells in the corresponding level for each gene.
+     * Each entry contains the summed expression across all cells in the corresponding group for each gene.
      *
      * If `AggregateAcrossCellsOptions::compute_sums = false`, this vector is empty.
      */
     std::vector<std::vector<Sum_> > sums;
 
     /**
-     * Vector of length equal to the number of factor levels.
+     * Vector of length equal to the number of groups.
      * Each inner vector is of length equal to the number of genes.
-     * Each entry contains the number of cells in the corresponding level with detected expression for each gene.
+     * Each entry contains the number of cells in the corresponding group with detected expression for each gene.
      *
      * If `AggregateAcrossCellsOptions::compute_detected = false`, this vector is empty.
      */
@@ -100,10 +100,10 @@ struct AggregateAcrossCellsResults {
  */
 namespace internal {
 
-template<bool sparse_, typename Data_, typename Index_, typename Factor_, typename Sum_, typename Detected_>
+template<bool sparse_, typename Data_, typename Index_, typename Group_, typename Sum_, typename Detected_>
 void compute_aggregate_by_row(
     const tatami::Matrix<Data_, Index_>& p,
-    const Factor_* const factor,
+    const Group_* const group,
     const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers,
     const AggregateAcrossCellsOptions& options)
 {
@@ -141,11 +141,11 @@ void compute_aggregate_by_row(
 
                 if constexpr(sparse_) {
                     for (Index_ j = 0; j < row.number; ++j) {
-                        tmp_sums[factor[row.index[j]]] += row.value[j];
+                        tmp_sums[group[row.index[j]]] += row.value[j];
                     }
                 } else {
                     for (Index_ j = 0; j < NC; ++j) {
-                        tmp_sums[factor[j]] += row[j];
+                        tmp_sums[group[j]] += row[j];
                     }
                 }
 
@@ -160,11 +160,11 @@ void compute_aggregate_by_row(
 
                 if constexpr(sparse_) {
                     for (Index_ j = 0; j < row.number; ++j) {
-                        tmp_detected[factor[row.index[j]]] += (row.value[j] > 0);
+                        tmp_detected[group[row.index[j]]] += (row.value[j] > 0);
                     }
                 } else {
                     for (Index_ j = 0; j < NC; ++j) {
-                        tmp_detected[factor[j]] += (row[j] > 0);
+                        tmp_detected[group[j]] += (row[j] > 0);
                     }
                 }
 
@@ -176,10 +176,10 @@ void compute_aggregate_by_row(
     }, p.nrow(), options.num_threads);
 }
 
-template<bool sparse_, typename Data_, typename Index_, typename Factor_, typename Sum_, typename Detected_>
+template<bool sparse_, typename Data_, typename Index_, typename Group_, typename Sum_, typename Detected_>
 void compute_aggregate_by_column(
     const tatami::Matrix<Data_, Index_>& p,
-    const Factor_* const factor,
+    const Group_* const group,
     const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers,
     const AggregateAcrossCellsOptions& options)
 {
@@ -207,7 +207,7 @@ void compute_aggregate_by_column(
         tatami_stats::LocalOutputBuffers<Detected_, decltype(I(get_detected))> local_detected(t, num_detected, start, length, std::move(get_detected));
 
         for (Index_ x = 0; x < NC; ++x) {
-            const auto current = factor[x];
+            const auto current = group[x];
 
             if constexpr(sparse_) {
                 const auto col = ext->fetch(vbuffer.data(), ibuffer.data());
@@ -255,39 +255,38 @@ void compute_aggregate_by_column(
  * Aggregate expression values across groups of cells for each gene.
  * We report the sum of expression values and the number of cells with detected (i.e., positive) expression values in each group.
  * This is typically used to create pseudo-bulk expression profiles for cluster/sample combinations.
- * Expression values are generally expected to be counts, though the same function can be used to compute the average log-expression.
+ * Expression values are generally expected to be counts so that the sums can be used as if they were counts from bulk data, e.g., for differential analyses with **edgeR**.
  *
  * @tparam Data_ Type of data in the input matrix, should be numeric.
  * @tparam Index_ Integer type of index in the input matrix.
- * @tparam Factor_ Integer type of the factor.
- * @tparam Sum_ Type of the sum, usually the same as `Data`.
- * @tparam Detected_ Type for the number of detected cells, usually integer.
+ * @tparam Group_ Integer type of the group assignments.
+ * @tparam Sum_ Numeric type of the sum, often the same as `Data_`.
+ * @tparam Detected_ Numeric type (usually integer) of the number of detected cells. 
  *
- * @param input The input matrix where rows are features and columns are cells.
- * @param[in] factor Grouping factor.
- * This is a pointer to an array of length equal to the number of columns of `input`, containing the factor level (i.e., assigned group) for each cell.
- * All levels should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique levels/groups.
- * @param[out] buffers Collection of buffers in which to store the aggregate statistics (e.g., sums, number of detected cells) for each level and gene.
+ * @param input The input matrix, usually containing non-negative counts.
+ * Rows are features and columns are cells.
+ * @param[in] group Pointer to an array of length equal to the number of columns of `input`, containing the assigned group for each cell.
+ * All entries should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique groups.
  * @param options Further options.
  */
-template<typename Data_, typename Index_, typename Factor_, typename Sum_, typename Detected_>
+template<typename Data_, typename Index_, typename Group_, typename Sum_, typename Detected_>
 void aggregate_across_cells(
     const tatami::Matrix<Data_, Index_>& input,
-    const Factor_* const factor,
+    const Group_* const group,
     const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers,
     const AggregateAcrossCellsOptions& options)
 {
     if (input.prefer_rows()) {
         if (input.sparse()) {
-            internal::compute_aggregate_by_row<true>(input, factor, buffers, options);
+            internal::compute_aggregate_by_row<true>(input, group, buffers, options);
         } else {
-            internal::compute_aggregate_by_row<false>(input, factor, buffers, options);
+            internal::compute_aggregate_by_row<false>(input, group, buffers, options);
         }
     } else {
         if (input.sparse()) {
-            internal::compute_aggregate_by_column<true>(input, factor, buffers, options);
+            internal::compute_aggregate_by_column<true>(input, group, buffers, options);
         } else {
-            internal::compute_aggregate_by_column<false>(input, factor, buffers, options);
+            internal::compute_aggregate_by_column<false>(input, group, buffers, options);
         }
     }
 } 
@@ -295,31 +294,31 @@ void aggregate_across_cells(
 /**
  * Overload of `aggregate_across_cells()` that allocates memory for the results.
  *
- * @tparam Sum_ Type of the sum, should be numeric.
- * @tparam Detected_ Type for the number of detected cells, usually integer.
+ * @tparam Sum_ Numerict ype of the sum.
+ * @tparam Detected_ Numeric type (usually integer) of the number of detected cells. 
  * @tparam Data_ Type of data in the input matrix, should be numeric.
  * @tparam Index_ Integer type of index in the input matrix.
- * @tparam Factor_ Integer type of the factor.
+ * @tparam Group_ Integer type of the group assignments.
  *
- * @param input The input matrix where rows are features and columns are cells.
- * @param[in] factor Grouping factor.
- * This is a pointer to an array of length equal to the number of columns of `input`, containing the factor level (i.e., assigned group) for each cell.
- * All levels should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique levels/groups.
+ * @param input The input matrix, usually containing non-negative counts.
+ * Rows are features and columns are cells.
+ * @param[in] group Pointer to an array of length equal to the number of columns of `input`, containing the assigned group for each cell.
+ * All entries should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique groups.
  * @param options Further options.
  *
  * @return Results of the aggregation, where the available statistics depend on `AggregateAcrossCellsOptions`.
  */
-template<typename Sum_ = double, typename Detected_ = int, typename Data_, typename Index_, typename Factor_>
+template<typename Sum_ = double, typename Detected_ = int, typename Data_, typename Index_, typename Group_>
 AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(
     const tatami::Matrix<Data_, Index_>& input,
-    const Factor_* const factor,
+    const Group_* const group,
     const AggregateAcrossCellsOptions& options)
 {
     const Index_ NR = input.nrow();
     const Index_ NC = input.ncol();
-    const std::size_t nlevels = [&]{
+    const std::size_t ngroups = [&]{
         if (NC) {
-            return sanisizer::sum<std::size_t>(*std::max_element(factor, factor + NC), 1);
+            return sanisizer::sum<std::size_t>(*std::max_element(group, group + NC), 1);
         } else {
             return static_cast<std::size_t>(0);
         }
@@ -329,9 +328,9 @@ AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(
     AggregateAcrossCellsBuffers<Sum_, Detected_> buffers;
 
     if (options.compute_sums) {
-        sanisizer::resize(output.sums, nlevels);
-        sanisizer::resize(buffers.sums, nlevels);
-        for (decltype(I(nlevels)) l = 0; l < nlevels; ++l) {
+        sanisizer::resize(output.sums, ngroups);
+        sanisizer::resize(buffers.sums, ngroups);
+        for (decltype(I(ngroups)) l = 0; l < ngroups; ++l) {
             auto& cursum = output.sums[l];
             tatami::resize_container_to_Index_size<decltype(I(cursum))>(cursum, NR
 #ifdef SCRAN_AGGREGATE_TEST_INIT
@@ -343,9 +342,9 @@ AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(
     }
 
     if (options.compute_detected) {
-        sanisizer::resize(output.detected, nlevels);
-        sanisizer::resize(buffers.detected, nlevels);
-        for (decltype(I(nlevels)) l = 0; l < nlevels; ++l) {
+        sanisizer::resize(output.detected, ngroups);
+        sanisizer::resize(buffers.detected, ngroups);
+        for (decltype(I(ngroups)) l = 0; l < ngroups; ++l) {
             auto& curdet = output.detected[l];
             tatami::resize_container_to_Index_size<decltype(I(curdet))>(curdet, NR
 #ifdef SCRAN_AGGREGATE_TEST_INIT
@@ -356,7 +355,7 @@ AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(
         }
     }
 
-    aggregate_across_cells(input, factor, buffers, options);
+    aggregate_across_cells(input, group, buffers, options);
     return output;
 } 
 

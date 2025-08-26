@@ -39,28 +39,28 @@ struct AggregateAcrossGenesOptions {
 
 /**
  * @brief Buffers for `aggregate_across_genes()`.
- * @tparam Sum_ Type of the sum, should be numeric.
+ * @tparam Sum_ Floating-point type of the sum/mean.
  */
 template <typename Sum_>
 struct AggregateAcrossGenesBuffers {
     /**
      * Vector of length equal to the number of gene sets.
      * Each element is a pointer to an array of length equal to the number of cells,
-     * to be filled with the (weighted) sum of expression values for each gene set.
+     * to be filled with the (weighted) sum/mean of expression values for each gene set.
      */
     std::vector<Sum_*> sum;
 };
 
 /**
  * @brief Results of `aggregate_across_genes()`.
- * @tparam Sum_ Type of the sum, should be numeric.
+ * @tparam Sum_ Floating-point type of the sum/mean.
  */
 template <typename Sum_>
 struct AggregateAcrossGenesResults {
     /**
      * Vector of length equal to the number of gene sets.
      * Each inner vector is of length equal to the number of cells.
-     * Each entry contains the (weighted) sum of expression values across all genes in the corresponding gene set.
+     * Each entry contains the (weighted) sum/mean of expression values across all genes in the corresponding gene set.
      */
     std::vector<std::vector<Sum_> > sum;
 };
@@ -250,22 +250,24 @@ void compute_aggregate_by_row(
 
 /**
  * Aggregate expression values across gene sets for each cell.
- * This is used to compute a sum/mean of expression values for one or more gene sets/signatures.
- * Each gene in the set can also be weighted, e.g., to account for the strength of regulatory relationships.
+ * This involves computing the sum/mean of expression values for any number of gene sets.
+ * The aim is to quantify the activity of signatures, pathways or regulons in each cell.
+ * Each gene in each set can also be weighted based on any _a priori_ assumptions of their importance to the corresponding pathway.
  *
  * @tparam Data_ Type of data in the input matrix, should be numeric.
  * @tparam Index_ Integer type of index in the input matrix.
- * @tparam Gene_ Integer type for the indices of genes in each set.
- * @tparam Weight_ Floating-point type for the weights of genes in each set.
+ * @tparam Gene_ Integer type of the indices of genes in each set.
+ * @tparam Weight_ Floating-point type of the weights of genes in each set.
  * @tparam Sum_ Floating-point type of the sum.
  *
- * @param input The input matrix where rows are features and columns are cells.
+ * @param input Matrix of expression values where rows are features and columns are cells.
+ * This is usually normalized and possibly log-transformed, but the exact nature of the values depends on the application.
  * @param gene_sets Vector of gene sets.
  * Each tuple corresponds to a set and contains (i) the number of genes in the set,
  * (ii) a pointer to the row indices of the genes in the set, and
  * (iii) a pointer to the weights of the genes in the set.
- * The weight pointer may be NULL, in which case all weights are set to 1.
- * @param[out] buffers Collection of buffers in which to store the aggregate statistics (e.g., sums) for each gene set and cell.
+ * The weight pointer may be `NULL`, in which case all weights are set to 1.
+ * @param[out] buffers Collection of buffers in which to store the sum/mean for each gene set and cell.
  * @param options Further options.
  */
 template<typename Data_, typename Index_, typename Gene_, typename Weight_, typename Sum_>
@@ -312,15 +314,15 @@ void aggregate_across_genes(
  * @tparam Sum_ Floating-point type of the sum.
  * @tparam Data_ Type of data in the input matrix, should be numeric.
  * @tparam Index_ Integer type of index in the input matrix.
- * @tparam Gene_ Integer type for the indices of genes in each set.
- * @tparam Weight_ Floating-point type for the weights of genes in each set.
+ * @tparam Gene_ Integer type of the indices of genes in each set.
+ * @tparam Weight_ Floating-point type of the weights of genes in each set.
  *
- * @param input The input matrix where rows are features and columns are cells.
+ * @param input Matrix of expression values where rows are features and columns are cells.
  * @param gene_sets Vector of gene sets.
  * Each tuple corresponds to a set and contains (i) the number of genes in the set,
  * (ii) a pointer to the row indices of the genes in the set, and
  * (iii) a pointer to the weights of the genes in the set.
- * The weight pointer may be NULL, in which case all weights are set to 1.
+ * The weight pointer may be `NULL`, in which case all weights are set to 1.
  * @param options Further options.
  *
  * @return Results of the aggregation.

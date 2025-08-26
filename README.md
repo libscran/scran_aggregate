@@ -6,9 +6,9 @@
 
 ## Overview
 
-This repository contains a function to aggregate statistics for groups of cells from a gene-by-cell matrix of expression values.
+This repository contains functions to aggregate statistics for groups of cells or sets of genes from a gene-by-cell matrix of expression values.
 It was primarily developed for computing pseudo-bulk expression profiles for clusters of cells,
-which can then be used for differential expression analysis.
+which can then be used for differential expression analysis with packages like **edgeR**.
 The code itself was originally derived from the [**scran** R package](https://bioconductor.org/packages/scran),
 factored out into a separate C++ library for easier re-use.
 
@@ -125,4 +125,4 @@ See the tags in [`extern/CMakeLists.txt`](extern/CMakeLists.txt) to find compati
 ### Manual
 
 If you're not using CMake, the simple approach is to just copy the files in `include/` - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's `-I`.
-This requires the external dependencies listed in [`extern/CMakeLists.txt`](extern/CMakeLists.txt), which also need to be made available during compilation.
+This also requires the external dependencies listed in [`extern/CMakeLists.txt`](extern/CMakeLists.txt). 
