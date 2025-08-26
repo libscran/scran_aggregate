@@ -21,6 +21,8 @@ the `aggregate_across_cells()` function will compute the aggregate statistics ac
 #include "scran_aggregate/scran_aggregate.hpp"
 
 const tatami::Matrix<double, int>& mat = some_data_source();
+
+// Array of groupings should contain integer assignments to groups 0, 1, 2, etc.
 std::vector<int> groupings = some_groupings();
 
 scran_aggregate::AggregateAcrossCellsOptions opt;
@@ -29,26 +31,6 @@ auto res = scran_aggregate::aggregate_across_cells(mat, groupings.data(), opt);
 res.sums; // vector of vectors of per-group sums across genes.
 res.sums[0]; // vector of sums for the first group across genes.
 res.detected; // vector of vectors of the number of detected cells per gene.
-```
-
-The array of groupings should contain integer assignments to groups 0, 1, 2, etc.
-For more complex groupings defined from combinations of multiple factors, 
-the `combine_factors()` utility will create group assignments from unique combinations of those factors:
-
-```cpp
-std::vector<int> grouping1 { 0, 0, 1, 1, 2, 2 };
-std::vector<int> grouping2 { 0, 1, 0, 1, 0, 1 };
-
-std::vector<int> combined(grouping1.size()); 
-auto res = scran_aggregate::combine_factors(
-    grouping1.size(), 
-    std::vector<int*>{ grouping1.data(), grouping2.data() },
-    combined.data()
-);
-
-combined; // defines unique combinations of (grouping1, grouping2).
-res.factors[0]; // values of grouping1 for each unique combination.
-res.factors[1]; // values of grouping2 for each unique combination.
 ```
 
 We can also use the `aggregate_across_genes()` function to sum expression values across gene sets, e.g., to compute the activity of a gene signature.
