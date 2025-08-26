@@ -294,7 +294,7 @@ template&lt;typename Data_ , typename Index_ , typename Gene_ , typename Weight_
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">input</td><td>Matrix of expression values where rows are features and columns are cells. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">input</td><td>Matrix of expression values where rows are features and columns are cells. This is usually normalized and possibly log-transformed, but the exact nature of the values depends on the application. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">gene_sets</td><td>Vector of gene sets. Each tuple corresponds to a set and contains (i) the number of genes in the set, (ii) a pointer to the row indices of the genes in the set, and (iii) a pointer to the weights of the genes in the set. The weight pointer may be <code>NULL</code>, in which case all weights are set to 1. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">buffers</td><td>Collection of buffers in which to store the sum/mean for each gene set and cell. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">options</td><td>Further options. </td></tr>
