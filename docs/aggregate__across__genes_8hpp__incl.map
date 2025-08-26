@@ -1,19 +1,21 @@
 <map id="scran_aggregate/aggregate_across_genes.hpp" name="scran_aggregate/aggregate_across_genes.hpp">
-<area shape="rect" id="Node000001" title="Aggregate expression values across genes." alt="" coords="308,5,486,46"/>
+<area shape="rect" id="Node000001" title="Aggregate expression values across genes." alt="" coords="356,5,534,46"/>
 <area shape="rect" id="Node000002" title=" " alt="" coords="5,102,80,127"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="308,45,204,67,91,97,86,98,84,93,90,91,202,62,307,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="356,42,230,64,91,97,86,98,84,93,90,91,229,58,355,36"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="103,102,160,127"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="321,49,249,70,173,97,170,97,168,93,171,91,247,65,320,44"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="356,47,267,68,173,97,170,97,168,92,171,91,265,63,355,42"/>
 <area shape="rect" id="Node000004" title=" " alt="" coords="184,102,288,127"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="362,49,273,96,270,92,359,44"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="399,49,280,98,278,93,397,44"/>
 <area shape="rect" id="Node000005" title=" " alt="" coords="312,102,389,127"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="389,48,366,89,362,87,384,45"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="425,48,376,93,373,89,422,45"/>
 <area shape="rect" id="Node000006" title=" " alt="" coords="413,102,477,127"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="410,45,433,87,429,89,406,48"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="448,47,448,86,442,86,442,47"/>
 <area shape="rect" id="Node000007" href="/github/workspace/docs/tatami.tag$tatami_8hpp.html" title=" " alt="" coords="502,102,623,127"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="436,44,527,92,525,96,433,49"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="473,44,536,90,532,94,470,49"/>
 <area shape="rect" id="Node000008" title=" " alt="" coords="648,94,781,135"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="470,44,633,88,632,93,469,49"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="507,44,640,86,638,91,506,49"/>
 <area shape="rect" id="Node000009" title=" " alt="" coords="806,102,957,127"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="487,38,794,91,813,95,812,100,793,97,486,44"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="535,41,794,91,811,95,810,100,793,97,534,46"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="981,102,1050,127"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="535,29,736,48,854,66,970,91,976,93,975,98,969,97,853,71,735,53,534,34"/>
 </map>

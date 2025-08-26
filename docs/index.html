@@ -108,21 +108,21 @@ $(function(){ initResizable(false); });
 <div class="line">std::vector&lt;int&gt; groupings = some_groupings();</div>
 <div class="line"> </div>
 <div class="line"><a class="code hl_struct" href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html">scran_aggregate::AggregateAcrossCellsOptions</a> opt;</div>
-<div class="line"><span class="keyword">auto</span> res = <a class="code hl_function" href="namespacescran__aggregate.html#a76e8390729e70654df46d322d2e119ff">scran_aggregate::aggregate_across_cells</a>(mat, groupings.data(), opt);</div>
+<div class="line"><span class="keyword">auto</span> res = <a class="code hl_function" href="namespacescran__aggregate.html#ab1ee2eeca9673cfbd991f8763ad97755">scran_aggregate::aggregate_across_cells</a>(mat, groupings.data(), opt);</div>
 <div class="line"> </div>
 <div class="line">res.sums; <span class="comment">// vector of vectors of per-group sums across genes.</span></div>
 <div class="line">res.sums[0]; <span class="comment">// vector of sums for the first group across genes.</span></div>
 <div class="line">res.detected; <span class="comment">// vector of vectors of the number of detected cells per gene.</span></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></div></div>
-<div class="ttc" id="anamespacescran__aggregate_html_a76e8390729e70654df46d322d2e119ff"><div class="ttname"><a href="namespacescran__aggregate.html#a76e8390729e70654df46d322d2e119ff">scran_aggregate::aggregate_across_cells</a></div><div class="ttdeci">void aggregate_across_cells(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Factor_ *factor, const AggregateAcrossCellsBuffers&lt; Sum_, Detected_ &gt; &amp;buffers, const AggregateAcrossCellsOptions &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:271</div></div>
+<div class="ttc" id="anamespacescran__aggregate_html_ab1ee2eeca9673cfbd991f8763ad97755"><div class="ttname"><a href="namespacescran__aggregate.html#ab1ee2eeca9673cfbd991f8763ad97755">scran_aggregate::aggregate_across_cells</a></div><div class="ttdeci">void aggregate_across_cells(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Factor_ *const factor, const AggregateAcrossCellsBuffers&lt; Sum_, Detected_ &gt; &amp;buffers, const AggregateAcrossCellsOptions &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:274</div></div>
 <div class="ttc" id="ascran__aggregate_8hpp_html"><div class="ttname"><a href="scran__aggregate_8hpp.html">scran_aggregate.hpp</a></div><div class="ttdoc">Aggregate single-cell expression values.</div></div>
-<div class="ttc" id="astructscran__aggregate_1_1AggregateAcrossCellsOptions_html"><div class="ttname"><a href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html">scran_aggregate::AggregateAcrossCellsOptions</a></div><div class="ttdoc">Options for aggregate_across_cells().</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:23</div></div>
+<div class="ttc" id="astructscran__aggregate_1_1AggregateAcrossCellsOptions_html"><div class="ttname"><a href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html">scran_aggregate::AggregateAcrossCellsOptions</a></div><div class="ttdoc">Options for aggregate_across_cells().</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:25</div></div>
 </div><!-- fragment --><p>The array of groupings should contain integer assignments to groups 0, 1, 2, etc. For more complex groupings defined from combinations of multiple factors, the <code>combine_factors()</code> utility will create group assignments from unique combinations of those factors:</p>
 <div class="fragment"><div class="line">std::vector&lt;int&gt; grouping1 { 0, 0, 1, 1, 2, 2 };</div>
 <div class="line">std::vector&lt;int&gt; grouping2 { 0, 1, 0, 1, 0, 1 };</div>
 <div class="line"> </div>
 <div class="line">std::vector&lt;int&gt; combined(grouping1.size()); </div>
-<div class="line"><span class="keyword">auto</span> res = <a class="code hl_function" href="namespacescran__aggregate.html#a696f058825d040f98710019f715197fb">scran_aggregate::combine_factors</a>(</div>
+<div class="line"><span class="keyword">auto</span> res = <a class="code hl_function" href="namespacescran__aggregate.html#ad80f3b36beb047078b69038867e8e714">scran_aggregate::combine_factors</a>(</div>
 <div class="line">    grouping1.size(), </div>
 <div class="line">    std::vector&lt;int*&gt;{ grouping1.data(), grouping2.data() },</div>
 <div class="line">    combined.data()</div>
@@ -131,7 +131,7 @@ $(function(){ initResizable(false); });
 <div class="line">combined; <span class="comment">// defines unique combinations of (grouping1, grouping2).</span></div>
 <div class="line">res.factors[0]; <span class="comment">// values of grouping1 for each unique combination.</span></div>
 <div class="line">res.factors[1]; <span class="comment">// values of grouping2 for each unique combination.</span></div>
-<div class="ttc" id="anamespacescran__aggregate_html_a696f058825d040f98710019f715197fb"><div class="ttname"><a href="namespacescran__aggregate.html#a696f058825d040f98710019f715197fb">scran_aggregate::combine_factors</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; Factor_ &gt; &gt; combine_factors(std::size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *combined)</div><div class="ttdef"><b>Definition</b> combine_factors.hpp:42</div></div>
+<div class="ttc" id="anamespacescran__aggregate_html_ad80f3b36beb047078b69038867e8e714"><div class="ttname"><a href="namespacescran__aggregate.html#ad80f3b36beb047078b69038867e8e714">scran_aggregate::combine_factors</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; Factor_ &gt; &gt; combine_factors(const std::size_t n, const std::vector&lt; const Factor_ * &gt; &amp;factors, Combined_ *const combined)</div><div class="ttdef"><b>Definition</b> combine_factors.hpp:43</div></div>
 </div><!-- fragment --><p>We can also use the <code>aggregate_across_genes()</code> function to sum expression values across gene sets, e.g., to compute the activity of a gene signature. This can be done with any number of gene sets, possibly with a different weight for each gene in each set.</p>
 <div class="fragment"><div class="line">std::vector&lt;std::tuple&lt;size_t, const int*, const double*&gt; &gt; gene_sets;</div>
 <div class="line"> </div>
@@ -149,8 +149,8 @@ $(function(){ initResizable(false); });
 <div class="line">    g_opt</div>
 <div class="line">);</div>
 <div class="line">g_res.sum[0]; <span class="comment">// vector of sums for set 1 in each cell.</span></div>
-<div class="ttc" id="anamespacescran__aggregate_html_abf6732ea8012e17cc65039228663eae0"><div class="ttname"><a href="namespacescran__aggregate.html#abf6732ea8012e17cc65039228663eae0">scran_aggregate::aggregate_across_genes</a></div><div class="ttdeci">void aggregate_across_genes(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; std::size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesBuffers&lt; Sum_ &gt; &amp;buffers, const AggregateAcrossGenesOptions &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_genes.hpp:270</div></div>
-<div class="ttc" id="astructscran__aggregate_1_1AggregateAcrossGenesOptions_html"><div class="ttname"><a href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">scran_aggregate::AggregateAcrossGenesOptions</a></div><div class="ttdoc">Options for aggregate_across_genes().</div><div class="ttdef"><b>Definition</b> aggregate_across_genes.hpp:24</div></div>
+<div class="ttc" id="anamespacescran__aggregate_html_abf6732ea8012e17cc65039228663eae0"><div class="ttname"><a href="namespacescran__aggregate.html#abf6732ea8012e17cc65039228663eae0">scran_aggregate::aggregate_across_genes</a></div><div class="ttdeci">void aggregate_across_genes(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; std::tuple&lt; std::size_t, const Gene_ *, const Weight_ * &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesBuffers&lt; Sum_ &gt; &amp;buffers, const AggregateAcrossGenesOptions &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_genes.hpp:272</div></div>
+<div class="ttc" id="astructscran__aggregate_1_1AggregateAcrossGenesOptions_html"><div class="ttname"><a href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">scran_aggregate::AggregateAcrossGenesOptions</a></div><div class="ttdoc">Options for aggregate_across_genes().</div><div class="ttdef"><b>Definition</b> aggregate_across_genes.hpp:26</div></div>
 </div><!-- fragment --><p>Check out the <a href="https://libscran.github.io/scran_aggregate">reference documentation</a> for more details.</p>
 <h1>Building projects</h1>
 <h2>CMake with <code>FetchContent</code></h2>
