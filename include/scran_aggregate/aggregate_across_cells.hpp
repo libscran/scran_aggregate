@@ -329,36 +329,30 @@ AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(
     AggregateAcrossCellsBuffers<Sum_, Detected_> buffers;
 
     if (options.compute_sums) {
-        output.sums.resize(
-            sanisizer::cast<decltype(I(output.sums.size()))>(nlevels),
-            tatami::create_container_of_Index_size<std::vector<Sum_> >(NR
+        sanisizer::resize(output.sums, nlevels);
+        sanisizer::resize(buffers.sums, nlevels);
+        for (decltype(I(nlevels)) l = 0; l < nlevels; ++l) {
+            auto& cursum = output.sums[l];
+            tatami::resize_container_to_Index_size<decltype(I(cursum))>(cursum, NR
 #ifdef SCRAN_AGGREGATE_TEST_INIT
                 , SCRAN_AGGREGATE_TEST_INIT
 #endif
-            )
-        );
-        buffers.sums.resize(
-            sanisizer::cast<decltype(I(buffers.sums.size()))>(nlevels)
-        );
-        for (decltype(I(nlevels)) l = 0; l < nlevels; ++l) {
-            buffers.sums[l] = output.sums[l].data();
+            );
+            buffers.sums[l] = cursum.data();
         }
     }
 
     if (options.compute_detected) {
-        output.detected.resize(
-            sanisizer::cast<decltype(I(output.detected.size()))>(nlevels),
-            tatami::create_container_of_Index_size<std::vector<Detected_> >(NR
+        sanisizer::resize(output.detected, nlevels);
+        sanisizer::resize(buffers.detected, nlevels);
+        for (decltype(I(nlevels)) l = 0; l < nlevels; ++l) {
+            auto& curdet = output.detected[l];
+            tatami::resize_container_to_Index_size<decltype(I(curdet))>(curdet, NR
 #ifdef SCRAN_AGGREGATE_TEST_INIT
                 , SCRAN_AGGREGATE_TEST_INIT
 #endif
-            )
-        );
-        buffers.detected.resize(
-            sanisizer::cast<decltype(I(buffers.detected.size()))>(nlevels)
-        );
-        for (decltype(I(nlevels)) l = 0; l < nlevels; ++l) {
-            buffers.detected[l] = output.detected[l].data();
+            );
+            buffers.detected[l] = curdet.data();
         }
     }
 

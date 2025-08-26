@@ -24,7 +24,7 @@ if(SCRAN_AGGREGATE_FETCH_EXTERN)
 else()
     find_package(tatami_tatami 4.0.0 CONFIG REQUIRED)
     find_package(tatami_tatami_stats 2.0.0 CONFIG REQUIRED)
-    find_package(ltla_sanisizer 0.1.0 CONFIG REQUIRED)
+    find_package(ltla_sanisizer 0.1.2 CONFIG REQUIRED)
 endif()
 
 target_link_libraries(scran_aggregate INTERFACE tatami::tatami tatami::tatami_stats ltla::sanisizer)

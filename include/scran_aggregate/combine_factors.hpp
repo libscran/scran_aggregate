@@ -156,7 +156,7 @@ std::vector<std::vector<Factor_> > combine_factors_unused(const std::size_t n, c
         return output;
     }
     if (nfac == 1) {
-        output[0].resize(factors[0].second);
+        sanisizer::resize(output[0], factors[0].second);
         std::iota(output[0].begin(), output[0].end(), static_cast<Combined_>(0));
         std::copy_n(factors[0].first, n, combined);
         return output;
@@ -170,7 +170,9 @@ std::vector<std::vector<Factor_> > combine_factors_unused(const std::size_t n, c
         const auto next_ncombos = sanisizer::product<Combined_>(ncombos, finfo.second);
         const auto ff = finfo.first;
         for (decltype(I(n)) i = 0; i < n; ++i) {
-            combined[i] += ncombos * ff[i];
+            // Product is safe as it is obviously less than 'next_combos' for 'ff[i] < finfo.second'.
+            // Addition is also safe as it will be less than 'next_combos', though this is less obvious.
+            combined[i] += sanisizer::product_unsafe<Combined_>(ncombos, ff[i]);
         }
         ncombos = next_ncombos;
     }
@@ -199,6 +201,8 @@ std::vector<std::vector<Factor_> > combine_factors_unused(const std::size_t n, c
 
         outer_repeats /= finfo.second;
         for (Combined_ r = 1; r < outer_repeats; ++r) {
+            // Referencing to 'begin()' while inserting is safe, as we reserved the full length at the start.
+            // Thus, there shouldn't be any allocations.
             out.insert(out.end(), out.begin(), out.begin() + initial_size);
         }
     }

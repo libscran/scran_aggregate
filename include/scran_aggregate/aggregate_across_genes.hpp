@@ -336,8 +336,8 @@ AggregateAcrossGenesResults<Sum_> aggregate_across_genes(
 
     const Index_ NC = input.ncol();
     const auto nsets = gene_sets.size();
-    output.sum.resize(sanisizer::cast<decltype(I(output.sum.size()))>(nsets));
-    buffers.sum.resize(sanisizer::cast<decltype(I(buffers.sum.size()))>(nsets));
+    sanisizer::resize(output.sum, nsets);
+    sanisizer::resize(buffers.sum, nsets);
 
     for (decltype(I(nsets)) s = 0; s < nsets; ++s) {
         tatami::resize_container_to_Index_size(
