@@ -161,15 +161,15 @@
       <type>void</type>
       <name>aggregate_across_cells</name>
       <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>ab1ee2eeca9673cfbd991f8763ad97755</anchor>
-      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Factor_ *const factor, const AggregateAcrossCellsBuffers&lt; Sum_, Detected_ &gt; &amp;buffers, const AggregateAcrossCellsOptions &amp;options)</arglist>
+      <anchor>a455854154026f84c3d8c52a216472c2b</anchor>
+      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Group_ *const group, const AggregateAcrossCellsBuffers&lt; Sum_, Detected_ &gt; &amp;buffers, const AggregateAcrossCellsOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>AggregateAcrossCellsResults&lt; Sum_, Detected_ &gt;</type>
       <name>aggregate_across_cells</name>
       <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>a8fcc27886bee80fc90af7ede41b88fc1</anchor>
-      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Factor_ *const factor, const AggregateAcrossCellsOptions &amp;options)</arglist>
+      <anchor>a14dbda14b9307f2c4dbedfd8c3622f5c</anchor>
+      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Group_ *const group, const AggregateAcrossCellsOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>void</type>

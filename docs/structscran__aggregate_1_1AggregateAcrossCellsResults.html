@@ -104,7 +104,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Results of <code><a class="el" href="namespacescran__aggregate.html#ab1ee2eeca9673cfbd991f8763ad97755">aggregate_across_cells()</a></code>.  
+<p>Results of <code><a class="el" href="namespacescran__aggregate.html#a455854154026f84c3d8c52a216472c2b">aggregate_across_cells()</a></code>.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="aggregate__across__cells_8hpp_source.html">aggregate_across_cells.hpp</a>&gt;</code></p>
@@ -118,7 +118,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Sum_, typename Detected_&gt;<br />
-struct scran_aggregate::AggregateAcrossCellsResults&lt; Sum_, Detected_ &gt;</div><p>Results of <code><a class="el" href="namespacescran__aggregate.html#ab1ee2eeca9673cfbd991f8763ad97755">aggregate_across_cells()</a></code>. </p>
+struct scran_aggregate::AggregateAcrossCellsResults&lt; Sum_, Detected_ &gt;</div><p>Results of <code><a class="el" href="namespacescran__aggregate.html#a455854154026f84c3d8c52a216472c2b">aggregate_across_cells()</a></code>. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Sum_</td><td>Type of the sum, should be numeric. </td></tr>
@@ -140,7 +140,7 @@ template&lt;typename Sum_ , typename Detected_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Vector of length equal to the number of factor levels. Each inner vector is of length equal to the number of genes. Each entry contains the summed expression across all cells in the corresponding level for each gene.</p>
+<p>Vector of length equal to the number of groups. Each inner vector is of length equal to the number of genes. Each entry contains the summed expression across all cells in the corresponding group for each gene.</p>
 <p>If <code><a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html#ad45ae84870be13fad30a9dbdd0299d62">AggregateAcrossCellsOptions::compute_sums</a> = false</code>, this vector is empty. </p>
 
 </div>
@@ -158,7 +158,7 @@ template&lt;typename Sum_ , typename Detected_ &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Vector of length equal to the number of factor levels. Each inner vector is of length equal to the number of genes. Each entry contains the number of cells in the corresponding level with detected expression for each gene.</p>
+<p>Vector of length equal to the number of groups. Each inner vector is of length equal to the number of genes. Each entry contains the number of cells in the corresponding group with detected expression for each gene.</p>
 <p>If <code><a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html#a698760c10561b3d904cb52abdbbe710e">AggregateAcrossCellsOptions::compute_detected</a> = false</code>, this vector is empty. </p>
 
 </div>
