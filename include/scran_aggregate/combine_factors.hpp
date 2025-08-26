@@ -7,9 +7,10 @@
 #include <unordered_map>
 #include <cstddef>
 
-#include "clean_factor.hpp"
-
 #include "sanisizer/sanisizer.hpp"
+
+#include "clean_factor.hpp"
+#include "utils.hpp"
 
 /**
  * @file combine_factors.hpp
@@ -39,8 +40,8 @@ namespace scran_aggregate {
  * Combinations are guaranteed to be sorted by the first factor, then the second, etc.
  */
 template<typename Factor_, typename Combined_>
-std::vector<std::vector<Factor_> > combine_factors(std::size_t n, const std::vector<const Factor_*>& factors, Combined_* combined) {
-    auto nfac = factors.size();
+std::vector<std::vector<Factor_> > combine_factors(const std::size_t n, const std::vector<const Factor_*>& factors, Combined_* const combined) {
+    const auto nfac = factors.size();
     auto output = sanisizer::create<std::vector<std::vector<Factor_> > >(nfac);
 
     // Handling the special cases.
@@ -74,8 +75,9 @@ std::vector<std::vector<Factor_> > combine_factors(std::size_t n, const std::vec
             }
             return false;
         };
+        std::map<Combination, Combined_, decltype(I(cmp))> mapping(std::move(cmp));
 
-        auto eq = [&](const Combination& left, const Combination& right) -> bool {
+        const auto eq = [&](const Combination& left, const Combination& right) -> bool {
             for (auto curf : factors) {
                 if (curf[left.index] != curf[right.index]) {
                     return false;
@@ -84,10 +86,9 @@ std::vector<std::vector<Factor_> > combine_factors(std::size_t n, const std::vec
             return true;
         };
 
-        std::map<Combination, Combined_, decltype(cmp)> mapping(std::move(cmp));
-        for (decltype(n) i = 0; i < n; ++i) {
+        for (decltype(I(n)) i = 0; i < n; ++i) {
             Combination current(i);
-            auto mIt = mapping.find(current);
+            const auto mIt = mapping.find(current);
             if (mIt == mapping.end() || !eq(mIt->first, current)) {
                 Combined_ alt = mapping.size();
                 mapping.insert(mIt, std::make_pair(current, alt));
@@ -101,21 +102,21 @@ std::vector<std::vector<Factor_> > combine_factors(std::size_t n, const std::vec
     }();
 
     // Remapping to a sorted set.
-    auto nuniq = unique.size();
+    const auto nuniq = unique.size();
     for (auto& ofac : output) {
         ofac.reserve(nuniq);
     }
     auto remapping = sanisizer::create<std::vector<Combined_> >(nuniq);
-    for (decltype(nuniq) u = 0; u < nuniq; ++u) {
-        auto ix = unique[u].first.index;
-        for (decltype(nfac) f = 0; f < nfac; ++f) {
+    for (decltype(I(nuniq)) u = 0; u < nuniq; ++u) {
+        const auto ix = unique[u].first.index;
+        for (decltype(I(nfac)) f = 0; f < nfac; ++f) {
             output[f].push_back(factors[f][ix]);
         }
         remapping[unique[u].second] = u;
     }
 
     // Mapping each cell to its sorted combination.
-    for (decltype(n) i = 0; i < n; ++i) {
+    for (decltype(I(n)) i = 0; i < n; ++i) {
         combined[i] = remapping[combined[i]];
     }
 
@@ -145,8 +146,8 @@ std::vector<std::vector<Factor_> > combine_factors(std::size_t n, const std::vec
  * with the only difference being that unobserved combinations are also reported.
  */
 template<typename Factor_, typename Number_, typename Combined_>
-std::vector<std::vector<Factor_> > combine_factors_unused(std::size_t n, const std::vector<std::pair<const Factor_*, Number_> >& factors, Combined_* combined) {
-    auto nfac = factors.size();
+std::vector<std::vector<Factor_> > combine_factors_unused(const std::size_t n, const std::vector<std::pair<const Factor_*, Number_> >& factors, Combined_* const combined) {
+    const auto nfac = factors.size();
     auto output = sanisizer::create<std::vector<std::vector<Factor_> > >(nfac);
 
     // Handling the special cases.
@@ -164,25 +165,25 @@ std::vector<std::vector<Factor_> > combine_factors_unused(std::size_t n, const s
     // We iterate from back to front, where the first factor is the slowest changing.
     std::copy_n(factors[nfac - 1].first, n, combined); 
     Combined_ ncombos = factors[nfac - 1].second;
-    for (decltype(nfac) f = nfac - 1; f > 0; --f) {
+    for (decltype(I(nfac)) f = nfac - 1; f > 0; --f) {
         const auto& finfo = factors[f - 1];
-        auto next_ncombos = sanisizer::product<Combined_>(ncombos, finfo.second);
-        auto ff = finfo.first;
-        for (decltype(n) i = 0; i < n; ++i) {
+        const auto next_ncombos = sanisizer::product<Combined_>(ncombos, finfo.second);
+        const auto ff = finfo.first;
+        for (decltype(I(n)) i = 0; i < n; ++i) {
             combined[i] += ncombos * ff[i];
         }
         ncombos = next_ncombos;
     }
 
-    sanisizer::cast<decltype(output[0].size())>(ncombos); // check that we can actually make the output vectors.
+    sanisizer::cast<decltype(I(output[0].size()))>(ncombos); // check that we can actually make the output vectors.
     Combined_ outer_repeats = ncombos;
     Combined_ inner_repeats = 1;
-    for (decltype(nfac) f = nfac; f > 0; --f) {
+    for (decltype(I(nfac)) f = nfac; f > 0; --f) {
         auto& out = output[f - 1];
         out.reserve(ncombos);
 
         const auto& finfo = factors[f - 1];
-        Combined_ initial_size = inner_repeats * finfo.second;
+        const Combined_ initial_size = inner_repeats * finfo.second;
         out.resize(initial_size);
 
         if (inner_repeats == 1) {
