@@ -98,10 +98,8 @@ struct AggregateAcrossCellsResults {
 /**
  * @cond
  */
-namespace internal {
-
 template<bool sparse_, typename Data_, typename Index_, typename Group_, typename Sum_, typename Detected_>
-void compute_aggregate_by_row(
+void aggregate_across_cells_by_row(
     const tatami::Matrix<Data_, Index_>& p,
     const Group_* const group,
     const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers,
@@ -150,7 +148,7 @@ void compute_aggregate_by_row(
                 }
 
                 // Computing before transferring for more cache-friendliness.
-                for (decltype(I(nsums)) l = 0; l < nsums; ++l) {
+                for (I<decltype(nsums)> l = 0; l < nsums; ++l) {
                     buffers.sums[l][x] = tmp_sums[l];
                 }
             }
@@ -168,7 +166,7 @@ void compute_aggregate_by_row(
                     }
                 }
 
-                for (decltype(I(ndetected)) l = 0; l < ndetected; ++l) {
+                for (I<decltype(ndetected)> l = 0; l < ndetected; ++l) {
                     buffers.detected[l][x] = tmp_detected[l];
                 }
             }
@@ -177,7 +175,7 @@ void compute_aggregate_by_row(
 }
 
 template<bool sparse_, typename Data_, typename Index_, typename Group_, typename Sum_, typename Detected_>
-void compute_aggregate_by_column(
+void aggregate_across_cells_by_column(
     const tatami::Matrix<Data_, Index_>& p,
     const Group_* const group,
     const AggregateAcrossCellsBuffers<Sum_, Detected_>& buffers,
@@ -200,11 +198,11 @@ void compute_aggregate_by_column(
 
         const auto num_sums = buffers.sums.size();
         auto get_sum = [&](Index_ i) -> Sum_* { return buffers.sums[i]; };
-        tatami_stats::LocalOutputBuffers<Sum_, decltype(I(get_sum))> local_sums(t, num_sums, start, length, std::move(get_sum));
+        tatami_stats::LocalOutputBuffers<Sum_, I<decltype(get_sum)>> local_sums(t, num_sums, start, length, std::move(get_sum));
 
         const auto num_detected = buffers.detected.size();
         auto get_detected = [&](Index_ i) -> Detected_* { return buffers.detected[i]; };
-        tatami_stats::LocalOutputBuffers<Detected_, decltype(I(get_detected))> local_detected(t, num_detected, start, length, std::move(get_detected));
+        tatami_stats::LocalOutputBuffers<Detected_, I<decltype(get_detected)>> local_detected(t, num_detected, start, length, std::move(get_detected));
 
         for (Index_ x = 0; x < NC; ++x) {
             const auto current = group[x];
@@ -245,8 +243,6 @@ void compute_aggregate_by_column(
         local_detected.transfer();
     }, p.nrow(), options.num_threads);
 }
-
-}
 /**
  * @endcond
  */
@@ -278,15 +274,15 @@ void aggregate_across_cells(
 {
     if (input.prefer_rows()) {
         if (input.sparse()) {
-            internal::compute_aggregate_by_row<true>(input, group, buffers, options);
+            aggregate_across_cells_by_row<true>(input, group, buffers, options);
         } else {
-            internal::compute_aggregate_by_row<false>(input, group, buffers, options);
+            aggregate_across_cells_by_row<false>(input, group, buffers, options);
         }
     } else {
         if (input.sparse()) {
-            internal::compute_aggregate_by_column<true>(input, group, buffers, options);
+            aggregate_across_cells_by_column<true>(input, group, buffers, options);
         } else {
-            internal::compute_aggregate_by_column<false>(input, group, buffers, options);
+            aggregate_across_cells_by_column<false>(input, group, buffers, options);
         }
     }
 } 
@@ -330,9 +326,9 @@ AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(
     if (options.compute_sums) {
         sanisizer::resize(output.sums, ngroups);
         sanisizer::resize(buffers.sums, ngroups);
-        for (decltype(I(ngroups)) l = 0; l < ngroups; ++l) {
+        for (I<decltype(ngroups)> l = 0; l < ngroups; ++l) {
             auto& cursum = output.sums[l];
-            tatami::resize_container_to_Index_size<decltype(I(cursum))>(cursum, NR
+            tatami::resize_container_to_Index_size<I<decltype(cursum)>>(cursum, NR
 #ifdef SCRAN_AGGREGATE_TEST_INIT
                 , SCRAN_AGGREGATE_TEST_INIT
 #endif
@@ -344,9 +340,9 @@ AggregateAcrossCellsResults<Sum_, Detected_> aggregate_across_cells(
     if (options.compute_detected) {
         sanisizer::resize(output.detected, ngroups);
         sanisizer::resize(buffers.detected, ngroups);
-        for (decltype(I(ngroups)) l = 0; l < ngroups; ++l) {
+        for (I<decltype(ngroups)> l = 0; l < ngroups; ++l) {
             auto& curdet = output.detected[l];
-            tatami::resize_container_to_Index_size<decltype(I(curdet))>(curdet, NR
+            tatami::resize_container_to_Index_size<I<decltype(curdet)>>(curdet, NR
 #ifdef SCRAN_AGGREGATE_TEST_INIT
                 , SCRAN_AGGREGATE_TEST_INIT
 #endif

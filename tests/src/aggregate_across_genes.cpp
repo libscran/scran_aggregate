@@ -12,7 +12,7 @@ protected:
     static void SetUpTestSuite() {
         int nr = 112, nc = 78;
         auto vec = scran_tests::simulate_vector(nr * nc, []{
-            scran_tests::SimulationParameters sparams;
+            scran_tests::SimulateVectorParameters sparams;
             sparams.density = 0.1;
             return sparams;
         }());
@@ -176,7 +176,7 @@ INSTANTIATE_TEST_SUITE_P(
 TEST(AggregateAcrossGenes, OutOfRange) {
     int nr = 11, nc = 78;
     auto vec = scran_tests::simulate_vector(nr * nc, []{
-        scran_tests::SimulationParameters sparams;
+        scran_tests::SimulateVectorParameters sparams;
         sparams.density = 0.1;
         return sparams;
     }());

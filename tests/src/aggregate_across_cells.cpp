@@ -22,7 +22,7 @@ protected:
     static void SetUpTestSuite() {
         int nr = 112, nc = 78;
         auto vec = scran_tests::simulate_vector(nr * nc, []{
-            scran_tests::SimulationParameters sparams;
+            scran_tests::SimulateVectorParameters sparams;
             sparams.density = 0.1;
             return sparams;
         }());
@@ -91,7 +91,7 @@ INSTANTIATE_TEST_SUITE_P(
 TEST(AggregateAcrossCells, Skipping) {
     int nr = 88, nc = 126;
     auto vec = scran_tests::simulate_vector(nr * nc, []{
-        scran_tests::SimulationParameters sparams;
+        scran_tests::SimulateVectorParameters sparams;
         sparams.density = 0.1;
         sparams.seed = 69;
         return sparams;
