@@ -20,7 +20,7 @@ FetchContent_Declare(
 
 FetchContent_Declare(
   factorize 
-  GIT_REPOSITORY https://github.com/LTLA/factorize
+  GIT_REPOSITORY https://github.com/libscran/factorize
   GIT_TAG master # ^0.1.0
 )
 
