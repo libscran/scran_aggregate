@@ -121,8 +121,8 @@ Public Attributes</h2></td></tr>
 struct scran_aggregate::AggregateAcrossCellsResults&lt; Sum_, Detected_ &gt;</div><p>Results of <code><a class="el" href="namespacescran__aggregate.html#a455854154026f84c3d8c52a216472c2b">aggregate_across_cells()</a></code>. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Sum_</td><td>Type of the sum, should be numeric. </td></tr>
-    <tr><td class="paramname">Detected_</td><td>Type for the number of detected cells, usually integer. </td></tr>
+    <tr><td class="paramname">Sum_</td><td>Numeric type of the sum, typically floating-point. If integer, this should be large enough to avoid integer overflow. </td></tr>
+    <tr><td class="paramname">Detected_</td><td>Type of the number of detected cells, usually integer. This should be large enough to avoid integer overflow. </td></tr>
   </table>
   </dd>
 </dl>
