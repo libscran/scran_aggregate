@@ -44,8 +44,10 @@ struct AggregateAcrossCellsOptions {
 
 /**
  * @brief Buffers for `aggregate_across_cells()`.
- * @tparam Sum_ Type of the sum, should be numeric.
- * @tparam Detected_ Type for the number of detected cells, usually integer.
+ * @tparam Sum_ Numeric type of the sum, typically floating-point.
+ * If integer, this should be large enough to avoid integer overflow.
+ * @tparam Detected_ Type of the number of detected cells, usually integer.
+ * This should be large enough to avoid integer overflow.
  */
 template <typename Sum_, typename Detected_>
 struct AggregateAcrossCellsBuffers {
@@ -71,8 +73,10 @@ struct AggregateAcrossCellsBuffers {
 
 /**
  * @brief Results of `aggregate_across_cells()`.
- * @tparam Sum_ Type of the sum, should be numeric.
- * @tparam Detected_ Type for the number of detected cells, usually integer.
+ * @tparam Sum_ Numeric type of the sum, typically floating-point.
+ * If integer, this should be large enough to avoid integer overflow.
+ * @tparam Detected_ Type of the number of detected cells, usually integer.
+ * This should be large enough to avoid integer overflow.
  */
 template <typename Sum_, typename Detected_>
 struct AggregateAcrossCellsResults {
@@ -253,11 +257,13 @@ void aggregate_across_cells_by_column(
  * This is typically used to create pseudo-bulk expression profiles for cluster/sample combinations.
  * Expression values are generally expected to be counts so that the sums can be used as if they were counts from bulk data, e.g., for differential analyses with **edgeR**.
  *
- * @tparam Data_ Type of data in the input matrix, should be numeric.
+ * @tparam Data_ Numeric type of data in the input matrix.
  * @tparam Index_ Integer type of index in the input matrix.
  * @tparam Group_ Integer type of the group assignments.
- * @tparam Sum_ Numeric type of the sum, often the same as `Data_`.
+ * @tparam Sum_ Numeric type of the sum, typically floating-point.
+ * If integer, it should be large enough to avoid overflow.
  * @tparam Detected_ Numeric type (usually integer) of the number of detected cells. 
+ * This should be large enough to avoid integer overflow, so setting it to be the same as `Index_` is a safe choice.
  *
  * @param input The input matrix, usually containing non-negative counts.
  * Rows are features and columns are cells.
@@ -290,8 +296,10 @@ void aggregate_across_cells(
 /**
  * Overload of `aggregate_across_cells()` that allocates memory for the results.
  *
- * @tparam Sum_ Numerict ype of the sum.
+ * @tparam Sum_ Numeric type of the sum, typically floating-point.
+ * If integer, it should be large enough to avoid overflow.
  * @tparam Detected_ Numeric type (usually integer) of the number of detected cells. 
+ * This should be large enough to avoid integer overflow, so setting it to be the same as `Index_` is a safe choice.
  * @tparam Data_ Type of data in the input matrix, should be numeric.
  * @tparam Index_ Integer type of index in the input matrix.
  * @tparam Group_ Integer type of the group assignments.
