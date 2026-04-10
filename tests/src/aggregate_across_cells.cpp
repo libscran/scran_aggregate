@@ -60,12 +60,23 @@ TEST_P(AggregateAcrossCellsTest, Basics) {
         EXPECT_EQ(ref.sums.size(), ngroups);
         EXPECT_EQ(ref.detected.size(), ngroups);
 
-        auto NR = dense_row->nrow();
+        std::vector<std::vector<int> > collected_indices(ngroups);
+        const int NC = dense_row->ncol();
+        for (int c = 0; c < NC; ++c) {
+            collected_indices[groupings[c]].push_back(c);
+        }
+
         for (int l = 0; l < ngroups; ++l) {
-            EXPECT_EQ(ref.sums[l].size(), NR);
-            EXPECT_EQ(ref.detected[l].size(), NR);
-            EXPECT_NE(std::accumulate(ref.sums[l].begin(), ref.sums[l].end(), 0.0), 0); // check that something is present, at least.
-            EXPECT_NE(std::accumulate(ref.detected[l].begin(), ref.detected[l].end(), 0), 0);
+            auto submat = tatami::make_DelayedSubset(dense_row, std::move(collected_indices[l]), false);
+            auto expected_sum = tatami_stats::sums::by_row(*submat, {});
+            scran_tests::compare_almost_equal_containers(expected_sum, ref.sums[l], {});
+
+            tatami::DelayedUnaryIsometricOperation<int, double, int> positive(
+                submat, 
+                std::make_shared<tatami::DelayedUnaryIsometricGreaterThanScalarHelper<int, double, int, double> >(0.0)
+            );
+            auto expected_detected = tatami_stats::sums::by_row<int>(positive, {});
+            EXPECT_EQ(expected_detected, ref.detected[l]);
         }
     }
 
@@ -166,27 +177,29 @@ TEST_P(AggregateAcrossCellsMedianTest, Basic) {
         auto res1 = scran_aggregate::aggregate_across_cells(*dense_row, groupings.data(), opt);
         compare(res1);
     } else {
-        for (int l = 0; l < ngroups; ++l) {
-            std::vector<int> keep;
-            const int NC = dense_row->ncol();
-            for (int c = 0; c < NC; ++c) {
-                if (groupings[c] == l) {
-                    keep.push_back(c);
-                }
-            }
+        EXPECT_EQ(med.sums.size(), ngroups);
+        EXPECT_EQ(med.detected.size(), ngroups);
+        EXPECT_EQ(med.medians.size(), ngroups);
 
-            auto submat = tatami::make_DelayedSubset(dense_row, std::move(keep), false);
+        std::vector<std::vector<int> > collected_indices(ngroups);
+        const int NC = dense_row->ncol();
+        for (int c = 0; c < NC; ++c) {
+            collected_indices[groupings[c]].push_back(c);
+        }
+
+        for (int l = 0; l < ngroups; ++l) {
+            auto submat = tatami::make_DelayedSubset(dense_row, std::move(collected_indices[l]), false);
             auto expected_med = tatami_stats::medians::by_row(*submat, {});
             scran_tests::compare_almost_equal_containers(expected_med, med.medians[l], {});
 
             auto expected_sum = tatami_stats::sums::by_row(*submat, {});
             scran_tests::compare_almost_equal_containers(expected_sum, med.sums[l], {});
 
-            auto expected_detected = tatami_stats::counts::zero::by_row(*submat, {});
-            const auto total = submat->ncol();
-            for (auto& d : expected_detected) {
-                d = total - d;
-            }
+            tatami::DelayedUnaryIsometricOperation<int, double, int> positive(
+                submat, 
+                std::make_shared<tatami::DelayedUnaryIsometricGreaterThanScalarHelper<int, double, int, double> >(0.0)
+            );
+            auto expected_detected = tatami_stats::sums::by_row<int>(positive, {});
             EXPECT_EQ(expected_detected, med.detected[l]);
         }
     }
