@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>scran_aggregate: scran_aggregate::AggregateAcrossCellsBuffers&lt; Sum_, Detected_ &gt; Struct Template Reference</title>
+<title>scran_aggregate: scran_aggregate::AggregateAcrossCellsBuffers&lt; Sum_, Detected_, Float_ &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -100,43 +100,46 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structscran__aggregate_1_1AggregateAcrossCellsBuffers-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">scran_aggregate::AggregateAcrossCellsBuffers&lt; Sum_, Detected_ &gt; Struct Template Reference</div></div>
+  <div class="headertitle"><div class="title">scran_aggregate::AggregateAcrossCellsBuffers&lt; Sum_, Detected_, Float_ &gt; Struct Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Buffers for <code><a class="el" href="namespacescran__aggregate.html#a455854154026f84c3d8c52a216472c2b">aggregate_across_cells()</a></code>.  
+<p>Buffers for <code><a class="el" href="namespacescran__aggregate.html#ace4c8f8b87106e77dedd5d394fa370f1">aggregate_across_cells()</a></code>.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="aggregate__across__cells_8hpp_source.html">aggregate_across_cells.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:af18936a8bb6ba1fbdb32f4584683288c" id="r_af18936a8bb6ba1fbdb32f4584683288c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Sum_ * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af18936a8bb6ba1fbdb32f4584683288c">sums</a></td></tr>
-<tr class="separator:af18936a8bb6ba1fbdb32f4584683288c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a468273e5a9566bbc2caae8e204a0d070" id="r_a468273e5a9566bbc2caae8e204a0d070"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Detected_ * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a468273e5a9566bbc2caae8e204a0d070">detected</a></td></tr>
-<tr class="separator:a468273e5a9566bbc2caae8e204a0d070"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4e883670838418b0a61bb7f254b7065" id="r_ac4e883670838418b0a61bb7f254b7065"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Sum_ * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4e883670838418b0a61bb7f254b7065">sums</a></td></tr>
+<tr class="separator:ac4e883670838418b0a61bb7f254b7065"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecab935899c993b325c6a4666eae882e" id="r_aecab935899c993b325c6a4666eae882e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Detected_ * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aecab935899c993b325c6a4666eae882e">detected</a></td></tr>
+<tr class="separator:aecab935899c993b325c6a4666eae882e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23d5b96d6ca63bf1fcc6d5c9ea823226" id="r_a23d5b96d6ca63bf1fcc6d5c9ea823226"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Float_ * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23d5b96d6ca63bf1fcc6d5c9ea823226">medians</a></td></tr>
+<tr class="separator:a23d5b96d6ca63bf1fcc6d5c9ea823226"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename Sum_, typename Detected_&gt;<br />
-struct scran_aggregate::AggregateAcrossCellsBuffers&lt; Sum_, Detected_ &gt;</div><p>Buffers for <code><a class="el" href="namespacescran__aggregate.html#a455854154026f84c3d8c52a216472c2b">aggregate_across_cells()</a></code>. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename Sum_, typename Detected_, typename Float_&gt;<br />
+struct scran_aggregate::AggregateAcrossCellsBuffers&lt; Sum_, Detected_, Float_ &gt;</div><p>Buffers for <code><a class="el" href="namespacescran__aggregate.html#ace4c8f8b87106e77dedd5d394fa370f1">aggregate_across_cells()</a></code>. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Sum_</td><td>Numeric type of the sum, typically floating-point. If integer, this should be large enough to avoid integer overflow. </td></tr>
     <tr><td class="paramname">Detected_</td><td>Type of the number of detected cells, usually integer. This should be large enough to avoid integer overflow. </td></tr>
+    <tr><td class="paramname">Float_</td><td>Floating-point type to be used for other statistics, e.g., median. </td></tr>
   </table>
   </dd>
 </dl>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="af18936a8bb6ba1fbdb32f4584683288c" name="af18936a8bb6ba1fbdb32f4584683288c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af18936a8bb6ba1fbdb32f4584683288c">&#9670;&#160;</a></span>sums</h2>
+<a id="ac4e883670838418b0a61bb7f254b7065" name="ac4e883670838418b0a61bb7f254b7065"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4e883670838418b0a61bb7f254b7065">&#9670;&#160;</a></span>sums</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Sum_ , typename Detected_ &gt; </div>
+template&lt;typename Sum_ , typename Detected_ , typename Float_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;Sum_*&gt; <a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html">scran_aggregate::AggregateAcrossCellsBuffers</a>&lt; Sum_, Detected_ &gt;::sums</td>
+          <td class="memname">std::vector&lt;Sum_*&gt; <a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html">scran_aggregate::AggregateAcrossCellsBuffers</a>&lt; Sum_, Detected_, Float_ &gt;::sums</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -145,21 +148,39 @@ template&lt;typename Sum_ , typename Detected_ &gt; </div>
 
 </div>
 </div>
-<a id="a468273e5a9566bbc2caae8e204a0d070" name="a468273e5a9566bbc2caae8e204a0d070"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a468273e5a9566bbc2caae8e204a0d070">&#9670;&#160;</a></span>detected</h2>
+<a id="aecab935899c993b325c6a4666eae882e" name="aecab935899c993b325c6a4666eae882e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aecab935899c993b325c6a4666eae882e">&#9670;&#160;</a></span>detected</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Sum_ , typename Detected_ &gt; </div>
+template&lt;typename Sum_ , typename Detected_ , typename Float_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;Detected_*&gt; <a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html">scran_aggregate::AggregateAcrossCellsBuffers</a>&lt; Sum_, Detected_ &gt;::detected</td>
+          <td class="memname">std::vector&lt;Detected_*&gt; <a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html">scran_aggregate::AggregateAcrossCellsBuffers</a>&lt; Sum_, Detected_, Float_ &gt;::detected</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Vector of length equal to the number of groups. Each element is a pointer to an array of length equal to the number of genes, to be filled with the number of cells in the corresponding group with detected expression for each gene.</p>
 <p>If this is empty, the number of detected cells for each group is not computed. </p>
+
+</div>
+</div>
+<a id="a23d5b96d6ca63bf1fcc6d5c9ea823226" name="a23d5b96d6ca63bf1fcc6d5c9ea823226"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23d5b96d6ca63bf1fcc6d5c9ea823226">&#9670;&#160;</a></span>medians</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Sum_ , typename Detected_ , typename Float_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;Float_*&gt; <a class="el" href="structscran__aggregate_1_1AggregateAcrossCellsBuffers.html">scran_aggregate::AggregateAcrossCellsBuffers</a>&lt; Sum_, Detected_, Float_ &gt;::medians</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Vector of length equal to the number of groups. Each element is a pointer to an array of length equal to the number of genes, to be filled with the median expression across all cells in the corresponding group for each gene.</p>
+<p>If this is empty, the median for each group is not computed. </p>
 
 </div>
 </div>

@@ -31,18 +31,26 @@
     <filename>structscran__aggregate_1_1AggregateAcrossCellsBuffers.html</filename>
     <templarg>typename Sum_</templarg>
     <templarg>typename Detected_</templarg>
+    <templarg>typename Float_</templarg>
     <member kind="variable">
       <type>std::vector&lt; Sum_ * &gt;</type>
       <name>sums</name>
       <anchorfile>structscran__aggregate_1_1AggregateAcrossCellsBuffers.html</anchorfile>
-      <anchor>af18936a8bb6ba1fbdb32f4584683288c</anchor>
+      <anchor>ac4e883670838418b0a61bb7f254b7065</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>std::vector&lt; Detected_ * &gt;</type>
       <name>detected</name>
       <anchorfile>structscran__aggregate_1_1AggregateAcrossCellsBuffers.html</anchorfile>
-      <anchor>a468273e5a9566bbc2caae8e204a0d070</anchor>
+      <anchor>aecab935899c993b325c6a4666eae882e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::vector&lt; Float_ * &gt;</type>
+      <name>medians</name>
+      <anchorfile>structscran__aggregate_1_1AggregateAcrossCellsBuffers.html</anchorfile>
+      <anchor>a23d5b96d6ca63bf1fcc6d5c9ea823226</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -64,6 +72,13 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
+      <type>bool</type>
+      <name>compute_medians</name>
+      <anchorfile>structscran__aggregate_1_1AggregateAcrossCellsOptions.html</anchorfile>
+      <anchor>a4c52daf55fc6064926d8ae5eae624480</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
       <type>int</type>
       <name>num_threads</name>
       <anchorfile>structscran__aggregate_1_1AggregateAcrossCellsOptions.html</anchorfile>
@@ -76,18 +91,26 @@
     <filename>structscran__aggregate_1_1AggregateAcrossCellsResults.html</filename>
     <templarg>typename Sum_</templarg>
     <templarg>typename Detected_</templarg>
+    <templarg>typename Float_</templarg>
     <member kind="variable">
       <type>std::vector&lt; std::vector&lt; Sum_ &gt; &gt;</type>
       <name>sums</name>
       <anchorfile>structscran__aggregate_1_1AggregateAcrossCellsResults.html</anchorfile>
-      <anchor>ad09fedfa434a9be5074b47fd950098b7</anchor>
+      <anchor>aaffd51d13ca7681a494b904d09019ef4</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>std::vector&lt; std::vector&lt; Detected_ &gt; &gt;</type>
       <name>detected</name>
       <anchorfile>structscran__aggregate_1_1AggregateAcrossCellsResults.html</anchorfile>
-      <anchor>abd1392875a4be38f5a7317b128c7b13b</anchor>
+      <anchor>accd409380a04a88b8cf067f1c20889e6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::vector&lt; std::vector&lt; Float_ &gt; &gt;</type>
+      <name>medians</name>
+      <anchorfile>structscran__aggregate_1_1AggregateAcrossCellsResults.html</anchorfile>
+      <anchor>aa2ac90592c80f617ce2052d2684e5613</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -146,14 +169,14 @@
       <type>void</type>
       <name>aggregate_across_cells</name>
       <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>a455854154026f84c3d8c52a216472c2b</anchor>
-      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Group_ *const group, const AggregateAcrossCellsBuffers&lt; Sum_, Detected_ &gt; &amp;buffers, const AggregateAcrossCellsOptions &amp;options)</arglist>
+      <anchor>ace4c8f8b87106e77dedd5d394fa370f1</anchor>
+      <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Group_ *const group, const AggregateAcrossCellsBuffers&lt; Sum_, Detected_, Float_ &gt; &amp;buffers, const AggregateAcrossCellsOptions &amp;options)</arglist>
     </member>
     <member kind="function">
-      <type>AggregateAcrossCellsResults&lt; Sum_, Detected_ &gt;</type>
+      <type>AggregateAcrossCellsResults&lt; Sum_, Detected_, Float_ &gt;</type>
       <name>aggregate_across_cells</name>
       <anchorfile>namespacescran__aggregate.html</anchorfile>
-      <anchor>a14dbda14b9307f2c4dbedfd8c3622f5c</anchor>
+      <anchor>a56acd20f25216e5149635077ea76732b</anchor>
       <arglist>(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const Group_ *const group, const AggregateAcrossCellsOptions &amp;options)</arglist>
     </member>
     <member kind="function">
