@@ -343,6 +343,7 @@ void aggregate_across_cells_by_column(
  * Rows are features and columns are cells.
  * @param[in] group Pointer to an array of length equal to the number of columns of `input`, containing the assigned group for each cell.
  * All entries should be integers in \f$[0, N)\f$ where \f$N\f$ is the number of unique groups.
+ * @param[out] buffers Pre-allocated buffers in which to store the computed statistics. 
  * @param options Further options.
  */
 template<typename Data_, typename Index_, typename Group_, typename Sum_, typename Detected_, typename Float_>
