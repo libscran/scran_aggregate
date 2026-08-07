@@ -4,6 +4,7 @@
 #include <random>
 
 #include "scran_aggregate/aggregate_across_cells.hpp"
+#include "tatami_stats/tatami_stats.hpp"
 
 static std::vector<int> create_groupings(size_t n, int ngroups) {
     std::vector<int> groupings(n);
@@ -42,22 +43,22 @@ TEST_P(AggregateAcrossCellsTest, Basics) {
     std::vector<int> groupings = create_groupings(dense_row->ncol(), ngroups);
 
     scran_aggregate::AggregateAcrossCellsOptions opt;
-    auto ref = scran_aggregate::aggregate_across_cells(*dense_row, groupings.data(), opt);
+    auto ref = scran_aggregate::aggregate_across_cells(*dense_row, groupings.data(), ngroups, opt);
 
     auto compare = [&](const auto& other) -> void {
         for (int l = 0; l < ngroups; ++l) {
-            EXPECT_EQ(ref.sums[l], other.sums[l]);
+            scran_tests::compare_almost_equal_containers(ref.sum[l], other.sum[l], {});
             EXPECT_EQ(ref.detected[l], other.detected[l]);
         }
     };
 
     opt.num_threads = nthreads; 
     if (nthreads != 1) {
-        auto res1 = scran_aggregate::aggregate_across_cells(*dense_row, groupings.data(), opt);
+        auto res1 = scran_aggregate::aggregate_across_cells(*dense_row, groupings.data(), ngroups, opt);
         compare(res1);
     } else {
         // Doing some cursory checks.
-        EXPECT_EQ(ref.sums.size(), ngroups);
+        EXPECT_EQ(ref.sum.size(), ngroups);
         EXPECT_EQ(ref.detected.size(), ngroups);
 
         std::vector<std::vector<int> > collected_indices(ngroups);
@@ -68,25 +69,25 @@ TEST_P(AggregateAcrossCellsTest, Basics) {
 
         for (int l = 0; l < ngroups; ++l) {
             auto submat = tatami::make_DelayedSubset(dense_row, std::move(collected_indices[l]), false);
-            auto expected_sum = tatami_stats::sums::by_row(*submat, {});
-            scran_tests::compare_almost_equal_containers(expected_sum, ref.sums[l], {});
+            auto expected_sum = tatami_stats::sum(true, *submat, {});
+            scran_tests::compare_almost_equal_containers(expected_sum, ref.sum[l], {});
 
             tatami::DelayedUnaryIsometricOperation<int, double, int> positive(
                 submat, 
                 std::make_shared<tatami::DelayedUnaryIsometricGreaterThanScalarHelper<int, double, int, double> >(0.0)
             );
-            auto expected_detected = tatami_stats::sums::by_row<int>(positive, {});
+            auto expected_detected = tatami_stats::sum<int>(true, positive, {});
             EXPECT_EQ(expected_detected, ref.detected[l]);
         }
     }
 
-    auto res2 = scran_aggregate::aggregate_across_cells(*sparse_row, groupings.data(), opt);
+    auto res2 = scran_aggregate::aggregate_across_cells(*sparse_row, groupings.data(), ngroups, opt);
     compare(res2);
 
-    auto res3 = scran_aggregate::aggregate_across_cells(*dense_column, groupings.data(), opt);
+    auto res3 = scran_aggregate::aggregate_across_cells(*dense_column, groupings.data(), ngroups, opt);
     compare(res3);
 
-    auto res4 = scran_aggregate::aggregate_across_cells(*sparse_column, groupings.data(), opt);
+    auto res4 = scran_aggregate::aggregate_across_cells(*sparse_column, groupings.data(), ngroups, opt);
     compare(res4);
 }
 
@@ -113,19 +114,19 @@ TEST(AggregateAcrossCells, Skipping) {
     auto grouping = create_groupings(input->ncol(), 2);
 
     scran_aggregate::AggregateAcrossCellsOptions opt;
-    auto ref = scran_aggregate::aggregate_across_cells(*input, grouping.data(), opt);
-    EXPECT_EQ(ref.sums.size(), 2);
+    auto ref = scran_aggregate::aggregate_across_cells(*input, grouping.data(), 2, opt);
+    EXPECT_EQ(ref.sum.size(), 2);
     EXPECT_EQ(ref.detected.size(), 2);
 
     // Skipping works correctly when we don't want to compute things.
-    opt.compute_sums = false;
-    auto partial = scran_aggregate::aggregate_across_cells(*input, grouping.data(), opt);
-    EXPECT_EQ(partial.sums.size(), 0);
+    opt.compute_sum = false;
+    auto partial = scran_aggregate::aggregate_across_cells(*input, grouping.data(), 2, opt);
+    EXPECT_EQ(partial.sum.size(), 0);
     EXPECT_EQ(partial.detected.size(), 2);
     
     opt.compute_detected = false;
-    auto skipped = scran_aggregate::aggregate_across_cells(*input, grouping.data(), opt);
-    EXPECT_EQ(skipped.sums.size(), 0);
+    auto skipped = scran_aggregate::aggregate_across_cells(*input, grouping.data(), 2, opt);
+    EXPECT_EQ(skipped.sum.size(), 0);
     EXPECT_EQ(skipped.detected.size(), 0);
 }
 
@@ -160,26 +161,26 @@ TEST_P(AggregateAcrossCellsMedianTest, Basic) {
     std::vector<int> groupings = create_groupings(dense_row->ncol(), ngroups);
 
     scran_aggregate::AggregateAcrossCellsOptions opt;
-    opt.compute_medians = true;
-    auto med = scran_aggregate::aggregate_across_cells(*dense_row, groupings.data(), opt);
+    opt.compute_median = true;
+    auto med = scran_aggregate::aggregate_across_cells(*dense_row, groupings.data(), ngroups, opt);
 
     auto compare = [&](const auto& other) -> void {
         for (int l = 0; l < ngroups; ++l) {
-            EXPECT_EQ(med.sums[l], other.sums[l]);
+            EXPECT_EQ(med.sum[l], other.sum[l]);
             EXPECT_EQ(med.detected[l], other.detected[l]);
-            EXPECT_EQ(med.medians[l], other.medians[l]);
+            EXPECT_EQ(med.median[l], other.median[l]);
         }
     };
 
     if (nthreads != 1) {
         // Check that the results on parallelization are the same.
         opt.num_threads = nthreads; 
-        auto res1 = scran_aggregate::aggregate_across_cells(*dense_row, groupings.data(), opt);
+        auto res1 = scran_aggregate::aggregate_across_cells(*dense_row, groupings.data(), ngroups, opt);
         compare(res1);
     } else {
-        EXPECT_EQ(med.sums.size(), ngroups);
+        EXPECT_EQ(med.sum.size(), ngroups);
         EXPECT_EQ(med.detected.size(), ngroups);
-        EXPECT_EQ(med.medians.size(), ngroups);
+        EXPECT_EQ(med.median.size(), ngroups);
 
         std::vector<std::vector<int> > collected_indices(ngroups);
         const int NC = dense_row->ncol();
@@ -189,28 +190,28 @@ TEST_P(AggregateAcrossCellsMedianTest, Basic) {
 
         for (int l = 0; l < ngroups; ++l) {
             auto submat = tatami::make_DelayedSubset(dense_row, std::move(collected_indices[l]), false);
-            auto expected_med = tatami_stats::medians::by_row(*submat, {});
-            scran_tests::compare_almost_equal_containers(expected_med, med.medians[l], {});
+            auto expected_med = tatami_stats::median(true, *submat, {});
+            scran_tests::compare_almost_equal_containers(expected_med, med.median[l], {});
 
-            auto expected_sum = tatami_stats::sums::by_row(*submat, {});
-            scran_tests::compare_almost_equal_containers(expected_sum, med.sums[l], {});
+            auto expected_sum = tatami_stats::sum(true, *submat, {});
+            scran_tests::compare_almost_equal_containers(expected_sum, med.sum[l], {});
 
             tatami::DelayedUnaryIsometricOperation<int, double, int> positive(
                 submat, 
                 std::make_shared<tatami::DelayedUnaryIsometricGreaterThanScalarHelper<int, double, int, double> >(0.0)
             );
-            auto expected_detected = tatami_stats::sums::by_row<int>(positive, {});
+            auto expected_detected = tatami_stats::sum<int>(true, positive, {});
             EXPECT_EQ(expected_detected, med.detected[l]);
         }
     }
 
-    auto res2 = scran_aggregate::aggregate_across_cells(*sparse_row, groupings.data(), opt);
+    auto res2 = scran_aggregate::aggregate_across_cells(*sparse_row, groupings.data(), ngroups, opt);
     compare(res2);
 
-    auto res3 = scran_aggregate::aggregate_across_cells(*dense_column, groupings.data(), opt);
+    auto res3 = scran_aggregate::aggregate_across_cells(*dense_column, groupings.data(), ngroups, opt);
     compare(res3);
 
-    auto res4 = scran_aggregate::aggregate_across_cells(*sparse_column, groupings.data(), opt);
+    auto res4 = scran_aggregate::aggregate_across_cells(*sparse_column, groupings.data(), ngroups, opt);
     compare(res4);
 }
 

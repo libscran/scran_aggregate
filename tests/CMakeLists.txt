@@ -1,9 +1,18 @@
 include(FetchContent)
+
 FetchContent_Declare(
   scran_tests
   GIT_REPOSITORY https://github.com/libscran/scran_tests
   GIT_TAG master
 )
+
+FetchContent_Declare(
+  tatami_stats
+  GIT_REPOSITORY https://github.com/tatami-inc/tatami_stats
+  GIT_TAG master
+)
+
+FetchContent_MakeAvailable(tatami_stats)
 FetchContent_MakeAvailable(scran_tests)
 
 include(GoogleTest)
