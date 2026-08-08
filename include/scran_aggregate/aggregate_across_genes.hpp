@@ -219,6 +219,7 @@ void aggregate_across_genes_by_row(
     const AggregateAcrossGenesOptions& options
 ) {
     const auto NR = p.nrow();
+    const auto NC = p.ncol();
     const auto num_sets = gene_sets.size();
     typedef I<decltype(num_sets)> SetIndex;
 
@@ -264,6 +265,7 @@ void aggregate_across_genes_by_row(
 
         for (I<decltype(num_sets)> s = 0; s < num_sets; ++s) {
             const auto& set = gene_sets[s];
+            std::fill_n(buffers.sum[s], NC, 0);
             if (set.weight) {
                 for (std::size_t g = 0; g < set.number; ++g) {
                     auto& dest = revmapping[mapping[set.gene[g] - offset]];
@@ -286,7 +288,6 @@ void aggregate_across_genes_by_row(
         per_thread_sums.emplace(sanisizer::cast<I<decltype(per_thread_sums->size())> >(options.num_threads - 1));
     }
 
-    const auto NC = p.ncol();
     const bool is_sparse = p.is_sparse();
     const auto nused = tatami::parallelize([&](const int t, const Index_ start, const Index_ length) -> void {
         auto sub_oracle = std::make_shared<tatami::FixedViewOracle<Index_> >(subset.data() + start, length);

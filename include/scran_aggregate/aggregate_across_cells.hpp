@@ -288,6 +288,9 @@ void aggregate_across_cells_by_column(
     std::optional<std::vector<std::optional<std::vector<std::vector<Float_> > > > > per_thread_sum;
     if (nsum) {
         assert(nsum == num_groups);
+        for (std::size_t g = 0; g < num_groups; ++g) {
+            std::fill_n(buffers.sum[g], NR, 0);
+        }
         if (do_parallel) {
             per_thread_sum.emplace(sanisizer::cast<I<decltype(per_thread_sum->size())> >(options.num_threads - 1));
         }
@@ -297,6 +300,9 @@ void aggregate_across_cells_by_column(
     std::optional<std::vector<std::optional<std::vector<std::vector<Detected_> > > > > per_thread_detected;
     if (ndetected) {
         assert(ndetected == num_groups);
+        for (std::size_t g = 0; g < num_groups; ++g) {
+            std::fill_n(buffers.detected[g], NR, 0);
+        }
         if (do_parallel) {
             per_thread_detected.emplace(sanisizer::cast<I<decltype(per_thread_detected->size())> >(options.num_threads - 1));
         }
