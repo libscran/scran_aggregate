@@ -301,6 +301,9 @@ void aggregate_across_genes_by_row(
                 return buffers.sum[curset];
             }
             // Only allocate each set's memory if we actually need it in the current thread.
+            // Recall that we split the gene subset across multiple threads.
+            // A thread could get a sub-subset where certain gene sets are not represented.
+            // In such cases, there's no point allocating temporary storage for those gene sets in that thread.
             if ((*tmp_sums)[curset].empty()) {
                 tatami::resize_container_to_Index_size((*tmp_sums)[curset], NC);
             }

@@ -148,6 +148,60 @@ TEST_P(AggregateAcrossGenesTest, Weighted) {
     }
 }
 
+TEST_P(AggregateAcrossGenesTest, ThreadSpecificSets) {
+    auto nthreads = GetParam();
+
+    const int nsets = 20;
+    const int ngenes = dense_row->nrow();
+    std::vector<std::vector<int> > mock_sets(nsets);
+
+    // Here, we create gene sets where each set only contains a small range of row indices. 
+    // This checks the behavior of the parallelized row-major algorithm where each thread processes a separate subset of genes.
+    // Some threads will not process any genes for particular sets, in which case they should not allocate temporary memory for those sets.
+    // Our aim here is to check the code that skips the memory allocation.
+    for (int s = 0; s < nsets; ++s) {
+        const int start = s * (ngenes / nsets) + (s < ngenes % nsets);
+        const int len = std::min(10, ngenes - start) / 2;
+        for (int l = 0; l < len; ++l) {
+            mock_sets[s].push_back(start + l * 2);
+        }
+    }
+    std::mt19937_64 rng(nsets * nthreads + 17);
+    std::shuffle(mock_sets.begin(), mock_sets.end(), rng); // shuffling for some variety.
+
+    std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > gene_sets;
+    gene_sets.reserve(nsets);
+    for (const auto& grp : mock_sets) {
+        gene_sets.emplace_back(grp.size(), grp.data(), static_cast<double*>(NULL));
+    }
+
+    auto compare = [&](const auto& ref, const auto& other) -> void {
+        for (size_t s = 0; s < nsets; ++s) {
+            scran_tests::compare_almost_equal_containers(ref.sum[s], other.sum[s], {});
+        }
+    };
+
+    scran_aggregate::AggregateAcrossGenesOptions opt;
+    opt.num_threads = nthreads; 
+    auto res1 = scran_aggregate::aggregate_across_genes(*dense_row, gene_sets, opt);
+
+    if (nthreads > 1) {
+        auto copy = opt;
+        copy.num_threads = 1;
+        auto ref = scran_aggregate::aggregate_across_genes(*dense_row, gene_sets, copy);
+        compare(res1, ref);
+    }
+
+    auto res2 = scran_aggregate::aggregate_across_genes(*sparse_row, gene_sets, opt);
+    compare(res1, res2);
+
+    auto res3 = scran_aggregate::aggregate_across_genes(*dense_column, gene_sets, opt);
+    compare(res1, res3);
+
+    auto res4 = scran_aggregate::aggregate_across_genes(*sparse_column, gene_sets, opt);
+    compare(res1, res4);
+}
+
 TEST_P(AggregateAcrossGenesTest, Empty) {
     auto nthreads = GetParam();
     std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > gene_sets;
