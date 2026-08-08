@@ -40,7 +40,7 @@ TEST_P(AggregateAcrossGenesTest, Unweighted) {
         }
     }
 
-    std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
+    std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > gene_sets;
     gene_sets.reserve(nsets);
     for (const auto& grp : mock_sets) {
         gene_sets.emplace_back(grp.size(), grp.data(), static_cast<double*>(NULL));
@@ -48,7 +48,7 @@ TEST_P(AggregateAcrossGenesTest, Unweighted) {
 
     auto compare = [&](const auto& ref, const auto& other) -> void {
         for (size_t s = 0; s < nsets; ++s) {
-            EXPECT_EQ(ref.sum[s], other.sum[s]);
+            scran_tests::compare_almost_equal_containers(ref.sum[s], other.sum[s], {});
         }
     };
 
@@ -78,7 +78,7 @@ TEST_P(AggregateAcrossGenesTest, Unweighted) {
     for (size_t s = 0; s < nsets; ++s) {
         auto expected = res1.sum[s];
         for (auto& x : expected) { x /= mock_sets[s].size(); }
-        EXPECT_EQ(expected, ave.sum[s]);
+        scran_tests::compare_almost_equal_containers(expected, ave.sum[s], {});
     }
 }
 
@@ -104,7 +104,7 @@ TEST_P(AggregateAcrossGenesTest, Weighted) {
         }
     }
 
-    std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
+    std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > gene_sets;
     gene_sets.reserve(nsets);
     for (size_t s = 0; s < nsets; ++s) {
         const auto& grp = mock_sets[s];
@@ -113,7 +113,7 @@ TEST_P(AggregateAcrossGenesTest, Weighted) {
 
     auto compare = [&](const auto& ref, const auto& other) -> void {
         for (size_t s = 0; s < nsets; ++s) {
-            EXPECT_EQ(ref.sum[s], other.sum[s]);
+            scran_tests::compare_almost_equal_containers(ref.sum[s], other.sum[s], {});
         }
     };
 
@@ -144,13 +144,13 @@ TEST_P(AggregateAcrossGenesTest, Weighted) {
         auto expected = res1.sum[s];
         double denom = std::accumulate(weights[s].begin(), weights[s].end(), 0.0);
         for (auto& x : expected) { x /= denom; }
-        EXPECT_EQ(expected, ave.sum[s]);
+        scran_tests::compare_almost_equal_containers(expected, ave.sum[s], {});
     }
 }
 
 TEST_P(AggregateAcrossGenesTest, Empty) {
     auto nthreads = GetParam();
-    std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
+    std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > gene_sets;
 
     scran_aggregate::AggregateAcrossGenesOptions opt;
     opt.num_threads = nthreads; 
@@ -183,7 +183,7 @@ TEST(AggregateAcrossGenes, OutOfRange) {
 
     tatami::DenseRowMatrix<double, int> mat(nr, nc, std::move(vec));
     std::vector<int> example { 1, 10, 100 };
-    std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
+    std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > gene_sets;
     gene_sets.emplace_back(3, example.data(), static_cast<double*>(NULL));
 
     scran_aggregate::AggregateAcrossGenesOptions opt;
