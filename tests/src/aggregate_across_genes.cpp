@@ -5,7 +5,7 @@
 
 #include "scran_aggregate/aggregate_across_genes.hpp"
 
-class AggregateAcrossGenesTest : public ::testing::TestWithParam<int> {
+class AggregateAcrossGenesTest : public ::testing::TestWithParam<std::tuple<int, int> > {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column, sparse_row, sparse_column;
 
@@ -24,21 +24,121 @@ protected:
     }
 };
 
-TEST_P(AggregateAcrossGenesTest, Unweighted) {
-    auto nthreads = GetParam();
+static std::vector<std::vector<int> > create_gene_sets(int ngenes, int scenario, unsigned long long seed) {
+    // Each set is empty.
+    if (scenario == 0) {
+        return std::vector<std::vector<int> >(19);
+    }
 
-    const size_t nsets = 100;
-    int ngenes = dense_row->nrow();
+    // No sets at all.
+    if (scenario == 1) {
+        return std::vector<std::vector<int> >();
+    }
+
+    // Thread-specific sets.
+    if (scenario == 2) {
+        const int nsets = 11;
+        std::mt19937_64 rng(seed);
+        std::vector<std::vector<int> > mock_sets(nsets);
+
+        // Here, we create gene sets where each set only contains a small range of row indices. 
+        // This checks the behavior of the parallelized row-major algorithm where each thread processes a separate subset of genes.
+        // Some threads will not process any genes for particular sets, in which case they should not allocate temporary memory for those sets.
+        // Our aim here is to check the code that skips the memory allocation.
+        const int per_set = ngenes / nsets;
+        const int remainder = ngenes % nsets;
+        for (int s = 0; s < nsets; ++s) {
+            const int start = s * per_set + (s < remainder ? s : remainder);
+            const int len = per_set + (s < remainder);
+            for (int l = 0; l < len; ++l) {
+                mock_sets[s].push_back(start + l);
+            }
+            std::shuffle(mock_sets[s].begin(), mock_sets[s].end(), rng); // shuffling for some variety.
+        }
+        std::shuffle(mock_sets.begin(), mock_sets.end(), rng); // shuffling for even some variety.
+        return mock_sets;
+    }
+
+    int nsets, start_gene, end_gene, gene_step;
+    double density;
+    if (scenario == 3) {
+        nsets = 100;
+        // Sampling 15% of every tenth gene for each set.
+        // This tests that we behave correctly when the subset is not a contiguous block, such that remapping is non-trivial.
+        start_gene = 0;
+        end_gene = ngenes;
+        gene_step = 10;
+        density = 0.15;
+
+    } else if (scenario == 4) {
+        nsets = 50;
+        // Sampling 20% of every third gene for each set.
+        // This tests that we behave correctly when the subset is not a contiguous block, such that remapping is non-trivial.
+        start_gene = 0;
+        end_gene = ngenes;
+        gene_step = 3;
+        density = 0.2;
+
+    } else if (scenario == 5) { 
+        nsets = 79;
+        // Ensuring that each gene is represented in at least one set.
+        // This checks the special case where all genes are present in the subset, and thus no remapping is required.
+        start_gene = 0;
+        end_gene = ngenes;
+        gene_step = 1;
+        density = 0.05;
+
+    } else if (scenario == 6) {
+        nsets = 54;
+        // Each of the first 25% of genes is represented in at least one set.
+        // The aim is to check that we correctly handle contiguous blocks starting at the first gene.
+        start_gene = 0;
+        end_gene = ngenes / 4;
+        gene_step = 1;
+        density = 0.1;
+
+    } else {
+        nsets = 67;
+        // Each of the middle third of genes is represented in at least one set.
+        // The aim is to check that we correctly handle contiguous blocks starting after the first gene.
+        start_gene = ngenes / 3;
+        end_gene = (ngenes * 2) / 3;
+        gene_step = 1;
+        density = 0.15;
+    }
+
+    std::mt19937_64 rng(seed);
     std::vector<std::vector<int> > mock_sets(nsets);
-    std::mt19937_64 rng(nsets * nthreads);
+
+    // Guarantee that each 'gene_step'-th gene in [start_gene, end_gene) is present.
+    for (int g = start_gene; g < end_gene; g += gene_step) {
+        mock_sets[rng() % nsets].push_back(g);
+    }
+
+    // Sprinkling in some more genes for variety.
+    // Some care is required to ensure that these remain unique.
     std::uniform_real_distribution runif;
     for (auto& grp : mock_sets) {
-        for (int g = 0; g < ngenes; ++g) {
-            if (runif(rng) < 0.15) {
-                grp.push_back(g);
+        std::unordered_set<int> copy(grp.begin(), grp.end());
+        for (int g = start_gene; g < end_gene; g += gene_step) {
+            if (runif(rng) < density) {
+                copy.insert(g);
             }
         }
+        grp.clear();
+        grp.insert(grp.end(), copy.begin(), copy.end());
+        std::shuffle(grp.begin(), grp.end(), rng);
     }
+    return mock_sets;
+}
+
+TEST_P(AggregateAcrossGenesTest, Unweighted) {
+    auto params = GetParam();
+    const auto scenario = std::get<0>(params);
+    const auto nthreads = std::get<1>(params);
+
+    const auto mock_sets = create_gene_sets(dense_row->nrow(), scenario, /* seed = */ (scenario + 17) * nthreads);
+    const std::size_t nsets = mock_sets.size();
 
     std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > gene_sets;
     gene_sets.reserve(nsets);
@@ -47,6 +147,7 @@ TEST_P(AggregateAcrossGenesTest, Unweighted) {
     }
 
     auto compare = [&](const auto& ref, const auto& other) -> void {
+        ASSERT_EQ(ref.sum.size(), other.sum.size());
         for (size_t s = 0; s < nsets; ++s) {
             scran_tests::compare_almost_equal_containers(ref.sum[s], other.sum[s], {});
         }
@@ -55,6 +156,7 @@ TEST_P(AggregateAcrossGenesTest, Unweighted) {
     scran_aggregate::AggregateAcrossGenesOptions opt;
     opt.num_threads = nthreads; 
     auto res1 = scran_aggregate::aggregate_across_genes(*dense_row, gene_sets, opt);
+    EXPECT_EQ(res1.sum.size(), nsets);
 
     if (nthreads > 1) {
         auto copy = opt;
@@ -83,23 +185,21 @@ TEST_P(AggregateAcrossGenesTest, Unweighted) {
 }
 
 TEST_P(AggregateAcrossGenesTest, Weighted) {
-    auto nthreads = GetParam();
+    auto params = GetParam();
+    const auto scenario = std::get<0>(params);
+    const auto nthreads = std::get<1>(params);
 
-    size_t nsets = 50;
-    int ngenes = dense_row->nrow();
-    std::vector<std::vector<int> > mock_sets(nsets);
+    const auto mock_sets = create_gene_sets(dense_row->nrow(), scenario, /* seed = */ (scenario + 13) * nthreads);
+    const std::size_t nsets = mock_sets.size();
+
     std::vector<std::vector<double> > weights(nsets);
     {
-        std::mt19937_64 rng(nsets * nthreads + 17);
+        std::mt19937_64 rng((scenario + 17) * nthreads);
         std::uniform_real_distribution runif;
         for (size_t s = 0; s < nsets; ++s) {
-            auto& grp = mock_sets[s];
             auto& wt = weights[s];
-            for (int g = 0; g < ngenes; ++g) {
-                if (runif(rng) < 0.15) {
-                    grp.push_back(g);
-                    wt.push_back(runif(rng));
-                }
+            for ([[maybe_unused]] auto g : mock_sets[s]) {
+                wt.push_back(runif(rng));
             }
         }
     }
@@ -112,6 +212,7 @@ TEST_P(AggregateAcrossGenesTest, Weighted) {
     }
 
     auto compare = [&](const auto& ref, const auto& other) -> void {
+        ASSERT_EQ(ref.sum.size(), other.sum.size());
         for (size_t s = 0; s < nsets; ++s) {
             scran_tests::compare_almost_equal_containers(ref.sum[s], other.sum[s], {});
         }
@@ -120,6 +221,7 @@ TEST_P(AggregateAcrossGenesTest, Weighted) {
     scran_aggregate::AggregateAcrossGenesOptions opt;
     opt.num_threads = nthreads; 
     auto res1 = scran_aggregate::aggregate_across_genes(*dense_row, gene_sets, opt);
+    EXPECT_EQ(res1.sum.size(), nsets);
 
     if (nthreads > 1) {
         auto copy = opt;
@@ -148,83 +250,13 @@ TEST_P(AggregateAcrossGenesTest, Weighted) {
     }
 }
 
-TEST_P(AggregateAcrossGenesTest, ThreadSpecificSets) {
-    auto nthreads = GetParam();
-
-    const int nsets = 20;
-    const int ngenes = dense_row->nrow();
-    std::vector<std::vector<int> > mock_sets(nsets);
-
-    // Here, we create gene sets where each set only contains a small range of row indices. 
-    // This checks the behavior of the parallelized row-major algorithm where each thread processes a separate subset of genes.
-    // Some threads will not process any genes for particular sets, in which case they should not allocate temporary memory for those sets.
-    // Our aim here is to check the code that skips the memory allocation.
-    for (int s = 0; s < nsets; ++s) {
-        const int start = s * (ngenes / nsets) + (s < ngenes % nsets);
-        const int len = std::min(10, ngenes - start) / 2;
-        for (int l = 0; l < len; ++l) {
-            mock_sets[s].push_back(start + l * 2);
-        }
-    }
-    std::mt19937_64 rng(nsets * nthreads + 17);
-    std::shuffle(mock_sets.begin(), mock_sets.end(), rng); // shuffling for some variety.
-
-    std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > gene_sets;
-    gene_sets.reserve(nsets);
-    for (const auto& grp : mock_sets) {
-        gene_sets.emplace_back(grp.size(), grp.data(), static_cast<double*>(NULL));
-    }
-
-    auto compare = [&](const auto& ref, const auto& other) -> void {
-        for (size_t s = 0; s < nsets; ++s) {
-            scran_tests::compare_almost_equal_containers(ref.sum[s], other.sum[s], {});
-        }
-    };
-
-    scran_aggregate::AggregateAcrossGenesOptions opt;
-    opt.num_threads = nthreads; 
-    auto res1 = scran_aggregate::aggregate_across_genes(*dense_row, gene_sets, opt);
-
-    if (nthreads > 1) {
-        auto copy = opt;
-        copy.num_threads = 1;
-        auto ref = scran_aggregate::aggregate_across_genes(*dense_row, gene_sets, copy);
-        compare(res1, ref);
-    }
-
-    auto res2 = scran_aggregate::aggregate_across_genes(*sparse_row, gene_sets, opt);
-    compare(res1, res2);
-
-    auto res3 = scran_aggregate::aggregate_across_genes(*dense_column, gene_sets, opt);
-    compare(res1, res3);
-
-    auto res4 = scran_aggregate::aggregate_across_genes(*sparse_column, gene_sets, opt);
-    compare(res1, res4);
-}
-
-TEST_P(AggregateAcrossGenesTest, Empty) {
-    auto nthreads = GetParam();
-    std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > gene_sets;
-
-    scran_aggregate::AggregateAcrossGenesOptions opt;
-    opt.num_threads = nthreads; 
-    auto res1 = scran_aggregate::aggregate_across_genes(*dense_row, gene_sets, opt);
-    EXPECT_EQ(res1.sum.size(), 0);
-
-    auto res2 = scran_aggregate::aggregate_across_genes(*sparse_row, gene_sets, opt);
-    EXPECT_EQ(res2.sum.size(), 0);
-
-    auto res3 = scran_aggregate::aggregate_across_genes(*dense_column, gene_sets, opt);
-    EXPECT_EQ(res3.sum.size(), 0);
-
-    auto res4 = scran_aggregate::aggregate_across_genes(*sparse_column, gene_sets, opt);
-    EXPECT_EQ(res4.sum.size(), 0);
-}
-
 INSTANTIATE_TEST_SUITE_P(
     AggregateAcrossGenes,
     AggregateAcrossGenesTest,
-    ::testing::Values(1, 3) // number of threads
+    ::testing::Combine(
+        ::testing::Values(0, 1, 2, 3, 4, 5, 6, 7), // scenarios
+        ::testing::Values(1, 3) // number of threads
+    )
 );
 
 TEST(AggregateAcrossGenes, OutOfRange) {

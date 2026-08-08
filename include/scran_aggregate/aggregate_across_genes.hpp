@@ -117,8 +117,8 @@ void aggregate_across_genes_by_column(
     const tatami::Matrix<Data_, Index_>& p,
     const std::vector<AggregateAcrossGenesSet<Gene_, Weight_> >& gene_sets,
     const AggregateAcrossGenesBuffers<Sum_>& buffers,
-    const AggregateAcrossGenesOptions& options)
-{
+    const AggregateAcrossGenesOptions& options
+) {
     const auto NR = p.nrow();
     const auto num_sets = gene_sets.size();
 
@@ -148,34 +148,76 @@ void aggregate_across_genes_by_column(
         }
     }
 
-    // Remapping the row indices to the universe of genes in all sets.
-    // TODO: minor optimization if all genes are used, in which case we can just use 'gene_sets' directly.
-    auto remapping = sanisizer::create<std::vector<std::pair<std::vector<Index_>, const Weight_*> > >(num_sets);
+    // Remapping the row indices to the subset of genes across all sets.
+    // However, we only do this if the subset of genes does not consist of all genes.
+    // This choice requires some care to produce an alternative to 'gene_sets' with the remapped indices.
+    const std::vector<AggregateAcrossGenesSet<Gene_, Weight_> >* gene_sets_ptr = &gene_sets;
+    std::optional<std::vector<AggregateAcrossGenesSet<Gene_, Weight_> > > remapped_gene_sets;
+
+    class RemappedGeneSetLiberator {
+    public:
+        RemappedGeneSetLiberator(std::optional<std::vector<AggregateAcrossGenesSet<Gene_, Weight_> > >& host) : my_host(host) {}
+
+        // The only purpose of this class is to wipe out the dynamically allocated memory for the remapped indices.
+        ~RemappedGeneSetLiberator() {
+            if (my_host.has_value()) {
+                for (auto& rset : *my_host) {
+                    if (rset.gene) {
+                        delete [] rset.gene;
+                    }
+                }
+            }
+        }
+    private:
+        std::optional<std::vector<AggregateAcrossGenesSet<Gene_, Weight_> > >& my_host;
+    };
+    RemappedGeneSetLiberator lib(remapped_gene_sets);
+
     const auto nsubs = subset.size();
     if (nsubs) {
         const Index_ offset = subset.front();
         const Index_ span = subset.back() - offset + 1;
-        auto mapping = tatami::create_container_of_Index_size<std::vector<Index_> >(span);
-        for (I<decltype(nsubs)> i = 0; i < nsubs; ++i) {
-            mapping[subset[i] - offset] = i;
-        }
 
-        for (I<decltype(num_sets)> s = 0; s < num_sets; ++s) {
-            const auto& set = gene_sets[s];
-            auto& remapped = remapping[s].first;
-            remapped.reserve(set.number);
-            for (std::size_t g = 0; g < set.number; ++g) {
-                remapped.push_back(mapping[set.gene[g] - offset]);
+        if (offset || !sanisizer::is_equal(span, nsubs)) { // i.e., not a consecutive block starting at zero.
+            auto mapping = tatami::create_container_of_Index_size<std::vector<Index_> >(span);
+            for (I<decltype(nsubs)> i = 0; i < nsubs; ++i) {
+                mapping[subset[i] - offset] = i;
             }
-            remapping[s].second = set.weight;
+
+            remapped_gene_sets.emplace(num_sets); // type is already correct, no need for sanisizer protection.
+            gene_sets_ptr = &(*remapped_gene_sets);
+
+            for (I<decltype(num_sets)> s = 0; s < num_sets; ++s) {
+                const auto& set = gene_sets[s];
+                auto& remapped = (*remapped_gene_sets)[s];
+                remapped.number = set.number;
+                remapped.weight = set.weight;
+
+                const auto rgene = new Gene_ [set.number];
+                remapped.gene = rgene; // set it here ASAP to avoid memory leak upon exception.
+                for (std::size_t g = 0; g < set.number; ++g) {
+                    rgene[g] = mapping[set.gene[g] - offset];
+                }
+            }
         }
     }
 
-    const tatami::VectorPtr<Index_> subset_of_interest = std::make_shared<std::vector<Index_> >(std::move(subset));
     tatami::parallelize([&](const int, const Index_ start, const Index_ length) -> void {
-        // We extract as sparse even if it is dense, as it's just easier to index from a dense vector.
-        auto ext = tatami::consecutive_extractor<false>(p, false, start, length, subset_of_interest);
-        auto vbuffer = tatami::create_container_of_Index_size<std::vector<Data_> >(subset_of_interest->size());
+        // We extract as dense even if it is sparse, as it's just easier to index from a dense vector.
+        auto ext = [&]{
+            if (nsubs) {
+                const Index_ offset = subset.front();
+                if (offset == 0 && sanisizer::is_equal(nsubs, NR)) {
+                    return tatami::consecutive_extractor<false>(p, false, start, length);
+                }
+                const Index_ span = subset.back() - offset + 1;
+                if (sanisizer::is_equal(span, nsubs)) {
+                    return tatami::consecutive_extractor<false>(p, false, start, length, offset, span);
+                }
+            }
+            return tatami::consecutive_extractor<false>(p, false, start, length, tatami::VectorPtr<Index_>(tatami::VectorPtr<Index_>{}, &subset));
+        }();
+        auto vbuffer = tatami::create_container_of_Index_size<std::vector<Data_> >(nsubs);
 
         // Using a pairwise sum for a more-or-less free improvement to accuracy.
         quickstats::PairwiseSumWorkspace<Sum_> pswrk;
@@ -184,22 +226,22 @@ void aggregate_across_genes_by_column(
         for (Index_ x = start, end = start + length; x < end; ++x) {
             const auto ptr = ext->fetch(vbuffer.data());
             for (std::size_t s = 0; s < num_sets; ++s) {
-                const auto& set = remapping[s];
+                const auto& set = (*gene_sets_ptr)[s];
 
-                if (set.second) {
+                if (set.weight) {
                     buffers.sum[s][x] = quickstats::pairwise_sum_abstract(
-                        set.first.size(), 
+                        set.number,
                         [&](std::size_t i) -> Sum_ {
-                            return ptr[set.first[i]] * set.second[i];
+                            return ptr[set.gene[i]] * set.weight[i];
                         },
                         pswrk,
                         psopt
                     );
                 } else {
                     buffers.sum[s][x] = quickstats::pairwise_sum_abstract(
-                        set.first.size(), 
+                        set.number, 
                         [&](std::size_t i) -> Sum_ {
-                            return ptr[set.first[i]];
+                            return ptr[set.gene[i]];
                         },
                         pswrk,
                         psopt
@@ -255,31 +297,54 @@ void aggregate_across_genes_by_row(
     // Reverse the mapping to get genes->sets.
     const Index_ nsubs = subset.size();
     if (nsubs) {
-        // TODO: minor optimization if all genes are used, in which case we can omit the creation of 'mapping'.
         const Index_ offset = subset.front();
         const Index_ span = subset.back() - offset + 1;
-        auto mapping = tatami::create_container_of_Index_size<std::vector<Index_> >(span);
-        for (I<decltype(nsubs)> i = 0; i < nsubs; ++i) {
-            mapping[subset[i] - offset] = i;
-        }
 
-        for (I<decltype(num_sets)> s = 0; s < num_sets; ++s) {
-            const auto& set = gene_sets[s];
-            std::fill_n(buffers.sum[s], NC, 0);
-            if (set.weight) {
-                for (std::size_t g = 0; g < set.number; ++g) {
-                    auto& dest = revmapping[mapping[set.gene[g] - offset]];
-                    dest.first.push_back(s);
-                    dest.second.push_back(set.weight[g]);
+        if (!sanisizer::is_equal(span, nsubs)) { // i.e., not a consecutive block. 
+            auto mapping = tatami::create_container_of_Index_size<std::vector<Index_> >(span);
+            for (I<decltype(nsubs)> i = 0; i < nsubs; ++i) {
+                mapping[subset[i] - offset] = i;
+            }
+
+            for (I<decltype(num_sets)> s = 0; s < num_sets; ++s) {
+                const auto& set = gene_sets[s];
+                if (set.weight) {
+                    for (std::size_t g = 0; g < set.number; ++g) {
+                        auto& dest = revmapping[mapping[set.gene[g] - offset]];
+                        dest.first.push_back(s);
+                        dest.second.push_back(set.weight[g]);
+                    }
+                } else {
+                    for (std::size_t g = 0; g < set.number; ++g) {
+                        auto& dest = revmapping[mapping[set.gene[g] - offset]];
+                        dest.first.push_back(s);
+                        dest.second.push_back(1);
+                    }
                 }
-            } else {
-                for (std::size_t g = 0; g < set.number; ++g) {
-                    auto& dest = revmapping[mapping[set.gene[g] - offset]];
-                    dest.first.push_back(s);
-                    dest.second.push_back(1);
+            }
+
+        } else {
+            for (I<decltype(num_sets)> s = 0; s < num_sets; ++s) {
+                const auto& set = gene_sets[s];
+                if (set.weight) {
+                    for (std::size_t g = 0; g < set.number; ++g) {
+                        auto& dest = revmapping[set.gene[g] - offset];
+                        dest.first.push_back(s);
+                        dest.second.push_back(set.weight[g]);
+                    }
+                } else {
+                    for (std::size_t g = 0; g < set.number; ++g) {
+                        auto& dest = revmapping[set.gene[g] - offset];
+                        dest.first.push_back(s);
+                        dest.second.push_back(1);
+                    }
                 }
             }
         }
+    }
+
+    for (I<decltype(num_sets)> s = 0; s < num_sets; ++s) {
+        std::fill_n(buffers.sum[s], NC, 0);
     }
 
     const bool do_parallel = options.num_threads > 1;
