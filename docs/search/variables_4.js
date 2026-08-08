@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['medians_0',['medians',['../structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#a23d5b96d6ca63bf1fcc6d5c9ea823226',1,'scran_aggregate::AggregateAcrossCellsBuffers::medians'],['../structscran__aggregate_1_1AggregateAcrossCellsResults.html#aa2ac90592c80f617ce2052d2684e5613',1,'scran_aggregate::AggregateAcrossCellsResults::medians']]]
+  ['index_0',['index',['https://tatami-inc.github.io/tatami/structtatami_1_1CompressedSparseContents.html#a5b30cd6415c0e3cfd91b31590f16bc58',1,'tatami::CompressedSparseContents::index'],['https://tatami-inc.github.io/tatami/structtatami_1_1FragmentedSparseContents.html#a8c1a2bebb066b64451576dc356877091',1,'tatami::FragmentedSparseContents::index'],['https://tatami-inc.github.io/tatami/structtatami_1_1SparseRange.html#af61bafe43fadb90cee6162ac79bfdd3d',1,'tatami::SparseRange::index']]]
 ];

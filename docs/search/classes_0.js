@@ -6,5 +6,6 @@ var searchData=
   ['aggregateacrossgenesbuffers_3',['AggregateAcrossGenesBuffers',['../structscran__aggregate_1_1AggregateAcrossGenesBuffers.html',1,'scran_aggregate']]],
   ['aggregateacrossgenesoptions_4',['AggregateAcrossGenesOptions',['../structscran__aggregate_1_1AggregateAcrossGenesOptions.html',1,'scran_aggregate']]],
   ['aggregateacrossgenesresults_5',['AggregateAcrossGenesResults',['../structscran__aggregate_1_1AggregateAcrossGenesResults.html',1,'scran_aggregate']]],
-  ['arrayview_6',['ArrayView',['https://tatami-inc.github.io/tatami/classtatami_1_1ArrayView.html',1,'tatami']]]
+  ['aggregateacrossgenesset_6',['AggregateAcrossGenesSet',['../structscran__aggregate_1_1AggregateAcrossGenesSet.html',1,'scran_aggregate']]],
+  ['arrayview_7',['ArrayView',['https://tatami-inc.github.io/tatami/classtatami_1_1ArrayView.html',1,'tatami']]]
 ];

@@ -10,7 +10,7 @@ var searchData=
   ['matrix_3c_20value_5f_2c_20index_5f_20_3e_7',['Matrix&lt; Value_, Index_ &gt;',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
   ['matrix_3c_20valueout_5f_2c_20indexout_5f_20_3e_8',['Matrix&lt; ValueOut_, IndexOut_ &gt;',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
   ['maybeoracle_9',['MaybeOracle',['https://tatami-inc.github.io/tatami/namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee',1,'tatami']]],
-  ['medians_10',['medians',['../structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#a23d5b96d6ca63bf1fcc6d5c9ea823226',1,'scran_aggregate::AggregateAcrossCellsBuffers::medians'],['../structscran__aggregate_1_1AggregateAcrossCellsResults.html#aa2ac90592c80f617ce2052d2684e5613',1,'scran_aggregate::AggregateAcrossCellsResults::medians']]],
+  ['median_10',['median',['../structscran__aggregate_1_1AggregateAcrossCellsBuffers.html#a25cb5c7e2b874409e3b8c86654e40ac4',1,'scran_aggregate::AggregateAcrossCellsBuffers::median'],['../structscran__aggregate_1_1AggregateAcrossCellsResults.html#a532ac5295fc04496690c271edfbfed7c',1,'scran_aggregate::AggregateAcrossCellsResults::median']]],
   ['myopicdenseextractor_11',['MyopicDenseExtractor',['https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html',1,'tatami']]],
   ['myopicsparseextractor_12',['MyopicSparseExtractor',['https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html',1,'tatami']]]
 ];
