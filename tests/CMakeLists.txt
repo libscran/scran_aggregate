@@ -44,8 +44,6 @@ add_executable(
     libtest 
     src/aggregate_across_cells.cpp
     src/aggregate_across_genes.cpp
-    src/combine_factors.cpp
-    src/clean_factor.cpp
 )
 decorate_test(libtest)
 
@@ -53,8 +51,6 @@ add_executable(
     dirtytest 
     src/aggregate_across_cells.cpp
     src/aggregate_across_genes.cpp
-    src/combine_factors.cpp
-    src/clean_factor.cpp
 )
 decorate_test(dirtytest)
 target_compile_definitions(dirtytest PRIVATE "SCRAN_AGGREGATE_TEST_INIT=scran_tests::initial_value()")
