@@ -120,7 +120,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="ascran__aggregate_8hpp_html"><div class="ttname"><a href="scran__aggregate_8hpp.html">scran_aggregate.hpp</a></div><div class="ttdoc">Aggregate single-cell expression values.</div></div>
 <div class="ttc" id="astructscran__aggregate_1_1AggregateAcrossCellsOptions_html"><div class="ttname"><a href="structscran__aggregate_1_1AggregateAcrossCellsOptions.html">scran_aggregate::AggregateAcrossCellsOptions</a></div><div class="ttdoc">Options for aggregate_across_cells().</div><div class="ttdef"><b>Definition</b> aggregate_across_cells.hpp:27</div></div>
 </div><!-- fragment --><p>We can also use the <code>aggregate_across_genes()</code> function to sum expression values across gene sets, e.g., to compute the activity of a gene signature. This can be done with any number of gene sets, possibly with a different weight for each gene in each set.</p>
-<div class="fragment"><div class="line">std::vector&lt;std::tuple&lt;size_t, const int*, const double*&gt; &gt; gene_sets;</div>
+<div class="fragment"><div class="line">std::vector&lt;scran_aggregate::AggregateAcrossGenesSet&lt;int, double&gt; &gt; gene_sets;</div>
 <div class="line"> </div>
 <div class="line">std::vector&lt;int&gt; set1 { 0, 5, 10, 20 };</div>
 <div class="line">gene_sets.emplace_back(set1.size(), set1.data(), <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span>*<span class="keyword">&gt;</span>(NULL)); <span class="comment">// no weight</span></div>
@@ -136,7 +136,7 @@ $(function(){ initResizable(false); });
 <div class="line">    g_opt</div>
 <div class="line">);</div>
 <div class="line">g_res.sum[0]; <span class="comment">// vector of sums for set 1 in each cell.</span></div>
-<div class="ttc" id="anamespacescran__aggregate_html_afaab6fff62f09b24a176f3587ede30fe"><div class="ttname"><a href="namespacescran__aggregate.html#afaab6fff62f09b24a176f3587ede30fe">scran_aggregate::aggregate_across_genes</a></div><div class="ttdeci">void aggregate_across_genes(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; AggregateAcrossGenesSet&lt; Gene_, Weight_ &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesBuffers&lt; Sum_ &gt; &amp;buffers, const AggregateAcrossGenesOptions &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_genes.hpp:474</div></div>
+<div class="ttc" id="anamespacescran__aggregate_html_afaab6fff62f09b24a176f3587ede30fe"><div class="ttname"><a href="namespacescran__aggregate.html#afaab6fff62f09b24a176f3587ede30fe">scran_aggregate::aggregate_across_genes</a></div><div class="ttdeci">void aggregate_across_genes(const tatami::Matrix&lt; Data_, Index_ &gt; &amp;input, const std::vector&lt; AggregateAcrossGenesSet&lt; Gene_, Weight_ &gt; &gt; &amp;gene_sets, const AggregateAcrossGenesBuffers&lt; Sum_ &gt; &amp;buffers, const AggregateAcrossGenesOptions &amp;options)</div><div class="ttdef"><b>Definition</b> aggregate_across_genes.hpp:473</div></div>
 <div class="ttc" id="astructscran__aggregate_1_1AggregateAcrossGenesOptions_html"><div class="ttname"><a href="structscran__aggregate_1_1AggregateAcrossGenesOptions.html">scran_aggregate::AggregateAcrossGenesOptions</a></div><div class="ttdoc">Options for aggregate_across_genes().</div><div class="ttdef"><b>Definition</b> aggregate_across_genes.hpp:26</div></div>
 </div><!-- fragment --><p>Check out the <a href="https://libscran.github.io/scran_aggregate">reference documentation</a> for more details.</p>
 <h1>Building projects</h1>
