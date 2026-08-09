@@ -250,6 +250,61 @@ TEST_P(AggregateAcrossGenesTest, Weighted) {
     }
 }
 
+TEST_P(AggregateAcrossGenesTest, WeightedAllOne) {
+    auto params = GetParam();
+    const auto scenario = std::get<0>(params);
+    const auto nthreads = std::get<1>(params);
+
+    const auto mock_sets = create_gene_sets(dense_row->nrow(), scenario, /* seed = */ (scenario + 13) * nthreads);
+    const std::size_t nsets = mock_sets.size();
+    std::vector<double> unity_weights(dense_row->nrow(), 1);
+
+    std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > weighted_gene_sets;
+    weighted_gene_sets.reserve(nsets);
+    for (size_t s = 0; s < nsets; ++s) {
+        const auto& grp = mock_sets[s];
+        weighted_gene_sets.emplace_back(grp.size(), grp.data(), unity_weights.data());
+    }
+
+    auto compare = [&](const auto& ref, const auto& other) -> void {
+        ASSERT_EQ(ref.sum.size(), other.sum.size());
+        for (size_t s = 0; s < nsets; ++s) {
+            scran_tests::compare_almost_equal_containers(ref.sum[s], other.sum[s], {});
+        }
+    };
+
+    scran_aggregate::AggregateAcrossGenesOptions opt;
+    opt.num_threads = nthreads; 
+    auto res1 = scran_aggregate::aggregate_across_genes(*dense_row, weighted_gene_sets, opt);
+    EXPECT_EQ(res1.sum.size(), nsets);
+
+    if (nthreads > 1) {
+        auto copy = opt;
+        copy.num_threads = 1;
+        auto ref = scran_aggregate::aggregate_across_genes(*dense_row, weighted_gene_sets, copy);
+        compare(res1, ref);
+    } else {
+        std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > unweighted_gene_sets;
+        unweighted_gene_sets.reserve(nsets);
+        for (size_t s = 0; s < nsets; ++s) {
+            const auto& grp = mock_sets[s];
+            unweighted_gene_sets.emplace_back(grp.size(), grp.data(), static_cast<double*>(NULL));
+        }
+        auto ref = scran_aggregate::aggregate_across_genes(*dense_row, unweighted_gene_sets, opt);
+        compare(res1, ref);
+    }
+
+    auto res2 = scran_aggregate::aggregate_across_genes(*sparse_row, weighted_gene_sets, opt);
+    compare(res1, res2);
+
+    auto res3 = scran_aggregate::aggregate_across_genes(*dense_column, weighted_gene_sets, opt);
+    compare(res1, res3);
+
+    auto res4 = scran_aggregate::aggregate_across_genes(*sparse_column, weighted_gene_sets, opt);
+    compare(res1, res4);
+}
+
+
 INSTANTIATE_TEST_SUITE_P(
     AggregateAcrossGenes,
     AggregateAcrossGenesTest,
