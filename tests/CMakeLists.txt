@@ -28,6 +28,7 @@ macro(decorate_test target)
         ${target}
         scran_aggregate
         scran_tests
+        tatami::tatami_stats
     )
 
     target_compile_options(${target} PRIVATE -Wall -Werror -Wpedantic -Wextra)

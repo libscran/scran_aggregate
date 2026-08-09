@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(scran_aggregate
-    VERSION 0.3.2
+project(
+    scran_aggregate
+    VERSION 0.4.0
     DESCRIPTION "Aggregate expression values across cells"
-    LANGUAGES CXX)
+    LANGUAGES CXX
+)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -23,12 +25,11 @@ if(SCRAN_AGGREGATE_FETCH_EXTERN)
     add_subdirectory(extern)
 else()
     find_package(tatami_tatami 4.1.0 CONFIG REQUIRED)
-    find_package(tatami_tatami_stats 3.1.0 CONFIG REQUIRED)
+    find_package(ltla_quickstats 0.2.0 CONFIG REQUIRED)
     find_package(ltla_sanisizer 0.2.0 CONFIG REQUIRED)
-    find_package(ltla_factorize 0.1.0 CONFIG REQUIRED)
 endif()
 
-target_link_libraries(scran_aggregate INTERFACE tatami::tatami tatami::tatami_stats ltla::sanisizer ltla::factorize)
+target_link_libraries(scran_aggregate INTERFACE tatami::tatami ltla::quickstats ltla::sanisizer)
 
 # Tests
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
