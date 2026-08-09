@@ -157,9 +157,8 @@ void aggregate_across_genes_by_column(
     class RemappedGeneSetLiberator {
     public:
         RemappedGeneSetLiberator(std::optional<std::vector<AggregateAcrossGenesSet<Gene_, Weight_> > >& host) : my_host(host) {}
-
-        // The only purpose of this class is to wipe out the dynamically allocated memory for the remapped indices.
         ~RemappedGeneSetLiberator() {
+            // The only purpose of this class is to wipe out the dynamically allocated memory for the remapped indices.
             if (my_host.has_value()) {
                 for (auto& rset : *my_host) {
                     if (rset.gene) {
@@ -193,8 +192,8 @@ void aggregate_across_genes_by_column(
                 remapped.number = set.number;
                 remapped.weight = set.weight;
 
-                const auto rgene = new Gene_ [set.number];
-                remapped.gene = rgene; // set it here ASAP to avoid memory leak upon exception.
+                const auto rgene = new Gene_ [set.number]; // set.number is already size_t, no need to cast.
+                remapped.gene = rgene; // set it here ASAP to avoid memory leak if there are any exceptions.
                 for (std::size_t g = 0; g < set.number; ++g) {
                     rgene[g] = mapping[set.gene[g] - offset];
                 }

@@ -37,7 +37,7 @@ We can also use the `aggregate_across_genes()` function to sum expression values
 This can be done with any number of gene sets, possibly with a different weight for each gene in each set.
 
 ```cpp
-std::vector<std::tuple<size_t, const int*, const double*> > gene_sets;
+std::vector<scran_aggregate::AggregateAcrossGenesSet<int, double> > gene_sets;
 
 std::vector<int> set1 { 0, 5, 10, 20 };
 gene_sets.emplace_back(set1.size(), set1.data(), static_cast<double*>(NULL)); // no weight
