@@ -21,7 +21,7 @@ protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column, sparse_row, sparse_column;
 
     static void SetUpTestSuite() {
-        int nr = 112, nc = 78;
+        int nr = 152, nc = 78;
         auto vec = scran_tests::simulate_vector(nr * nc, []{
             scran_tests::SimulateVectorParameters sparams;
             sparams.density = 0.1;
@@ -103,7 +103,7 @@ INSTANTIATE_TEST_SUITE_P(
 /*********************************************/
 
 TEST(AggregateAcrossCells, Skipping) {
-    int nr = 88, nc = 126;
+    int nr = 88, nc = 176;
     auto vec = scran_tests::simulate_vector(nr * nc, []{
         scran_tests::SimulateVectorParameters sparams;
         sparams.density = 0.1;

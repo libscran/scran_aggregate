@@ -349,8 +349,8 @@ void aggregate_across_cells_by_column(
             tatami::Options opt;
             opt.sparse_ordered_index = false;
             auto ext = tatami::consecutive_extractor<true>(p, false, start, length, opt);
-            auto vbuffer = tatami::create_container_of_Index_size<std::vector<Data_> >(length);
-            auto ibuffer = tatami::create_container_of_Index_size<std::vector<Index_> >(length);
+            auto vbuffer = tatami::create_container_of_Index_size<std::vector<Data_> >(NR);
+            auto ibuffer = tatami::create_container_of_Index_size<std::vector<Index_> >(NR);
 
             for (Index_ x = 0; x < length; ++x) {
                 const auto col = ext->fetch(vbuffer.data(), ibuffer.data());
@@ -373,7 +373,7 @@ void aggregate_across_cells_by_column(
 
         } else {
             auto ext = tatami::consecutive_extractor<false>(p, false, start, length);
-            auto vbuffer = tatami::create_container_of_Index_size<std::vector<Data_> >(length);
+            auto vbuffer = tatami::create_container_of_Index_size<std::vector<Data_> >(NR);
 
             for (Index_ x = 0; x < length; ++x) {
                 const auto col = ext->fetch(vbuffer.data());
