@@ -27,9 +27,10 @@ else()
     find_package(tatami_tatami 4.1.0 CONFIG REQUIRED)
     find_package(ltla_quickstats 0.2.0 CONFIG REQUIRED)
     find_package(ltla_sanisizer 0.2.0 CONFIG REQUIRED)
+    find_package(ltla_jiwoo 0.1.0 CONFIG REQUIRED)
 endif()
 
-target_link_libraries(scran_aggregate INTERFACE tatami::tatami ltla::quickstats ltla::sanisizer)
+target_link_libraries(scran_aggregate INTERFACE tatami::tatami ltla::quickstats ltla::sanisizer ltla::jiwoo)
 
 # Tests
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
