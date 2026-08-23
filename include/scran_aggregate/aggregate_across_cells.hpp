@@ -286,8 +286,7 @@ void aggregate_across_cells_by_column(
     const bool do_parallel = options.num_threads > 1;
 
     const auto nsum = buffers.sum.size();
-    std::optional<std::vector<std::optional<std::vector<Float_*> > > > per_thread_sum;
-    jiwoo::Scope scsums(per_thread_sum);
+    std::optional<std::vector<std::optional<jiwoo::EquilengthArrays<Float_> > > > per_thread_sum;
     if (nsum) {
         assert(nsum == num_groups);
         for (std::size_t g = 0; g < num_groups; ++g) {
@@ -299,8 +298,7 @@ void aggregate_across_cells_by_column(
     }
 
     const auto ndetected = buffers.detected.size();
-    std::optional<std::vector<std::optional<std::vector<Detected_*> > > > per_thread_detected;
-    jiwoo::Scope scdets(per_thread_detected);
+    std::optional<std::vector<std::optional<jiwoo::EquilengthArrays<Detected_> > > > per_thread_detected;
     if (ndetected) {
         assert(ndetected == num_groups);
         for (std::size_t g = 0; g < num_groups; ++g) {
@@ -312,31 +310,27 @@ void aggregate_across_cells_by_column(
     }
 
     const auto nused = tatami::parallelize([&](const int t, const Index_ start, const Index_ length) -> void {
-        std::optional<std::vector<Float_*> > tmp_sum_ptrs;
-        jiwoo::Scope scsum(tmp_sum_ptrs);
-        std::optional<std::vector<Detected_*> > tmp_detected_ptrs;
-        jiwoo::Scope scdet(tmp_detected_ptrs);
+        std::optional<jiwoo::EquilengthArrays<Float_> > tmp_sum;
+        std::optional<jiwoo::EquilengthArrays<Detected_> > tmp_detected;
 
         Float_* const * sum_ptrs = NULL;
         Detected_* const * det_ptrs = NULL;
         if (t > 0) {
             if (nsum) {
-                tmp_sum_ptrs.emplace(sanisizer::cast<I<decltype(tmp_sum_ptrs->size())> >(num_groups));
-                for (std::size_t g = 0; g < num_groups; ++g) {
-                    auto ptr = new Float_[NR]; // cast from NR to size_t is safe, given the tatami contract.
-                    (*tmp_sum_ptrs)[g] = ptr;
-                    std::fill_n(ptr, NR, 0);
-                }
-                sum_ptrs = tmp_sum_ptrs->data();
+                tmp_sum.emplace(
+                    sanisizer::cast<I<decltype(tmp_sum->size())> >(num_groups),
+                    static_cast<std::size_t>(NR), // cast from NR to size_t is safe, given the tatami contract.
+                    0
+                );
+                sum_ptrs = tmp_sum->get();
             }
             if (ndetected) {
-                tmp_detected_ptrs.emplace(sanisizer::cast<I<decltype(tmp_detected_ptrs->size())> >(num_groups));
-                for (std::size_t g = 0; g < num_groups; ++g) {
-                    auto ptr = new Detected_[NR]; // cast from NR to size_t is safe, given the tatami contract.
-                    (*tmp_detected_ptrs)[g] = ptr;
-                    std::fill_n(ptr, NR, 0);
-                }
-                det_ptrs = tmp_detected_ptrs->data();
+                tmp_detected.emplace(
+                    sanisizer::cast<I<decltype(tmp_detected->size())> >(num_groups),
+                    static_cast<std::size_t>(NR), // cast from NR to size_t is safe, given the tatami contract.
+                    0
+                );
+                det_ptrs = tmp_detected->get();
             }
         } else {
             if (nsum) {
@@ -399,10 +393,10 @@ void aggregate_across_cells_by_column(
 
         if (t > 0) {
             if (nsum) {
-                jiwoo::transfer(tmp_sum_ptrs, (*per_thread_sum)[t - 1]);
+                (*per_thread_sum)[t - 1] = std::move(tmp_sum);
             }
             if (ndetected) {
-                jiwoo::transfer(tmp_detected_ptrs, (*per_thread_detected)[t - 1]);
+                (*per_thread_detected)[t - 1] = std::move(tmp_detected);
             }
         }
     }, p.ncol(), options.num_threads);
