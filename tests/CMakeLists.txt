@@ -54,4 +54,20 @@ add_executable(
     src/aggregate_across_genes.cpp
 )
 decorate_test(dirtytest)
-target_compile_definitions(dirtytest PRIVATE "SCRAN_AGGREGATE_TEST_INIT=scran_tests::initial_value()")
+target_compile_definitions(
+    dirtytest
+    PRIVATE
+    "SCRAN_AGGREGATE_TEST_INIT=scran_tests::initial_value()" # check that dirty output buffers are ignored.
+)
+
+add_executable(
+    forcetest 
+    src/aggregate_across_cells.cpp
+    src/aggregate_across_genes.cpp
+)
+decorate_test(forcetest)
+target_compile_definitions(
+    forcetest
+    PRIVATE
+    TATAMI_DEBUG_FORCE_COPY=1 # check that buffers for tatami::fetch() are correctly allocated.
+)
